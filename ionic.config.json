@@ -1,0 +1,7 @@
+{
+  "name": "Appband",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
