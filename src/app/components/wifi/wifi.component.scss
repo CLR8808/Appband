@@ -1,0 +1,82 @@
+ion-content {
+  --background: #F4F4F4;
+  --color: #11181C;
+}
+
+.container {
+  padding: 56px 24px 40px 24px;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.back-btn {
+  font-size: 28px;
+  color: #11181C;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #11181C;
+}
+
+.description {
+  font-size: 15px;
+  color: #7A7A80;
+  margin-bottom: 28px;
+  line-height: 22px;
+}
+
+.info-titulo {
+  font-size: 12px;
+  color: #A0A0A8;
+  margin-bottom: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.card {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  padding: 4px 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.wifi-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.wifi-item:active {
+  background-color: #F5F5F7;
+}
+
+.wifi-nombre {
+  font-size: 16px;
+  font-weight: 600;
+  color: #11181C;
+}
+
+.wifi-item ion-icon {
+  color: #0E9AA7;
+  font-size: 20px;
+}
+
+.divider {
+  height: 1px;
+  background-color: #F0F0F2;
+  margin: 0 20px;
+}

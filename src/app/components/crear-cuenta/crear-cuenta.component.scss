@@ -1,0 +1,141 @@
+ion-content {
+  --background: #F4F4F4;
+}
+
+.container {
+  padding: 0 30px;
+  padding-bottom: 40px;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 50px;
+  margin-bottom: 44px;
+}
+
+.back-btn {
+  font-size: 30px;
+  color: #11181C;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #11181C;
+}
+
+.form {
+  margin-top: 6px;
+}
+
+.input-block {
+  margin-bottom: 30px;
+}
+
+.label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #7A7A80;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.custom-input {
+  width: 100%;
+  font-size: 16px;
+  color: #11181C;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+
+.line-input {
+  border-bottom: 2px solid #0E9AA7;
+  transition: border-color 0.2s ease;
+}
+
+.line-input:focus {
+  border-bottom-color: #0FB8C7;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid #0E9AA7;
+  transition: border-color 0.2s ease;
+}
+
+.input-row:focus-within {
+  border-bottom-color: #0FB8C7;
+}
+
+.line-input-icon {
+  flex: 1;
+  padding-right: 8px;
+  border: none;
+}
+
+.right-icon {
+  font-size: 22px;
+  color: #0E9AA7;
+  margin-left: 8px;
+  margin-bottom: 2px;
+}
+
+.checkbox-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 2px;
+  margin-bottom: 40px;
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #0E9AA7;
+  border-radius: 4px;
+  margin-right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.checkbox.active {
+  background-color: #0E9AA7;
+}
+
+.check-icon {
+  font-size: 14px;
+  color: #FFFFFF;
+}
+
+.checkbox-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.btn-primary {
+  width: 100%;
+  height: 58px;
+  background: linear-gradient(135deg, #0FB8C7 0%, #0E9AA7 100%);
+  border-radius: 14px;
+  border: none;
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(14, 154, 167, 0.3);
+  cursor: pointer;
+  letter-spacing: 0.3px;
+}

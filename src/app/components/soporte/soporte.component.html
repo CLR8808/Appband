@@ -1,0 +1,30 @@
+<ion-content scroll-y="true" class="bg-light">
+  <div class="container">
+    <div class="header">
+      <ion-icon name="chevron-back" class="back-btn" (click)="goBack()"></ion-icon>
+      <span class="title">Soporte</span>
+    </div>
+
+    <div class="card">
+      <div class="item">
+        <ion-icon name="mail-outline" class="item-icon"></ion-icon>
+        <div class="item-text-container">
+          <span class="item-label">Correo</span>
+          <span class="item-value">soporte@safeband.com</span>
+        </div>
+      </div>
+
+      <div class="item">
+        <ion-icon name="call-outline" class="item-icon"></ion-icon>
+        <div class="item-text-container">
+          <span class="item-label">Teléfono</span>
+          <span class="item-value">+52 669 123 4567</span>
+        </div>
+      </div>
+
+      <button class="btn-primary" (click)="contactarSoporte()">
+        Contactar soporte
+      </button>
+    </div>
+  </div>
+</ion-content>

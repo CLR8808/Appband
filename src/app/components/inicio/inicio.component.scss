@@ -1,0 +1,163 @@
+ion-content {
+  --background: #F4F4F4;
+  --color: #11181C;
+}
+
+.content-padding {
+  padding: 24px 24px 120px 24px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-top: 30px;
+  margin-bottom: 35px;
+  color: #1E1E1E;
+}
+
+.add-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  backgroundColor: #EDEDED;
+  padding: 16px 20px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.add-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.add-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0FB8C7 0%, #0E9AA7 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 18px;
+}
+
+.add-icon {
+  font-size: 26px;
+  color: #FFFFFF;
+}
+
+.add-text {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.empty-img {
+  width: 280px;
+  height: 280px;
+  object-fit: contain;
+  margin-bottom: 25px;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.06));
+}
+
+.empty-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.empty-subtitle {
+  font-size: 14px;
+  color: #0E9AA7;
+  text-align: center;
+  font-weight: 500;
+}
+
+.section-subtitle {
+  font-size: 20px;
+  color: #777;
+  margin-top: 10px;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.device-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #EDEDED;
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.device-card:active {
+  transform: scale(0.98);
+}
+
+.device-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 1;
+}
+
+.device-img {
+  width: 55px;
+  height: 55px;
+  margin-right: 14px;
+  object-fit: contain;
+}
+
+.device-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.device-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #11181C;
+}
+
+.status-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: #2ECC71;
+  margin-right: 6px;
+}
+
+.status-text {
+  font-size: 14px;
+  color: #777;
+}
+
+.chevron-icon {
+  font-size: 22px;
+  color: #333;
+}

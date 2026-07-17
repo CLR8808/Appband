@@ -1,0 +1,16 @@
+<ion-content scroll-y="false" class="bg-light">
+  <div class="container">
+    <div class="header">
+      <ion-icon name="chevron-back" class="back-btn" (click)="goBack()"></ion-icon>
+      <span class="title">Nombre</span>
+    </div>
+
+    <p class="description">Asigna un Nombre al dispositivo</p>
+
+    <input type="text" class="input" [(ngModel)]="nombre" />
+
+    <button class="btn-primary" (click)="guardar()">
+      Guardar
+    </button>
+  </div>
+</ion-content>

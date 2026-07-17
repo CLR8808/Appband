@@ -1,0 +1,69 @@
+<ion-content class="bg-gray" scroll-y="true">
+  <div class="container">
+    <!-- HEADER -->
+    <div class="header">
+      <ion-icon name="chevron-back" class="back-btn" (click)="goBack()"></ion-icon>
+      <span class="title">Configuración de SafeBand</span>
+    </div>
+
+    <!-- INFO DISPOSITIVO -->
+    <span class="section-title">Información del dispositivo</span>
+
+    <div class="card">
+      <div class="row-between">
+        <span class="label">Nombre del dispositivo</span>
+        <div class="row">
+          <span class="value">{{ dispositivos.length > 0 ? dispositivos[0].nombre : "Sin dispositivo" }}</span>
+          <ion-icon name="chevron-forward" color="medium"></ion-icon>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row-between">
+        <span class="label">Estado</span>
+        <span class="activo">{{ dispositivos.length > 0 ? "Activo y conectado" : "Sin dispositivo" }}</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row-between">
+        <span class="label">Batería</span>
+        <div class="row">
+          <ion-icon name="battery-half" class="icon-blue"></ion-icon>
+          <span class="value"> 85%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEGURIDAD -->
+    <span class="section-title">Seguridad y detección de caídas</span>
+
+    <div class="card">
+      <div class="row-between">
+        <span class="label">Sensibilidad de detección</span>
+        <div class="row">
+          <span class="value">Media</span>
+          <ion-icon name="chevron-forward" color="medium"></ion-icon>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row-between">
+        <span class="label">Tiempo antes de la alerta</span>
+        <div class="row">
+          <span class="value">30 Segundos</span>
+          <ion-icon name="chevron-forward" color="medium"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFO -->
+    <span class="section-title">Información</span>
+
+    <div class="card clickable" (click)="desvincular()">
+      <span class="desvincular">Desvincular Safeband</span>
+    </div>
+  </div>
+</ion-content>

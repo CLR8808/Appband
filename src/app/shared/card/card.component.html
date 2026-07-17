@@ -1,0 +1,16 @@
+<div class="card" [ngClass]="{'danger-card': danger}" (click)="handleClick()">
+  <div class="left-section">
+    <div class="icon-circle">
+      <ion-icon [name]="icon" [ngClass]="{'danger-text': danger, 'normal-text': !danger}"></ion-icon>
+    </div>
+    <span class="title" [ngClass]="{'danger-text': danger, 'normal-text': !danger}">{{ title }}</span>
+  </div>
+
+  <ng-container *ngIf="showSwitch; else chevronTemplate">
+    <ion-toggle [checked]="switchValue" (ionChange)="onToggle($event)" color="success"></ion-toggle>
+  </ng-container>
+
+  <ng-template #chevronTemplate>
+    <ion-icon *ngIf="showChevron" name="chevron-forward" [ngClass]="{'danger-text': danger, 'normal-text': !danger}" class="chevron-icon"></ion-icon>
+  </ng-template>
+</div>

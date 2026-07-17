@@ -1,0 +1,128 @@
+ion-content {
+  --background: #F4F4F4;
+  --color: #11181C;
+}
+
+.container {
+  padding: 50px 24px 40px 24px;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.back-btn {
+  font-size: 30px;
+  color: #11181C;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #11181C;
+}
+
+.reloj {
+  width: 260px;
+  height: 260px;
+  display: block;
+  margin: 10px auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.1));
+}
+
+.info-box {
+  background-color: #FFFFFF;
+  border-radius: 18px;
+  padding: 22px;
+  position: relative;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+}
+
+.text {
+  margin-top: 8px;
+  text-align: center;
+  color: #11181C;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.punto-activo {
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: #22C55E;
+  margin-bottom: 3px;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+}
+
+.divider {
+  height: 1px;
+  background-color: #F0F0F2;
+  margin: 16px 0;
+}
+
+.vertical-divider {
+  position: absolute;
+  width: 1px;
+  background-color: #F0F0F2;
+  top: 22px;
+  bottom: 22px;
+  left: 50%;
+}
+
+.icon-blue {
+  font-size: 24px;
+  color: #0E9AA7;
+}
+
+.icon-green {
+  font-size: 24px;
+  color: #22C55E;
+}
+
+.btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, #0FB8C7 0%, #0E9AA7 100%);
+  padding: 17px 0;
+  border-radius: 14px;
+  border: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 40px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(14, 154, 167, 0.3);
+  letter-spacing: 0.3px;
+}
+
+.btn-secondary {
+  width: 100%;
+  background-color: #FFFFFF;
+  padding: 17px 0;
+  border-radius: 14px;
+  border: 2px solid #E0E0E4;
+  color: #11181C;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 14px;
+  cursor: pointer;
+}

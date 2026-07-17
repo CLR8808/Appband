@@ -1,0 +1,26 @@
+<ion-content class="bg-gray" scroll-y="false">
+  <div class="container">
+    <div class="header">
+      <ion-icon name="chevron-back" class="back-btn" (click)="goBack()"></ion-icon>
+      <span class="title">Verificación</span>
+    </div>
+
+    <p class="description">
+      Ingresa el código enviado a<br />
+      <strong>+52 (669) 114-1627</strong>
+    </p>
+
+    <!-- CODE INPUTS -->
+    <div class="code-container">
+      <input type="text" class="code-input" maxlength="1" #input1 (keyup)="onKeyUp($event, 1, null, input2)" [(ngModel)]="codigo[0]" />
+      <input type="text" class="code-input" maxlength="1" #input2 (keyup)="onKeyUp($event, 2, input1, input3)" [(ngModel)]="codigo[1]" />
+      <input type="text" class="code-input" maxlength="1" #input3 (keyup)="onKeyUp($event, 3, input2, input4)" [(ngModel)]="codigo[2]" />
+      <input type="text" class="code-input" maxlength="1" #input4 (keyup)="onKeyUp($event, 4, input3, null)" [(ngModel)]="codigo[3]" />
+    </div>
+
+    <!-- BOTON -->
+    <button class="btn-primary" (click)="verificar()">
+      Verificar
+    </button>
+  </div>
+</ion-content>

@@ -1,0 +1,54 @@
+ion-content {
+  --background: #E8E8E8;
+  --color: #11181C;
+}
+
+.map-placeholder {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.map-header {
+  position: absolute;
+  top: 54px;
+  left: 20px;
+  right: 20px;
+  background-color: #FFFFFF;
+  padding: 16px 22px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.map-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #11181C;
+}
+
+.map-bg {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, #D5E8E9 0%, #BFD5D7 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.map-icon {
+  font-size: 80px;
+  color: #0E9AA7;
+  opacity: 0.4;
+  margin-bottom: 14px;
+}
+
+.map-text {
+  font-size: 17px;
+  color: #7A7A80;
+  font-weight: 600;
+}

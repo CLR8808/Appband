@@ -1,0 +1,51 @@
+<ion-content class="login-content" scroll-y="false">
+  <div class="gradient-bg">
+    <!-- LOGO -->
+    <div class="header">
+      <img src="assets/images/logo.png" alt="Logo" class="logo" />
+    </div>
+
+    <!-- CARD ANIMADA -->
+    <div class="card slide-up">
+      <!-- EMAIL -->
+      <div class="input-container">
+        <ion-icon name="mail-outline" color="medium"></ion-icon>
+        <input type="email" class="custom-input" placeholder="SafeStep@gmail.com" [(ngModel)]="correo" />
+        <ion-icon name="checkmark-circle-outline" style="color: #0E9AA7;"></ion-icon>
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="input-container">
+        <ion-icon name="lock-closed-outline" color="medium"></ion-icon>
+        <input [type]="mostrarContrasena ? 'text' : 'password'" class="custom-input" placeholder="Contraseña" [(ngModel)]="contrasena" />
+        <ion-icon [name]="mostrarContrasena ? 'eye-off-outline' : 'eye-outline'" color="medium" (click)="toggleContrasena()"></ion-icon>
+      </div>
+
+      <!-- OPTIONS -->
+      <div class="row-options">
+        <div class="remember-container">
+          <div class="checkbox"></div>
+          <span class="remember-text">Recuérdame</span>
+        </div>
+        <span class="forgot-text">Olvidé mi contraseña</span>
+      </div>
+
+      <!-- BUTTON -->
+      <button class="btn-primary" (click)="manejarInicioSesion()">
+        Ingresar
+      </button>
+
+      <!-- SOCIAL -->
+      <div class="social-container">
+        <ion-icon name="logo-apple" class="social-icon"></ion-icon>
+        <ion-icon name="logo-google" class="social-icon google-color"></ion-icon>
+        <ion-icon name="logo-facebook" class="social-icon facebook-color"></ion-icon>
+      </div>
+
+      <!-- REGISTER -->
+      <p class="register-text">
+        No tienes cuenta? <span class="register-link" routerLink="/crear-cuenta">Regístrate aquí</span>
+      </p>
+    </div>
+  </div>
+</ion-content>

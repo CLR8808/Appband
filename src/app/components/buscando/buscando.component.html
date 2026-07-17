@@ -1,0 +1,19 @@
+<ion-content scroll-y="false" class="bg-light">
+  <div class="container">
+    <div class="header">
+      <ion-icon name="chevron-back" class="back-btn" (click)="cancelar()"></ion-icon>
+      <span class="title">Buscando Dispositivo</span>
+    </div>
+
+    <div class="loader-container">
+      <ion-spinner name="crescent" color="primary" class="custom-spinner"></ion-spinner>
+    </div>
+
+    <h2 class="main-title">Buscando</h2>
+    <p class="description">Mantén el dispositivo cerca</p>
+
+    <button class="btn-primary" (click)="cancelar()">
+      Cancelar
+    </button>
+  </div>
+</ion-content>

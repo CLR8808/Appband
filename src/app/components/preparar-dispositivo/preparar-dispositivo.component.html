@@ -1,0 +1,28 @@
+<ion-content scroll-y="false" class="bg-light">
+  <div class="container">
+    <div class="header">
+      <ion-icon name="chevron-back" class="back-btn" (click)="goBack()"></ion-icon>
+      <span class="title">Preparar Dispositivo</span>
+    </div>
+
+    <div class="icon-container">
+      <div class="icon-circle">
+        <ion-icon name="watch-outline" class="watch-icon"></ion-icon>
+      </div>
+    </div>
+
+    <h2 class="main-title">Enciende la Pulsera</h2>
+    <p class="subtitle">
+      Mantén presionado el botón superior<br/>
+      durante 5 segundos hasta que vibre
+    </p>
+
+    <div class="info-box">
+      <span class="info-text">Mantén la pulsera cerca de tu celular</span>
+    </div>
+
+    <button class="btn-primary" (click)="next()">
+      Siguiente
+    </button>
+  </div>
+</ion-content>

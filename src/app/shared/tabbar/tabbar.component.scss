@@ -1,0 +1,43 @@
+::ng-deep .custom-tab-bar {
+  position: absolute;
+  bottom: 30px;
+  left: 20px;
+  right: 20px;
+  border-radius: 18px;
+  background-color: #0E9AA7;
+  padding: 8px 0;
+  height: 60px;
+  border: none;
+  --border: none;
+  /* Shadow requested by user */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+ion-tab-button {
+  background: transparent;
+  --color: #FFFFFF;
+  --color-selected: #FFFFFF;
+}
+
+.icon-container {
+  padding: 10px;
+  border-radius: 10px;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+ion-icon {
+  font-size: 26px;
+  color: #FFFFFF !important; /* Whiter icons requested by user */
+}
+
+ion-tab-button.tab-selected .icon-container {
+  background-color: #36C9DB;
+  transform: scale(1.1);
+}
+
+ion-tab-button.tab-selected ion-icon {
+  font-size: 24px;
+}

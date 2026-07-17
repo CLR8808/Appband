@@ -1,0 +1,36 @@
+<ion-content scroll-y="false" class="bg-light">
+  <div class="container">
+    <div class="header">
+      <ion-icon name="chevron-back" class="back-btn" (click)="goBack()"></ion-icon>
+      <span class="title">Configurar Wi-Fi</span>
+    </div>
+
+    <p class="description">
+      la pulsera necesita conexion para enviar alertas<br/>
+      de emergencia de forma autonoma
+    </p>
+
+    <h3 class="info-titulo">Información del dispositivo</h3>
+
+    <div class="card">
+      <div class="wifi-item" (click)="conectar('Casa_Familia_5G')">
+        <span class="wifi-nombre">Casa_Familia_5G</span>
+        <ion-icon name="wifi" color="dark"></ion-icon>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="wifi-item" (click)="conectar('Megacable_DDB55_2.5G')">
+        <span class="wifi-nombre">Megacable_DDB55_2.5G</span>
+        <ion-icon name="wifi" color="dark"></ion-icon>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="wifi-item" (click)="conectar('Megacable_DDB55_5G')">
+        <span class="wifi-nombre">Megacable_DDB55_5G</span>
+        <ion-icon name="wifi" color="dark"></ion-icon>
+      </div>
+    </div>
+  </div>
+</ion-content>

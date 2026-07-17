@@ -1,0 +1,57 @@
+<ion-content class="bg-gray" scroll-y="true">
+  <div class="container">
+    <div class="header">
+      <ion-icon name="chevron-back" class="back-btn" (click)="goBack()"></ion-icon>
+      <span class="title">Crear cuenta</span>
+    </div>
+
+    <div class="form">
+      <div class="input-block">
+        <span class="label">Nombre</span>
+        <input type="text" class="custom-input line-input" [(ngModel)]="nombre" />
+      </div>
+
+      <div class="input-block">
+        <span class="label">Telefono</span>
+        <input type="tel" class="custom-input line-input" [(ngModel)]="telefono" (input)="manejarTelefono($event)" maxlength="10" />
+      </div>
+
+      <div class="input-block">
+        <span class="label">Email</span>
+        <div class="input-row">
+          <input type="email" class="custom-input line-input-icon" [(ngModel)]="email" />
+          <ion-icon *ngIf="emailValido" name="checkmark-circle" class="right-icon"></ion-icon>
+        </div>
+      </div>
+
+      <div class="input-block">
+        <span class="label">Usuario</span>
+        <div class="input-row">
+          <input type="text" class="custom-input line-input-icon" [(ngModel)]="usuario" />
+          <ion-icon *ngIf="usuarioValido" name="checkmark-circle" class="right-icon"></ion-icon>
+        </div>
+      </div>
+
+      <div class="input-block">
+        <span class="label">Contraseña</span>
+        <input [type]="mostrarContrasena ? 'text' : 'password'" class="custom-input line-input" [(ngModel)]="contrasena" />
+      </div>
+
+      <div class="input-block">
+        <span class="label">Confirmar contraseña</span>
+        <input [type]="mostrarContrasena ? 'text' : 'password'" class="custom-input line-input" [(ngModel)]="confirmarContrasena" />
+      </div>
+
+      <div class="checkbox-row" (click)="toggleMostrarContrasena()">
+        <div class="checkbox" [class.active]="mostrarContrasena">
+          <ion-icon *ngIf="mostrarContrasena" name="checkmark" class="check-icon"></ion-icon>
+        </div>
+        <span class="checkbox-text">Mostrar contraseña</span>
+      </div>
+
+      <button class="btn-primary" (click)="validarFormulario()">
+        Crear
+      </button>
+    </div>
+  </div>
+</ion-content>

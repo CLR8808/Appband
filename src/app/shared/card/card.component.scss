@@ -1,0 +1,70 @@
+.card {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  min-height: 72px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  cursor: pointer;
+  box-sizing: border-box;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  transition: transform 0.15s ease;
+}
+
+.card:active {
+  transform: scale(0.98);
+}
+
+.danger-card {
+  border: 1.5px solid #FECACA;
+  background-color: #FEF2F2;
+  box-shadow: none;
+}
+
+.left-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 1;
+}
+
+.icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background-color: #E8F7F8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 16px;
+}
+
+.danger-card .icon-circle {
+  background-color: #FEE2E2;
+}
+
+.icon-circle ion-icon {
+  font-size: 22px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  flex-shrink: 1;
+}
+
+.normal-text {
+  color: #11181C;
+}
+
+.danger-text {
+  color: #DC2626;
+}
+
+.chevron-icon {
+  font-size: 20px;
+  color: #C8C8CC;
+}

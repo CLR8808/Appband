@@ -1,0 +1,36 @@
+<ion-content class="bg-gray" scroll-y="true">
+  <div class="container">
+    <h1 class="main-title">Perfil</h1>
+
+    <!-- HEADER PROFILE -->
+    <div class="profile-header">
+      <div class="avatar-container">
+        <img src="assets/images/avatar.png" class="avatar-img" onerror="this.src='assets/images/logo.png'"/>
+        <div class="edit-badge">
+          <ion-icon name="pencil" color="light"></ion-icon>
+        </div>
+      </div>
+      <div class="profile-info">
+        <span class="name">Juana Morales</span>
+        <span class="email">SafeStep@gmail.com</span>
+      </div>
+    </div>
+
+    <!-- SECTIONS -->
+    <span class="section-title">General</span>
+    <app-card icon="person-outline" title="Detalles de usuario" (onClick)="irADetalles()"></app-card>
+    <app-card icon="settings-outline" title="Configuración" (onClick)="irAConfiguracion()"></app-card>
+
+    <span class="section-title">Preferencias</span>
+    <app-card icon="notifications-outline" title="Notificaciones" [showSwitch]="true" [switchValue]="notificaciones" (switchChange)="notificaciones = $event"></app-card>
+    <app-card icon="location-outline" title="Ubicación" [showSwitch]="true" [switchValue]="ubicacion" (switchChange)="ubicacion = $event"></app-card>
+    <app-card icon="bluetooth-outline" title="Bluetooth" [showSwitch]="true" [switchValue]="bluetooth" (switchChange)="bluetooth = $event"></app-card>
+
+    <span class="section-title">Ayuda</span>
+    <app-card icon="headset-outline" title="Soporte" (onClick)="irASoporte()"></app-card>
+
+    <!-- LOGOUT -->
+    <div class="logout-spacer"></div>
+    <app-card icon="log-out-outline" title="Cerrar sesión" [danger]="true" [showChevron]="false" (onClick)="cerrarSesion()"></app-card>
+  </div>
+</ion-content>

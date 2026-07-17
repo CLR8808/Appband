@@ -1,0 +1,24 @@
+<ion-content scroll-y="false" class="bg-light">
+  <div class="container">
+    <div class="header">
+      <ion-icon name="chevron-back" class="back-btn" (click)="goBack()"></ion-icon>
+      <span class="title">Bluetooth</span>
+    </div>
+
+    <div class="icon-container">
+      <div class="icon-circle">
+        <ion-icon name="bluetooth" class="bt-icon"></ion-icon>
+      </div>
+    </div>
+
+    <h2 class="main-title">Permitir Conexión</h2>
+    <p class="description">
+      Safeband necesita tener acceso a bluetooth<br/>
+      para encontrar y vincular la pulsera cercana
+    </p>
+
+    <button class="btn-primary" (click)="permitir()">
+      Permitir acceso
+    </button>
+  </div>
+</ion-content>

@@ -1,0 +1,109 @@
+ion-content {
+  --background: #F4F4F4;
+  --color: #11181C;
+}
+
+.container {
+  padding: 50px 24px 40px 24px;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.back-btn {
+  font-size: 30px;
+  color: #11181C;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #11181C;
+}
+
+.section-title {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #A0A0A8;
+  margin-top: 18px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.card {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.clickable {
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.clickable:active {
+  transform: scale(0.98);
+}
+
+.row-between {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.label {
+  color: #11181C;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.value {
+  color: #7A7A80;
+  font-size: 15px;
+  font-weight: 500;
+  margin-right: 4px;
+}
+
+.activo {
+  color: #0E9AA7;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.divider {
+  height: 1px;
+  background-color: #F0F0F2;
+  margin: 14px 0;
+}
+
+.desvincular {
+  color: #E53935;
+  font-weight: 700;
+  font-size: 16px;
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+.icon-blue {
+  color: #0E9AA7;
+  font-size: 18px;
+  margin-right: 4px;
+}

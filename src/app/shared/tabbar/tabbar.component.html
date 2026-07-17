@@ -1,0 +1,27 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom" class="custom-tab-bar">
+    <ion-tab-button tab="mapa">
+      <div class="icon-container">
+        <ion-icon [name]="isTabActive('mapa') ? 'location' : 'location-outline'"></ion-icon>
+      </div>
+    </ion-tab-button>
+
+    <ion-tab-button tab="inicio">
+      <div class="icon-container">
+        <ion-icon [name]="isTabActive('inicio') ? 'home' : 'home-outline'"></ion-icon>
+      </div>
+    </ion-tab-button>
+
+    <ion-tab-button tab="perfil">
+      <div class="icon-container">
+        <ion-icon [name]="isTabActive('perfil') ? 'person' : 'person-outline'"></ion-icon>
+      </div>
+    </ion-tab-button>
+
+    <ion-tab-button tab="eventos">
+      <div class="icon-container">
+        <ion-icon [name]="isTabActive('eventos') ? 'time' : 'time-outline'"></ion-icon>
+      </div>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

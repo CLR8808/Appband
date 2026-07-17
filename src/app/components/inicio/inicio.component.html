@@ -1,0 +1,39 @@
+<ion-content scroll-y="true">
+  <div class="content-padding">
+    <!-- Título principal -->
+    <h1 class="title">Dispositivos</h1>
+
+    <!-- BOTÓN AGREGAR DISPOSITIVO -->
+    <div class="add-card" (click)="agregarDispositivo()">
+      <div class="add-box">
+        <ion-icon name="add" class="add-icon"></ion-icon>
+      </div>
+      <span class="add-text">Agregar Dispositivo</span>
+    </div>
+
+    <!-- SI NO HAY DISPOSITIVOS (ESTADO VACÍO) -->
+    <div class="empty-state" *ngIf="dispositivos.length === 0">
+      <img src="assets/images/safeband.png" alt="Safeband" class="empty-img" onerror="this.src='assets/images/logo.png'" />
+      <h2 class="empty-title">No hay dispositivos agregados</h2>
+      <p class="empty-subtitle">Agrega tu Safeband para comenzar. &gt;&gt;</p>
+    </div>
+
+    <!-- LISTA DE DISPOSITIVOS -->
+    <ng-container *ngIf="dispositivos.length > 0">
+      <h2 class="section-subtitle">Mis Dispositivos</h2>
+      <div class="device-card" *ngFor="let disp of dispositivos" (click)="irADetalle(disp)">
+        <div class="device-left">
+          <img src="assets/images/reloj.png" alt="Reloj" class="device-img" />
+          <div class="device-info">
+            <span class="device-name">{{ disp.nombre }}</span>
+            <div class="status-row">
+              <div class="status-dot"></div>
+              <span class="status-text">Activa</span>
+            </div>
+          </div>
+        </div>
+        <ion-icon name="chevron-forward" class="chevron-icon"></ion-icon>
+      </div>
+    </ng-container>
+  </div>
+</ion-content>

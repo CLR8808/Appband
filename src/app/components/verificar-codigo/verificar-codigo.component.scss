@@ -1,0 +1,82 @@
+ion-content {
+  --background: #F4F4F4;
+}
+
+.container {
+  padding: 0 24px;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 60px;
+  margin-bottom: 40px;
+}
+
+.back-btn {
+  font-size: 34px;
+  color: #11181C;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #11181C;
+  margin-left: 8px;
+}
+
+.description {
+  font-size: 18px;
+  color: #687076;
+  line-height: 28px;
+  margin-top: 0;
+  margin-bottom: 50px;
+}
+
+.description strong {
+  color: #11181C;
+  font-weight: 700;
+}
+
+.code-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 80px;
+  gap: 12px;
+}
+
+.code-input {
+  width: 70px;
+  height: 84px;
+  border-radius: 16px;
+  background-color: #EAEAED;
+  font-size: 36px;
+  font-weight: 700;
+  color: #11181C;
+  text-align: center;
+  border: 2px solid transparent;
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.code-input:focus {
+  background-color: #E0EFF0;
+  border-color: #0E9AA7;
+}
+
+.btn-primary {
+  width: 100%;
+  height: 62px;
+  background: linear-gradient(135deg, #0FB8C7 0%, #0E9AA7 100%);
+  border-radius: 16px;
+  border: none;
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(14, 154, 167, 0.3);
+  cursor: pointer;
+  letter-spacing: 0.3px;
+}

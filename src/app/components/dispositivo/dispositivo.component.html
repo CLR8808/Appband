@@ -1,0 +1,46 @@
+<ion-content scroll-y="true" class="bg-light">
+  <div class="container">
+    <div class="header">
+      <ion-icon name="chevron-back" class="back-btn" (click)="goBack()"></ion-icon>
+      <span class="title">Mi SafeBand V1</span>
+    </div>
+
+    <img src="assets/images/reloj.png" alt="Reloj" class="reloj" />
+
+    <div class="info-box">
+      <div class="vertical-divider"></div>
+      
+      <div class="row">
+        <div class="item">
+          <ion-icon name="battery-half" class="icon-blue"></ion-icon>
+          <span class="text">Batería<br/>85%</span>
+        </div>
+        <div class="item">
+          <div class="punto-activo"></div>
+          <span class="text">Activa</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row">
+        <div class="item">
+          <ion-icon name="wifi" class="icon-green"></ion-icon>
+          <span class="text">Buena conexión</span>
+        </div>
+        <div class="item">
+          <ion-icon name="happy" class="icon-green"></ion-icon>
+          <span class="text">Sin incidentes</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" (click)="irEventos()">
+      Eventos
+    </button>
+
+    <button class="btn-secondary" (click)="irConfiguracion()">
+      Configuración
+    </button>
+  </div>
+</ion-content>
