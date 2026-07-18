@@ -36,32 +36,32 @@ export class DetallesUsuarioComponent implements OnInit {
     private usuarioService: Usuario
   ) {}
 
-  async ngOnInit() {
-    const usuario = this.authService.usuarioActual;
-    if (!usuario) {
-      this.cargando = false;
-      return;
-    }
+  ngOnInit() {
+    this.authService.usuarioActual$.subscribe(async (usuario) => {
+      if (!usuario) {
+        return;
+      }
 
-    this.uid = usuario.uid;
+      this.uid = usuario.uid;
 
-    try {
-      const perfil = await firstValueFrom(this.usuarioService.obtenerUsuario(usuario.uid));
-      if (perfil) {
-        this.nombre = perfil.nombre || '';
-        this.genero = perfil.genero || '';
-        this.fechaNacimiento = perfil.fechaNacimiento || '';
-        this.telefono = perfil.telefono || '';
-        this.correo = perfil.correo || usuario.email || '';
-      } else {
+      try {
+        const perfil = await firstValueFrom(this.usuarioService.obtenerUsuario(usuario.uid));
+        if (perfil) {
+          this.nombre = perfil.nombre || '';
+          this.genero = perfil.genero || '';
+          this.fechaNacimiento = perfil.fechaNacimiento || '';
+          this.telefono = perfil.telefono || '';
+          this.correo = perfil.correo || usuario.email || '';
+        } else {
+          this.correo = usuario.email || '';
+        }
+      } catch {
         this.correo = usuario.email || '';
       }
-    } catch {
-      this.correo = usuario.email || '';
-    }
 
-    this.guardarOriginal();
-    this.cargando = false;
+      this.guardarOriginal();
+      this.cargando = false;
+    });
   }
 
   goBack() {

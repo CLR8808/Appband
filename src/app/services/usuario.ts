@@ -30,12 +30,9 @@ export class Usuario {
       this.guardarUsuarioLocal(actualizado);
     }
 
-    // Actualizar Firestore
+    // Actualizar Firestore usando setDoc con merge: true (crea si no existe, actualiza si existe)
     const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
-    return updateDoc(usuarioRef, datos).catch(() => {
-      // Si Firestore falla (permisos, offline), los datos quedan en localStorage
-      console.warn('No se pudo actualizar en Firestore, datos guardados localmente.');
-    });
+    return setDoc(usuarioRef, datos, { merge: true });
   }
 
   obtenerUsuario(uid: string): Observable<PerfilUsuario | undefined> {
