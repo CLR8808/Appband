@@ -1,35 +1,115 @@
 <ion-content scroll-y="true" class="bg-light">
   <div class="container">
+    <!-- HEADER -->
     <div class="header">
       <ion-icon name="chevron-back" class="back-btn" (click)="goBack()"></ion-icon>
       <span class="title">Detalles de usuario</span>
+      <div class="header-actions">
+        <button *ngIf="!editando" class="edit-btn" (click)="activarEdicion()">
+          <ion-icon name="create-outline"></ion-icon>
+          <span>Editar</span>
+        </button>
+        <button *ngIf="editando" class="cancel-btn" (click)="cancelarEdicion()">
+          Cancelar
+        </button>
+      </div>
     </div>
 
-    <div class="form" *ngIf="detalles$ | async as detalles">
-      <div class="field">
-        <span class="field-text">{{ detalles.nombre }}</span>
-      </div>
+    <!-- LOADING STATE -->
+    <div *ngIf="cargando" class="loading-state">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card short"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card short"></div>
+    </div>
 
-      <div class="field">
-        <span class="field-text">{{ detalles.genero }}</span>
-      </div>
+    <!-- PROFILE CONTENT -->
+    <div class="profile-content" *ngIf="!cargando">
 
-      <div class="field">
-        <span class="field-text">{{ detalles.fechaNacimiento }}</span>
-        <ion-icon name="calendar-outline" class="field-icon"></ion-icon>
-      </div>
-
-      <div class="field">
-        <span class="field-text">{{ detalles.telefono }}</span>
-        <ion-icon name="call-outline" class="field-icon"></ion-icon>
-      </div>
-
-      <div class="field-group">
-        <div class="field">
-          <span class="field-text">{{ detalles.correo }}</span>
+      <!-- AVATAR SECTION -->
+      <div class="avatar-section">
+        <div class="avatar-circle">
+          <ion-icon name="person" class="avatar-icon"></ion-icon>
         </div>
-        <span class="helper-text">Su correo no puede ser editado</span>
+        <span class="avatar-name">{{ nombre || 'Usuario' }}</span>
+        <span class="avatar-email">{{ correo || 'Sin correo' }}</span>
       </div>
+
+      <!-- FIELDS SECTION -->
+      <div class="fields-section">
+        <span class="section-label">INFORMACIÓN PERSONAL</span>
+
+        <!-- NOMBRE -->
+        <div class="field-card">
+          <div class="field-header">
+            <ion-icon name="person-outline" class="field-icon accent"></ion-icon>
+            <span class="field-label">Nombre completo</span>
+          </div>
+          <div class="field-body">
+            <span *ngIf="!editando" class="field-value">{{ nombre || 'Sin especificar' }}</span>
+            <input *ngIf="editando" type="text" class="field-input" [(ngModel)]="nombre" placeholder="Tu nombre" />
+          </div>
+        </div>
+
+        <!-- TELEFONO -->
+        <div class="field-card">
+          <div class="field-header">
+            <ion-icon name="call-outline" class="field-icon green"></ion-icon>
+            <span class="field-label">Teléfono</span>
+          </div>
+          <div class="field-body">
+            <span *ngIf="!editando" class="field-value">{{ telefonoFormateado }}</span>
+            <input *ngIf="editando" type="tel" class="field-input" [(ngModel)]="telefono" (input)="manejarTelefono($event)" maxlength="10" placeholder="10 dígitos" />
+          </div>
+        </div>
+
+        <!-- GENERO -->
+        <div class="field-card">
+          <div class="field-header">
+            <ion-icon [name]="generoIcono" class="field-icon purple"></ion-icon>
+            <span class="field-label">Género</span>
+          </div>
+          <div class="field-body">
+            <span *ngIf="!editando" class="field-value">{{ generoTexto }}</span>
+            <select *ngIf="editando" class="field-input field-select" [(ngModel)]="genero">
+              <option value="">Selecciona</option>
+              <option value="masculino">Masculino</option>
+              <option value="femenino">Femenino</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- FECHA NACIMIENTO -->
+        <div class="field-card">
+          <div class="field-header">
+            <ion-icon name="calendar-outline" class="field-icon orange"></ion-icon>
+            <span class="field-label">Fecha de nacimiento</span>
+          </div>
+          <div class="field-body">
+            <span *ngIf="!editando" class="field-value">{{ fechaTexto }}</span>
+            <input *ngIf="editando" type="date" class="field-input" [(ngModel)]="fechaNacimiento" />
+          </div>
+        </div>
+
+        <!-- CORREO (no editable) -->
+        <div class="field-card disabled">
+          <div class="field-header">
+            <ion-icon name="mail-outline" class="field-icon muted"></ion-icon>
+            <span class="field-label">Correo electrónico</span>
+          </div>
+          <div class="field-body">
+            <span class="field-value muted-text">{{ correo || 'Sin correo' }}</span>
+          </div>
+          <span class="field-note">El correo no puede ser editado</span>
+        </div>
+      </div>
+
+      <!-- SAVE BUTTON -->
+      <button *ngIf="editando" class="save-btn" (click)="guardarCambios()" [disabled]="guardando">
+        <ion-icon name="save-outline" *ngIf="!guardando"></ion-icon>
+        <span>{{ guardando ? 'Guardando...' : 'Guardar cambios' }}</span>
+      </button>
     </div>
   </div>
 </ion-content>

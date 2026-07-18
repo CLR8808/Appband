@@ -14,7 +14,9 @@ import {
   documentTextOutline, mapOutline, watchOutline, bluetooth, wifi, batteryHalf, 
   happy, mailOutline, callOutline, time, timeOutline,
   lockClosedOutline, eyeOutline, eyeOffOutline, checkmarkCircleOutline, checkmarkCircle,
-  checkmark, logoApple, logoGoogle, logoFacebook
+  checkmark, logoApple, logoGoogle, logoFacebook,
+  createOutline, saveOutline, closeCircleOutline, maleOutline, femaleOutline,
+  transgenderOutline
 } from 'ionicons/icons';
 
 import { routes } from './app/app.routes';
@@ -58,7 +60,13 @@ addIcons({
   'checkmark': checkmark,
   'logo-apple': logoApple,
   'logo-google': logoGoogle,
-  'logo-facebook': logoFacebook
+  'logo-facebook': logoFacebook,
+  'create-outline': createOutline,
+  'save-outline': saveOutline,
+  'close-circle-outline': closeCircleOutline,
+  'male-outline': maleOutline,
+  'female-outline': femaleOutline,
+  'transgender-outline': transgenderOutline
 });
 
 bootstrapApplication(AppComponent, {

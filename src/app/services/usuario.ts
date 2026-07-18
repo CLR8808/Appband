@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, doc, docData, serverTimestamp, setDoc } from '@angular/fire/firestore';
+import { Firestore, doc, docData, serverTimestamp, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Observable, catchError, concat, map, of, tap } from 'rxjs';
 import { PerfilUsuario } from '../interfaces/usuario';
 
@@ -19,6 +19,22 @@ export class Usuario {
     return setDoc(usuarioRef, {
       ...usuario,
       fechaCreacion: serverTimestamp(),
+    });
+  }
+
+  actualizarUsuario(uid: string, datos: Partial<Omit<PerfilUsuario, 'uid' | 'fechaCreacion'>>): Promise<void> {
+    // Actualizar localStorage primero
+    const usuarioLocal = this.obtenerUsuarioLocal(uid);
+    if (usuarioLocal) {
+      const actualizado = { ...usuarioLocal, ...datos };
+      this.guardarUsuarioLocal(actualizado);
+    }
+
+    // Actualizar Firestore
+    const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
+    return updateDoc(usuarioRef, datos).catch(() => {
+      // Si Firestore falla (permisos, offline), los datos quedan en localStorage
+      console.warn('No se pudo actualizar en Firestore, datos guardados localmente.');
     });
   }
 
