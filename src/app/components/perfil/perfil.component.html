@@ -2,8 +2,7 @@
   <div class="container">
     <h1 class="main-title">Perfil</h1>
 
-    <!-- HEADER PROFILE -->
-    <div class="profile-header">
+    <div class="profile-header" *ngIf="perfil$ | async as perfil">
       <div class="avatar-container">
         <img src="assets/images/avatar.png" class="avatar-img" onerror="this.src='assets/images/logo.png'"/>
         <div class="edit-badge">
@@ -11,8 +10,8 @@
         </div>
       </div>
       <div class="profile-info">
-        <span class="name">Juana Morales</span>
-        <span class="email">SafeStep@gmail.com</span>
+        <span class="name">{{ perfil.nombre }}</span>
+        <span class="email">{{ perfil.correo }}</span>
       </div>
     </div>
 

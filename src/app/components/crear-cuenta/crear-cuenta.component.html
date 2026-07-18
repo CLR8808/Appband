@@ -25,20 +25,27 @@
       </div>
 
       <div class="input-block">
-        <span class="label">Usuario</span>
-        <div class="input-row">
-          <input type="text" class="custom-input line-input-icon" [(ngModel)]="usuario" />
-          <ion-icon *ngIf="usuarioValido" name="checkmark-circle" class="right-icon"></ion-icon>
-        </div>
+        <span class="label">Genero</span>
+        <select class="custom-input line-input" [(ngModel)]="genero">
+          <option value="">Selecciona</option>
+          <option value="masculino">Masculino</option>
+          <option value="femenino">Femenino</option>
+          <option value="otro">Otro</option>
+        </select>
       </div>
 
       <div class="input-block">
-        <span class="label">Contraseña</span>
+        <span class="label">Fecha de nacimiento</span>
+        <input type="date" class="custom-input line-input" [(ngModel)]="fechaNacimiento" />
+      </div>
+
+      <div class="input-block">
+        <span class="label">Contrasena</span>
         <input [type]="mostrarContrasena ? 'text' : 'password'" class="custom-input line-input" [(ngModel)]="contrasena" />
       </div>
 
       <div class="input-block">
-        <span class="label">Confirmar contraseña</span>
+        <span class="label">Confirmar contrasena</span>
         <input [type]="mostrarContrasena ? 'text' : 'password'" class="custom-input line-input" [(ngModel)]="confirmarContrasena" />
       </div>
 
@@ -46,11 +53,11 @@
         <div class="checkbox" [class.active]="mostrarContrasena">
           <ion-icon *ngIf="mostrarContrasena" name="checkmark" class="check-icon"></ion-icon>
         </div>
-        <span class="checkbox-text">Mostrar contraseña</span>
+        <span class="checkbox-text">Mostrar contrasena</span>
       </div>
 
-      <button class="btn-primary" (click)="validarFormulario()">
-        Crear
+      <button class="btn-primary" (click)="validarFormulario()" [disabled]="creandoCuenta">
+        {{ creandoCuenta ? 'Creando...' : 'Crear' }}
       </button>
     </div>
   </div>

@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-iniciar-sesion',
@@ -15,26 +16,53 @@ export class IniciarSesionComponent {
   correo = '';
   contrasena = '';
   mostrarContrasena = false;
+  iniciandoSesion = false;
 
-  CORREO_PREDEFINIDO = 'SafeStep@gmail.com';
-  CONTRASENA_PREDEFINIDA = '123456';
-
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: Auth
+  ) {}
 
   toggleContrasena() {
     this.mostrarContrasena = !this.mostrarContrasena;
   }
 
-  manejarInicioSesion() {
+  async manejarInicioSesion() {
     if (!this.correo.trim() || !this.contrasena.trim()) {
-      alert('Ingresa tu correo y contraseña');
+      alert('Ingresa tu correo y contrasena');
       return;
     }
 
-    if (this.correo === this.CORREO_PREDEFINIDO && this.contrasena === this.CONTRASENA_PREDEFINIDA) {
+    this.iniciandoSesion = true;
+
+    try {
+      await this.authService.iniciarSesion(this.correo.trim(), this.contrasena);
       this.router.navigate(['/tabs/inicio']);
-    } else {
-      alert('Correo o contraseña incorrectos');
+    } catch (error) {
+      alert(this.obtenerMensajeError(error));
+    } finally {
+      this.iniciandoSesion = false;
+    }
+  }
+
+  private obtenerMensajeError(error: unknown): string {
+    const codigo = typeof error === 'object' && error !== null && 'code' in error
+      ? String(error.code)
+      : '';
+
+    switch (codigo) {
+      case 'auth/invalid-email':
+        return 'Ingresa un correo valido.';
+      case 'auth/invalid-credential':
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+        return 'Correo o contrasena incorrectos.';
+      case 'auth/operation-not-allowed':
+        return 'Activa el inicio de sesion con correo y contrasena en Firebase Authentication.';
+      case 'auth/network-request-failed':
+        return 'No se pudo conectar con Firebase. Revisa tu conexion a internet.';
+      default:
+        return 'No se pudo iniciar sesion. Intenta de nuevo.';
     }
   }
 }
