@@ -91,11 +91,11 @@ export class CrearCuentaComponent {
 
       await this.usuarioService.guardarUsuario(perfil);
 
-      this.router.navigate(['/verificar-codigo']);
+      this.router.navigate(['/verificar-codigo'], { state: { telefono: this.telefono } });
     } catch (error) {
       if (this.esErrorPermisosFirestore(error)) {
         alert('La cuenta se creo. Tus datos se mostraran en este dispositivo, pero Firestore aun no permite guardar el perfil.');
-        this.router.navigate(['/verificar-codigo']);
+        this.router.navigate(['/verificar-codigo'], { state: { telefono: this.telefono } });
         return;
       }
 
