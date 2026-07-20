@@ -49,7 +49,7 @@ export class DetallesUsuarioComponent implements OnInit {
         if (perfil) {
           this.nombre = perfil.nombre || '';
           this.genero = perfil.genero || '';
-          this.fechaNacimiento = perfil.fechaNacimiento || '';
+          this.fechaNacimiento = this.normalizarFecha(perfil.fechaNacimiento || '');
           this.telefono = perfil.telefono || '';
           this.correo = perfil.correo || usuario.email || '';
         } else {
@@ -128,11 +128,41 @@ export class DetallesUsuarioComponent implements OnInit {
 
   get fechaTexto(): string {
     if (!this.fechaNacimiento) return 'Sin especificar';
-    const partes = this.fechaNacimiento.split('-').map(Number);
-    if (partes.length !== 3 || partes.some(Number.isNaN)) return this.fechaNacimiento;
-    const [anio, mes, dia] = partes;
-    const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    return `${dia} ${meses[mes - 1]}, ${anio}`;
+    const str = String(this.fechaNacimiento);
+
+    // Formato ISO: YYYY-MM-DD o YYYY-MM-DDTHH:mm:ss...
+    const isoMatch = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (isoMatch) {
+      const [, anio, mes, dia] = isoMatch;
+      return `${dia}/${mes}/${anio}`;
+    }
+
+    // Formato DD/MM/YYYY (ya en el formato correcto)
+    const dmyMatch = str.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (dmyMatch) {
+      return str;
+    }
+
+    return str;
+  }
+
+  private normalizarFecha(fecha: string): string {
+    if (!fecha) return '';
+    const str = String(fecha);
+
+    // Ya está en formato YYYY-MM-DD: devolver solo los primeros 10 caracteres
+    if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
+      return str.substring(0, 10);
+    }
+
+    // Formato DD/MM/YYYY → convertir a YYYY-MM-DD para el input type="date"
+    const dmyMatch = str.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (dmyMatch) {
+      const [, dia, mes, anio] = dmyMatch;
+      return `${anio}-${mes}-${dia}`;
+    }
+
+    return str;
   }
 
   get telefonoFormateado(): string {

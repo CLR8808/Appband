@@ -1,64 +1,97 @@
-<ion-content class="bg-gray" scroll-y="true">
-  <div class="container">
-    <div class="header">
-      <ion-icon name="chevron-back" class="back-btn" (click)="goBack()"></ion-icon>
-      <span class="title">Crear cuenta</span>
-    </div>
+<ion-content scroll-y="true">
+  <div class="page-wrapper">
 
-    <div class="form">
-      <div class="input-block">
-        <span class="label">Nombre</span>
-        <input type="text" class="custom-input line-input" [(ngModel)]="nombre" />
-      </div>
-
-      <div class="input-block">
-        <span class="label">Telefono</span>
-        <input type="tel" class="custom-input line-input" [(ngModel)]="telefono" (input)="manejarTelefono($event)" maxlength="10" />
-      </div>
-
-      <div class="input-block">
-        <span class="label">Email</span>
-        <div class="input-row">
-          <input type="email" class="custom-input line-input-icon" [(ngModel)]="email" />
-          <ion-icon *ngIf="emailValido" name="checkmark-circle" class="right-icon"></ion-icon>
+    <!-- Gradient Hero Section -->
+    <div class="hero-section">
+      <div class="top-bar">
+        <div class="back-btn" (click)="goBack()">
+          <ion-icon name="chevron-back"></ion-icon>
         </div>
       </div>
+      <div class="hero-content">
+        <div class="avatar-ring">
+          <ion-icon name="person-outline"></ion-icon>
+        </div>
+        <h1 class="hero-title">Crear cuenta</h1>
+        <p class="hero-subtitle">Únete a SafeStep hoy</p>
+      </div>
+    </div>
 
-      <div class="input-block">
-        <span class="label">Genero</span>
-        <select class="custom-input line-input" [(ngModel)]="genero">
-          <option value="">Selecciona</option>
+    <!-- Form Card -->
+    <div class="form-card slide-up">
+
+      <!-- Personal info section -->
+      <p class="section-label">Información personal</p>
+
+      <div class="input-group">
+        <ion-icon name="person-outline"></ion-icon>
+        <input type="text" placeholder="Nombre completo" [(ngModel)]="nombre" />
+      </div>
+
+      <div class="input-group">
+        <ion-icon name="call-outline"></ion-icon>
+        <input type="tel" placeholder="Teléfono (10 dígitos)" [(ngModel)]="telefono"
+               (input)="manejarTelefono($event)" maxlength="10" />
+      </div>
+
+      <div class="input-group">
+        <ion-icon name="mail-outline"></ion-icon>
+        <input type="email" placeholder="correo@ejemplo.com" [(ngModel)]="email" />
+        <ion-icon *ngIf="emailValido" name="checkmark-circle" class="valid-icon"></ion-icon>
+      </div>
+
+      <div class="input-group select-group">
+        <ion-icon name="transgender-outline"></ion-icon>
+        <select [(ngModel)]="genero" [class.empty]="!genero">
+          <option value="">Género</option>
           <option value="masculino">Masculino</option>
           <option value="femenino">Femenino</option>
           <option value="otro">Otro</option>
         </select>
       </div>
 
-      <div class="input-block">
-        <span class="label">Fecha de nacimiento</span>
-        <input type="date" class="custom-input line-input" [(ngModel)]="fechaNacimiento" />
+      <div class="input-group">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <input type="date" [(ngModel)]="fechaNacimiento" class="date-input" />
       </div>
 
-      <div class="input-block">
-        <span class="label">Contrasena</span>
-        <input [type]="mostrarContrasena ? 'text' : 'password'" class="custom-input line-input" [(ngModel)]="contrasena" />
+      <!-- Security section -->
+      <p class="section-label">Seguridad</p>
+
+      <div class="input-group">
+        <ion-icon name="lock-closed-outline"></ion-icon>
+        <input [type]="mostrarContrasena ? 'text' : 'password'"
+               placeholder="Contraseña (mín. 6 caracteres)" [(ngModel)]="contrasena" />
+        <ion-icon
+          [name]="mostrarContrasena ? 'eye-off-outline' : 'eye-outline'"
+          class="toggle-icon"
+          (click)="toggleMostrarContrasena()">
+        </ion-icon>
       </div>
 
-      <div class="input-block">
-        <span class="label">Confirmar contrasena</span>
-        <input [type]="mostrarContrasena ? 'text' : 'password'" class="custom-input line-input" [(ngModel)]="confirmarContrasena" />
+      <div class="input-group">
+        <ion-icon name="lock-closed-outline"></ion-icon>
+        <input [type]="mostrarContrasena ? 'text' : 'password'"
+               placeholder="Confirmar contraseña" [(ngModel)]="confirmarContrasena" />
       </div>
 
-      <div class="checkbox-row" (click)="toggleMostrarContrasena()">
-        <div class="checkbox" [class.active]="mostrarContrasena">
-          <ion-icon *ngIf="mostrarContrasena" name="checkmark" class="check-icon"></ion-icon>
+      <!-- Toggle show password -->
+      <div class="show-pass-row" (click)="toggleMostrarContrasena()">
+        <div class="toggle-switch" [class.active]="mostrarContrasena">
+          <div class="toggle-knob"></div>
         </div>
-        <span class="checkbox-text">Mostrar contrasena</span>
+        <span class="toggle-label">Mostrar contraseña</span>
       </div>
 
+      <!-- Create account button -->
       <button class="btn-primary" (click)="validarFormulario()" [disabled]="creandoCuenta">
-        {{ creandoCuenta ? 'Creando...' : 'Crear' }}
+        <span>{{ creandoCuenta ? 'Creando cuenta...' : 'Crear cuenta' }}</span>
+        <ion-icon *ngIf="!creandoCuenta" name="checkmark-circle-outline"></ion-icon>
       </button>
+
+      <p class="login-text">
+        ¿Ya tienes cuenta? <span (click)="goBack()">Inicia sesión</span>
+      </p>
     </div>
   </div>
 </ion-content>
