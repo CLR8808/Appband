@@ -1,19 +1,63 @@
-<ion-content scroll-y="false" class="bg-light">
+<ion-content scroll-y="true" class="bg-light">
   <div class="container">
     <div class="header">
       <ion-icon name="chevron-back" class="back-btn" (click)="cancelar()"></ion-icon>
       <span class="title">Buscando Dispositivo</span>
     </div>
 
-    <div class="loader-container">
+    <!-- Spinner de búsqueda activa -->
+    <div class="loader-container" *ngIf="bluetoothService.isScanning()">
       <ion-spinner name="crescent" color="primary" class="custom-spinner"></ion-spinner>
     </div>
 
-    <h2 class="main-title">Buscando</h2>
-    <p class="description">Mantén el dispositivo cerca</p>
+    <h2 class="main-title">
+      {{ bluetoothService.isScanning() ? 'Buscando Safeband...' : 'Dispositivos Cercanos' }}
+    </h2>
+    <p class="description">
+      {{ bluetoothService.isScanning() ? 'Mantén la pulsera o dispositivo Bluetooth cerca' : 'Selecciona tu dispositivo de la lista para vincularlo' }}
+    </p>
 
-    <button class="btn-primary" (click)="cancelar()">
-      Cancelar
-    </button>
+    <!-- Error alert si ocurre -->
+    <div class="error-box" *ngIf="bluetoothService.error()">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <span>{{ bluetoothService.error() }}</span>
+    </div>
+
+    <!-- Lista de dispositivos Bluetooth encontrados -->
+    <div class="devices-list" *ngIf="bluetoothService.devices().length > 0">
+      <h3 class="list-title">Dispositivos detectados ({{ bluetoothService.devices().length }}):</h3>
+      <div 
+        class="device-card" 
+        *ngFor="let dev of bluetoothService.devices()" 
+        (click)="seleccionarDispositivo(dev)">
+        <div class="device-icon">
+          <ion-icon name="bluetooth"></ion-icon>
+        </div>
+        <div class="device-info">
+          <div class="device-name">{{ dev.name }}</div>
+          <div class="device-id">ID: {{ dev.deviceId }}</div>
+        </div>
+        <div class="device-signal" *ngIf="dev.rssi">
+          <span>{{ dev.rssi }} dBm</span>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Mensaje si no se encuentran dispositivos al terminar el escaneo -->
+    <div class="empty-state" *ngIf="!bluetoothService.isScanning() && bluetoothService.devices().length === 0">
+      <ion-icon name="bluetooth-outline" class="empty-icon"></ion-icon>
+      <p>No se encontraron dispositivos cercanos en rango.</p>
+      <button class="btn-primary btn-retry" (click)="iniciarEscaneo()">
+        Volver a buscar
+      </button>
+    </div>
+
+    <div class="footer-actions">
+      <button class="btn-primary" (click)="cancelar()">
+        Cancelar
+      </button>
+    </div>
   </div>
 </ion-content>
+

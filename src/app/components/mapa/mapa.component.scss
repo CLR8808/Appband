@@ -1,54 +1,227 @@
 ion-content {
-  --background: #E8E8E8;
+  --background: #F4F4F4;
   --color: #11181C;
 }
 
-.map-placeholder {
-  height: 100%;
-  width: 100%;
+.map-wrapper {
   position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .map-header {
   position: absolute;
-  top: 54px;
+  top: 50px;
   left: 20px;
   right: 20px;
   background-color: #FFFFFF;
-  padding: 16px 22px;
+  padding: 14px 20px;
   border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  z-index: 10;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
   display: flex;
-  justify-content: center;
   align-items: center;
+  gap: 10px;
+
+  .header-icon {
+    font-size: 22px;
+    color: #0E9AA7;
+  }
+
+  .map-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #11181C;
+  }
 }
 
-.map-title {
-  font-size: 17px;
-  font-weight: 700;
-  color: #11181C;
-}
-
-.map-bg {
+.map-view {
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, #D5E8E9 0%, #BFD5D7 100%);
+  z-index: 1;
+}
+
+.location-btn {
+  position: absolute;
+  bottom: 140px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  border: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  ion-icon {
+    font-size: 26px;
+    color: #0E9AA7;
+  }
 }
 
-.map-icon {
-  font-size: 80px;
-  color: #0E9AA7;
-  opacity: 0.4;
-  margin-bottom: 14px;
+.device-card-overlay {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 16px 20px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14);
+  z-index: 1000;
+
+  .device-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+
+    .device-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 16px;
+      color: #11181C;
+
+      .bt-badge-icon {
+        color: #0E9AA7;
+        font-size: 20px;
+      }
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #10B981;
+      background: #ECFDF5;
+      padding: 4px 10px;
+      border-radius: 12px;
+
+      .pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #10B981;
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        animation: statusPulse 1.6s infinite;
+      }
+    }
+  }
+
+  .device-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .coord-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+
+      .coord-label {
+        color: #6B7280;
+        font-weight: 500;
+      }
+
+      .coord-value {
+        color: #11181C;
+        font-weight: 700;
+        font-family: monospace;
+      }
+    }
+
+    &.loading-state {
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 0;
+      color: #6B7280;
+      font-size: 14px;
+    }
+  }
+
+  .error-state {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #DC2626;
+    font-size: 13px;
+    padding: 6px 0;
+  }
 }
 
-.map-text {
-  font-size: 17px;
-  color: #7A7A80;
-  font-weight: 600;
+/* Animación de punto verde */
+@keyframes statusPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
 }
+
+/* Marcador de mapa Leaflet personalizado */
+::ng-deep .custom-map-marker {
+  background: transparent;
+  border: none;
+
+  .marker-pulse-wrapper {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .marker-pulse {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-color: rgba(14, 154, 167, 0.35);
+      animation: mapMarkerPulse 2s infinite ease-out;
+    }
+
+    .marker-icon-box {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #0E9AA7;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+      z-index: 2;
+    }
+  }
+}
+
+@keyframes mapMarkerPulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+

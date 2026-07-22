@@ -1,13 +1,56 @@
 <ion-content scroll-y="false">
-  <div class="map-placeholder">
+  <div class="map-wrapper">
+    <!-- Header Flotante -->
     <div class="map-header">
-      <span class="map-title">Ubicación en tiempo real</span>
+      <ion-icon name="location-outline" class="header-icon"></ion-icon>
+      <span class="map-title">Ubicación en Tiempo Real</span>
     </div>
-    
-    <!-- PLACEHOLDER FOR MAP -->
-    <div class="map-bg">
-      <ion-icon name="map-outline" class="map-icon"></ion-icon>
-      <span class="map-text">Ubicación Actual</span>
+
+    <!-- Contenedor del Mapa Leaflet -->
+    <div id="map-container" class="map-view"></div>
+
+    <!-- Botón Flotante Mi Ubicación -->
+    <button class="location-btn" (click)="centrarMapa()" title="Centrar Mapa">
+      <ion-icon name="locate"></ion-icon>
+    </button>
+
+    <!-- Tarjeta Flotante con Información del Dispositivo y GPS -->
+    <div class="device-card-overlay">
+      <div class="device-card-header">
+        <div class="device-badge">
+          <ion-icon name="bluetooth" class="bt-badge-icon"></ion-icon>
+          <span>{{ bluetoothService.selectedDevice()?.name || 'Safeband' }}</span>
+        </div>
+        <span class="status-indicator">
+          <span class="pulse-dot"></span> En Línea
+        </span>
+      </div>
+
+      <div class="device-card-body" *ngIf="lastCoords">
+        <div class="coord-item">
+          <span class="coord-label">Latitud:</span>
+          <span class="coord-value">{{ lastCoords.lat.toFixed(6) }}</span>
+        </div>
+        <div class="coord-item">
+          <span class="coord-label">Longitud:</span>
+          <span class="coord-value">{{ lastCoords.lng.toFixed(6) }}</span>
+        </div>
+        <div class="coord-item" *ngIf="lastCoords.accuracy">
+          <span class="coord-label">Precisión GPS:</span>
+          <span class="coord-value">&plusmn;{{ lastCoords.accuracy.toFixed(0) }} m</span>
+        </div>
+      </div>
+
+      <div class="device-card-body loading-state" *ngIf="!lastCoords && !locationService.error()">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <span>Obteniendo señal GPS...</span>
+      </div>
+
+      <div class="error-state" *ngIf="locationService.error()">
+        <ion-icon name="alert-circle"></ion-icon>
+        <span>{{ locationService.error() }}</span>
+      </div>
     </div>
   </div>
 </ion-content>
+

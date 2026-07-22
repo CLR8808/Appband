@@ -9,11 +9,19 @@
       <img src="assets/images/reloj.png" alt="Reloj" class="image" />
     </div>
 
-    <h2 class="main-title">Safeband detectada</h2>
-    <p class="description">Pulse en conectar</p>
+    <h2 class="main-title">
+      {{ bluetoothService.selectedDevice()?.name || 'Safeband detectada' }}
+    </h2>
+    <p class="description">
+      <ng-container *ngIf="bluetoothService.selectedDevice() as dev">
+        ID / MAC: {{ dev.deviceId }}<br/>
+      </ng-container>
+      Pulse en conectar para vincular la red
+    </p>
 
     <button class="btn-primary" (click)="conectar()">
       Conectar
     </button>
   </div>
 </ion-content>
+
