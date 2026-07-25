@@ -3,8 +3,56 @@ ion-content {
   --color: #11181C;
 }
 
+// ── Segment de Pestañas Superior ──────────────────────────
+.segment-wrapper {
+  padding: 54px 24px 0 24px;
+  background: #F4F4F4;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.top-segment {
+  background: #FFFFFF;
+  border-radius: 14px;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 4px;
+
+  ion-segment-button {
+    --background: transparent;
+    --background-checked: #0E9AA7;
+    --color: #6B7280;
+    --color-checked: #FFFFFF;
+    --indicator-color: transparent;
+    --border-radius: 10px;
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    min-height: 42px;
+    text-transform: none;
+    letter-spacing: 0;
+
+    ion-icon {
+      font-size: 18px;
+      margin-right: 6px;
+    }
+
+    ion-label {
+      font-size: 14px;
+      font-weight: 700;
+    }
+  }
+}
+
+// ── Contenedor principal ──────────────────────────────────
 .container {
-  padding: 54px 24px 120px 24px;
+  padding: 20px 24px 120px 24px;
+}
+
+.paciente-container {
+  padding: 0 0 120px 0;
 }
 
 .main-title {

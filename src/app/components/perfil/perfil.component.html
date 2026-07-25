@@ -1,5 +1,20 @@
 <ion-content class="bg-gray" scroll-y="true">
-  <div class="container">
+  <!-- Segment de Pestañas: Perfil | Paciente -->
+  <div class="segment-wrapper">
+    <ion-segment [value]="activeTab" (ionChange)="onTabChange($event)" mode="ios" class="top-segment">
+      <ion-segment-button value="perfil">
+        <ion-icon name="person-outline"></ion-icon>
+        <ion-label>Perfil</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="paciente">
+        <ion-icon name="heart-outline"></ion-icon>
+        <ion-label>Paciente</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- ═══ PESTAÑA: PERFIL (contenido original) ═══ -->
+  <div class="container" *ngIf="activeTab === 'perfil'">
     <h1 class="main-title">Perfil</h1>
 
     <div class="profile-header" *ngIf="perfil$ | async as perfil">
@@ -31,5 +46,10 @@
     <!-- LOGOUT -->
     <div class="logout-spacer"></div>
     <app-card icon="log-out-outline" title="Cerrar sesión" [danger]="true" [showChevron]="false" (onClick)="cerrarSesion()"></app-card>
+  </div>
+
+  <!-- ═══ PESTAÑA: PACIENTE (formulario de registro) ═══ -->
+  <div class="container paciente-container" *ngIf="activeTab === 'paciente'">
+    <app-registro-paciente></app-registro-paciente>
   </div>
 </ion-content>

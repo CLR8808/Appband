@@ -6,6 +6,7 @@ import { Observable, map, of, switchMap } from 'rxjs';
 import { CardComponent } from '../../shared/card/card.component';
 import { Auth } from '../../services/auth';
 import { Usuario } from '../../services/usuario';
+import { RegistroPacienteComponent } from '../registro-paciente/registro-paciente.component';
 
 interface PerfilVista {
   nombre: string;
@@ -17,13 +18,16 @@ interface PerfilVista {
   templateUrl: './perfil.component.html',
   styleUrls: ['./perfil.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, CardComponent]
+  imports: [IonicModule, CommonModule, CardComponent, RegistroPacienteComponent]
 })
 export class PerfilComponent {
   notificaciones = true;
   ubicacion = true;
   bluetooth = true;
   readonly perfil$: Observable<PerfilVista>;
+
+  /** Pestaña activa: 'perfil' o 'paciente' */
+  activeTab: 'perfil' | 'paciente' = 'perfil';
 
   constructor(
     private router: Router,
@@ -47,6 +51,11 @@ export class PerfilComponent {
         );
       })
     );
+  }
+
+  /** Cambia la pestaña activa */
+  onTabChange(event: any) {
+    this.activeTab = event.detail.value;
   }
 
   irADetalles() {

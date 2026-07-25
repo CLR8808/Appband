@@ -1,0 +1,1030 @@
+<!-- ============================================================ -->
+<!-- Formulario de Registro de Pacientes — 6 Secciones + Resumen  -->
+<!-- ============================================================ -->
+
+<!-- Pantalla de éxito tras enviar -->
+<div class="success-screen" *ngIf="enviado">
+  <div class="success-animation">
+    <div class="success-circle">
+      <ion-icon name="checkmark-circle" class="success-icon"></ion-icon>
+    </div>
+    <h2 class="success-title">¡Registro Completado!</h2>
+    <p class="success-text">
+      Los datos del paciente han sido guardados exitosamente.
+      El monitoreo con la banda está listo para configurarse.
+    </p>
+    <button class="btn-primary btn-large" (click)="nuevoRegistro()">
+      <ion-icon name="create-outline"></ion-icon>
+      Editar Registro
+    </button>
+  </div>
+</div>
+
+<!-- Formulario principal -->
+<div class="form-container" *ngIf="!enviado" [formGroup]="form">
+
+  <!-- Barra de Progreso -->
+  <div class="progress-section">
+    <div class="progress-header">
+      <span class="progress-label">Paso {{ pasoActual + 1 }} de {{ totalPasos }}</span>
+      <span class="progress-title">{{ titulosPasos[pasoActual] }}</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" [style.width.%]="progreso * 100"></div>
+    </div>
+    <!-- Indicadores de pasos -->
+    <div class="step-indicators">
+      <button
+        *ngFor="let titulo of titulosPasos; let i = index"
+        class="step-dot"
+        [class.active]="i === pasoActual"
+        [class.completed]="i < pasoActual"
+        (click)="irAPaso(i)"
+        [title]="titulo">
+        <ion-icon [name]="i < pasoActual ? 'checkmark' : iconosPasos[i]"></ion-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Cargando datos existentes -->
+  <div class="loading-overlay" *ngIf="cargandoDatos">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <span>Cargando datos del paciente...</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECCIÓN 1 — DATOS DEL PACIENTE                        -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-content" *ngIf="pasoActual === 0" formGroupName="datosPaciente">
+    <div class="section-header">
+      <ion-icon name="person-outline" class="section-icon"></ion-icon>
+      <h3>Datos del Paciente</h3>
+    </div>
+
+    <!-- Foto de Perfil -->
+    <div class="photo-upload" (click)="seleccionarFoto()">
+      <div class="photo-circle">
+        <img
+          *ngIf="datosPaciente.get('fotoPerfil')?.value"
+          [src]="datosPaciente.get('fotoPerfil')?.value"
+          alt="Foto del paciente" />
+        <ion-icon name="camera-outline" *ngIf="!datosPaciente.get('fotoPerfil')?.value"></ion-icon>
+      </div>
+      <span class="photo-label">Tomar o elegir foto (opcional)</span>
+    </div>
+
+    <!-- Nombre Completo -->
+    <div class="field-group">
+      <label class="field-label">
+        Nombre Completo <span class="required">*</span>
+      </label>
+      <div class="input-wrapper">
+        <ion-icon name="person-outline" class="field-icon"></ion-icon>
+        <ion-input
+          formControlName="nombreCompleto"
+          placeholder="Nombre completo del paciente"
+          class="custom-input"
+          type="text">
+        </ion-input>
+        <button
+          *ngIf="vozSoportada"
+          class="voice-btn"
+          [class.recording]="grabandoVoz && campoVozActivo === 'datosPaciente.nombreCompleto'"
+          (click)="grabandoVoz ? detenerVoz() : iniciarVoz('datosPaciente.nombreCompleto')">
+          <ion-icon [name]="grabandoVoz && campoVozActivo === 'datosPaciente.nombreCompleto' ? 'stop-circle' : 'mic-outline'"></ion-icon>
+        </button>
+      </div>
+      <span class="error-msg" *ngIf="datosPaciente.get('nombreCompleto')?.touched && datosPaciente.get('nombreCompleto')?.invalid">
+        Ingrese el nombre completo (mínimo 3 caracteres)
+      </span>
+    </div>
+
+    <!-- Fecha de Nacimiento -->
+    <div class="field-group">
+      <label class="field-label">
+        Fecha de Nacimiento <span class="required">*</span>
+      </label>
+      <div class="input-wrapper">
+        <ion-icon name="calendar-outline" class="field-icon"></ion-icon>
+        <ion-input
+          formControlName="fechaNacimiento"
+          type="date"
+          class="custom-input">
+        </ion-input>
+      </div>
+      <div class="age-badge" *ngIf="edadCalculada !== null">
+        <ion-icon name="hourglass-outline"></ion-icon>
+        <span>{{ edadCalculada }} años</span>
+        <span class="age-warning" *ngIf="edadCalculada < healthConfig.limites.edadMinima">
+          — La edad debe ser mayor a {{ healthConfig.limites.edadMinima }} años
+        </span>
+      </div>
+    </div>
+
+    <!-- Género -->
+    <div class="field-group">
+      <label class="field-label">
+        Género <span class="required">*</span>
+      </label>
+      <div class="input-wrapper">
+        <ion-icon name="male-female-outline" class="field-icon"></ion-icon>
+        <ion-select
+          formControlName="genero"
+          placeholder="Seleccionar género"
+          interface="action-sheet"
+          class="custom-select">
+          <ion-select-option *ngFor="let g of healthConfig.generos" [value]="g">{{ g }}</ion-select-option>
+        </ion-select>
+      </div>
+    </div>
+
+    <!-- Peso y Altura (lado a lado) -->
+    <div class="field-row">
+      <div class="field-group half">
+        <label class="field-label">
+          Peso (kg) <span class="required">*</span>
+        </label>
+        <div class="input-wrapper">
+          <ion-icon name="fitness-outline" class="field-icon"></ion-icon>
+          <ion-input
+            formControlName="peso"
+            type="number"
+            placeholder="Ej: 70"
+            class="custom-input"
+            [min]="healthConfig.limites.pesoMin"
+            [max]="healthConfig.limites.pesoMax">
+          </ion-input>
+        </div>
+        <span class="error-msg" *ngIf="datosPaciente.get('peso')?.touched && datosPaciente.get('peso')?.invalid">
+          {{ healthConfig.limites.pesoMin }}–{{ healthConfig.limites.pesoMax }} kg
+        </span>
+      </div>
+
+      <div class="field-group half">
+        <label class="field-label">
+          Altura (cm) <span class="required">*</span>
+        </label>
+        <div class="input-wrapper">
+          <ion-icon name="resize-outline" class="field-icon"></ion-icon>
+          <ion-input
+            formControlName="altura"
+            type="number"
+            placeholder="Ej: 165"
+            class="custom-input"
+            [min]="healthConfig.limites.alturaMin"
+            [max]="healthConfig.limites.alturaMax">
+          </ion-input>
+        </div>
+        <span class="error-msg" *ngIf="datosPaciente.get('altura')?.touched && datosPaciente.get('altura')?.invalid">
+          {{ healthConfig.limites.alturaMin }}–{{ healthConfig.limites.alturaMax }} cm
+        </span>
+      </div>
+    </div>
+
+    <!-- Tipo de Sangre -->
+    <div class="field-group">
+      <label class="field-label">
+        Tipo de Sangre <span class="required">*</span>
+      </label>
+      <div class="input-wrapper">
+        <ion-icon name="water-outline" class="field-icon"></ion-icon>
+        <ion-select
+          formControlName="tipoSangre"
+          placeholder="Seleccionar tipo de sangre"
+          interface="action-sheet"
+          class="custom-select">
+          <ion-select-option *ngFor="let tipo of healthConfig.tiposSangre" [value]="tipo">{{ tipo }}</ion-select-option>
+        </ion-select>
+      </div>
+    </div>
+
+    <!-- Dirección -->
+    <div class="field-group">
+      <label class="field-label">
+        Dirección <span class="required">*</span>
+      </label>
+      <div class="input-wrapper">
+        <ion-icon name="location-outline" class="field-icon"></ion-icon>
+        <ion-input
+          formControlName="direccion"
+          placeholder="Dirección completa"
+          class="custom-input"
+          type="text">
+        </ion-input>
+        <button
+          *ngIf="vozSoportada"
+          class="voice-btn"
+          [class.recording]="grabandoVoz && campoVozActivo === 'datosPaciente.direccion'"
+          (click)="grabandoVoz ? detenerVoz() : iniciarVoz('datosPaciente.direccion')">
+          <ion-icon [name]="grabandoVoz && campoVozActivo === 'datosPaciente.direccion' ? 'stop-circle' : 'mic-outline'"></ion-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Teléfono -->
+    <div class="field-group">
+      <label class="field-label">
+        Teléfono de Contacto <span class="required">*</span>
+      </label>
+      <div class="input-wrapper">
+        <ion-icon name="call-outline" class="field-icon"></ion-icon>
+        <ion-input
+          formControlName="telefono"
+          placeholder="+52 55 1234 5678"
+          class="custom-input"
+          type="tel">
+        </ion-input>
+      </div>
+      <span class="error-msg" *ngIf="datosPaciente.get('telefono')?.touched && datosPaciente.get('telefono')?.invalid">
+        Ingrese un número de teléfono válido (7-15 dígitos)
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECCIÓN 2 — INFORMACIÓN MÉDICA                        -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-content" *ngIf="pasoActual === 1" formGroupName="infoMedica">
+    <div class="section-header medical">
+      <ion-icon name="heart-outline" class="section-icon"></ion-icon>
+      <h3>Información Médica</h3>
+    </div>
+
+    <!-- ¿Tiene Marcapasos? -->
+    <div class="toggle-field">
+      <div class="toggle-info">
+        <ion-icon name="hardware-chip-outline" class="toggle-icon"></ion-icon>
+        <div>
+          <span class="toggle-label">¿Tiene marcapasos?</span>
+          <span class="toggle-desc">Dispositivo implantado para regular el ritmo cardíaco</span>
+        </div>
+      </div>
+      <ion-toggle
+        formControlName="tieneMarcapasos"
+        (ionChange)="mostrarAdvertenciaMarcapasos($event.detail.checked)"
+        color="danger">
+      </ion-toggle>
+    </div>
+
+    <!-- Advertencia de marcapasos -->
+    <div class="warning-banner" *ngIf="infoMedica.get('tieneMarcapasos')?.value">
+      <ion-icon name="warning-outline"></ion-icon>
+      <span>Paciente con marcapasos — Verificar compatibilidad con la banda de monitoreo</span>
+    </div>
+
+    <!-- Enfermedades Cardíacas (Chips) -->
+    <div class="field-group">
+      <label class="field-label">
+        <ion-icon name="heart-dislike-outline"></ion-icon>
+        Enfermedades Cardíacas Diagnosticadas
+      </label>
+      <p class="field-hint">Seleccione todas las que apliquen</p>
+      <div class="chip-container">
+        <button
+          *ngFor="let enfermedad of healthConfig.enfermedadesCardiacas"
+          class="medical-chip"
+          [class.selected]="enfermedadesSeleccionadas.has(enfermedad.valor)"
+          (click)="toggleEnfermedad(enfermedad.valor)">
+          <ion-icon [name]="enfermedadesSeleccionadas.has(enfermedad.valor) ? 'checkmark-circle' : 'add-circle-outline'"></ion-icon>
+          {{ enfermedad.etiqueta }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Otra enfermedad (visible si seleccionó "otra") -->
+    <div class="field-group" *ngIf="enfermedadesSeleccionadas.has('otra')">
+      <label class="field-label">Especificar otra enfermedad</label>
+      <div class="input-wrapper">
+        <ion-icon name="create-outline" class="field-icon"></ion-icon>
+        <ion-input
+          formControlName="otraEnfermedad"
+          placeholder="Nombre de la enfermedad"
+          class="custom-input">
+        </ion-input>
+      </div>
+    </div>
+
+    <!-- Medicamentos (Chips) -->
+    <div class="field-group">
+      <label class="field-label">
+        <ion-icon name="medkit-outline"></ion-icon>
+        Medicamentos que Afectan el Ritmo Cardíaco
+      </label>
+      <p class="field-hint">Seleccione todos los que apliquen</p>
+      <div class="chip-container">
+        <button
+          *ngFor="let med of healthConfig.medicamentos"
+          class="medical-chip med-chip"
+          [class.selected]="medicamentosSeleccionados.has(med.valor)"
+          (click)="toggleMedicamento(med.valor)">
+          <ion-icon [name]="medicamentosSeleccionados.has(med.valor) ? 'checkmark-circle' : 'add-circle-outline'"></ion-icon>
+          {{ med.etiqueta }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Otro medicamento -->
+    <div class="field-group" *ngIf="medicamentosSeleccionados.has('otros')">
+      <label class="field-label">Especificar otro medicamento</label>
+      <div class="input-wrapper">
+        <ion-icon name="create-outline" class="field-icon"></ion-icon>
+        <ion-input
+          formControlName="otroMedicamento"
+          placeholder="Nombre del medicamento"
+          class="custom-input">
+        </ion-input>
+      </div>
+    </div>
+
+    <!-- Frecuencia cardíaca en reposo -->
+    <div class="field-group">
+      <label class="field-label">
+        <ion-icon name="pulse-outline"></ion-icon>
+        Frecuencia Cardíaca en Reposo (BPM)
+      </label>
+      <div class="input-wrapper">
+        <ion-icon name="heart-outline" class="field-icon"></ion-icon>
+        <ion-input
+          formControlName="fcReposo"
+          type="number"
+          placeholder="Ej: 70"
+          class="custom-input"
+          min="30"
+          max="220">
+        </ion-input>
+        <span class="input-suffix">BPM</span>
+      </div>
+    </div>
+
+    <!-- ¿Ha sufrido desmayos? -->
+    <div class="toggle-field">
+      <div class="toggle-info">
+        <ion-icon name="eye-off-outline" class="toggle-icon"></ion-icon>
+        <div>
+          <span class="toggle-label">¿Ha sufrido desmayos o mareos en los últimos 6 meses?</span>
+        </div>
+      </div>
+      <ion-toggle formControlName="desmayosTiene" color="warning"></ion-toggle>
+    </div>
+
+    <!-- Frecuencia de desmayos -->
+    <div class="field-group" *ngIf="infoMedica.get('desmayosTiene')?.value">
+      <label class="field-label">Frecuencia de desmayos/mareos</label>
+      <div class="input-wrapper">
+        <ion-icon name="repeat-outline" class="field-icon"></ion-icon>
+        <ion-select
+          formControlName="desmayosFrecuencia"
+          placeholder="Seleccionar frecuencia"
+          interface="action-sheet"
+          class="custom-select">
+          <ion-select-option *ngFor="let f of healthConfig.frecuenciasDesmayos" [value]="f">{{ f }}</ion-select-option>
+        </ion-select>
+      </div>
+    </div>
+
+    <!-- Historial de caídas -->
+    <div class="toggle-field">
+      <div class="toggle-info">
+        <ion-icon name="trending-down-outline" class="toggle-icon"></ion-icon>
+        <div>
+          <span class="toggle-label">¿Tiene historial de caídas previas?</span>
+        </div>
+      </div>
+      <ion-toggle formControlName="historialCaidasTiene" color="warning"></ion-toggle>
+    </div>
+
+    <!-- Cantidad de caídas -->
+    <div class="field-group" *ngIf="infoMedica.get('historialCaidasTiene')?.value">
+      <label class="field-label">¿Cuántas caídas en el último año?</label>
+      <div class="input-wrapper">
+        <ion-icon name="analytics-outline" class="field-icon"></ion-icon>
+        <ion-input
+          formControlName="historialCaidasCantidad"
+          type="number"
+          placeholder="Ej: 2"
+          class="custom-input"
+          min="0">
+        </ion-input>
+      </div>
+    </div>
+
+    <!-- ¿Usa desfibrilador implantado? -->
+    <div class="toggle-field">
+      <div class="toggle-info">
+        <ion-icon name="flash-outline" class="toggle-icon"></ion-icon>
+        <div>
+          <span class="toggle-label">¿Usa desfibrilador implantado?</span>
+          <span class="toggle-desc">Dispositivo implantable cardioversor</span>
+        </div>
+      </div>
+      <ion-toggle formControlName="tieneDesfibrilador" color="danger"></ion-toggle>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECCIÓN 3 — UMBRALES DE ALERTA                        -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-content" *ngIf="pasoActual === 2" formGroupName="umbralesAlerta">
+    <div class="section-header pulse">
+      <ion-icon name="pulse-outline" class="section-icon"></ion-icon>
+      <h3>Umbrales de Alerta</h3>
+    </div>
+
+    <p class="section-desc">
+      Configure los límites de pulso que activarán alertas automáticas.
+      Los valores fuera de este rango generarán notificaciones al tutor.
+    </p>
+
+    <!-- Pulso Máximo (Range) -->
+    <div class="range-field">
+      <label class="field-label">
+        Pulso Máximo antes de Alerta <span class="required">*</span>
+      </label>
+      <div class="range-value-display">
+        <ion-icon name="arrow-up-circle-outline" [style.color]="colorPulso(umbralesAlerta.get('pulsoMaximo')?.value)"></ion-icon>
+        <span class="range-bpm" [style.color]="colorPulso(umbralesAlerta.get('pulsoMaximo')?.value)">
+          {{ umbralesAlerta.get('pulsoMaximo')?.value }} BPM
+        </span>
+      </div>
+      <ion-range
+        formControlName="pulsoMaximo"
+        [min]="healthConfig.limites.pulsoAbsolutoMin"
+        [max]="healthConfig.limites.pulsoAbsolutoMax"
+        [pin]="true"
+        [pinFormatter]="formatearPulso"
+        class="pulse-range pulse-range-max"
+        [style.--bar-background]="'linear-gradient(to right, #10B981, #F59E0B, #DC2626)'"
+        color="danger">
+      </ion-range>
+      <div class="range-labels">
+        <span>{{ healthConfig.limites.pulsoAbsolutoMin }}</span>
+        <span>{{ healthConfig.limites.pulsoAbsolutoMax }}</span>
+      </div>
+    </div>
+
+    <!-- Pulso Mínimo (Range) -->
+    <div class="range-field">
+      <label class="field-label">
+        Pulso Mínimo antes de Alerta <span class="required">*</span>
+      </label>
+      <div class="range-value-display">
+        <ion-icon name="arrow-down-circle-outline" [style.color]="colorPulso(umbralesAlerta.get('pulsoMinimo')?.value)"></ion-icon>
+        <span class="range-bpm" [style.color]="colorPulso(umbralesAlerta.get('pulsoMinimo')?.value)">
+          {{ umbralesAlerta.get('pulsoMinimo')?.value }} BPM
+        </span>
+      </div>
+      <ion-range
+        formControlName="pulsoMinimo"
+        [min]="healthConfig.limites.pulsoAbsolutoMin"
+        [max]="healthConfig.limites.pulsoAbsolutoMax"
+        [pin]="true"
+        [pinFormatter]="formatearPulso"
+        class="pulse-range pulse-range-min"
+        color="primary">
+      </ion-range>
+      <div class="range-labels">
+        <span>{{ healthConfig.limites.pulsoAbsolutoMin }}</span>
+        <span>{{ healthConfig.limites.pulsoAbsolutoMax }}</span>
+      </div>
+    </div>
+
+    <!-- Validación pulso max > min -->
+    <div class="warning-banner" *ngIf="umbralesAlerta.get('pulsoMaximo')?.value <= umbralesAlerta.get('pulsoMinimo')?.value">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <span>El pulso máximo debe ser mayor que el mínimo</span>
+    </div>
+
+    <!-- Vista previa de zonas -->
+    <div class="pulse-zone-preview">
+      <div class="zone zone-danger-low">
+        <span class="zone-label">🔴 Peligro</span>
+        <span>&lt; {{ umbralesAlerta.get('pulsoMinimo')?.value }} BPM</span>
+      </div>
+      <div class="zone zone-normal">
+        <span class="zone-label">🟢 Normal</span>
+        <span>{{ umbralesAlerta.get('pulsoMinimo')?.value }} – {{ umbralesAlerta.get('pulsoMaximo')?.value }} BPM</span>
+      </div>
+      <div class="zone zone-danger-high">
+        <span class="zone-label">🔴 Peligro</span>
+        <span>&gt; {{ umbralesAlerta.get('pulsoMaximo')?.value }} BPM</span>
+      </div>
+    </div>
+
+    <!-- Sensibilidad de Caídas -->
+    <div class="field-group">
+      <label class="field-label">
+        <ion-icon name="body-outline"></ion-icon>
+        Sensibilidad de Detección de Caídas <span class="required">*</span>
+      </label>
+      <div class="sensitivity-cards">
+        <button
+          *ngFor="let s of healthConfig.sensibilidadesCaidas"
+          class="sensitivity-card"
+          [class.selected]="umbralesAlerta.get('sensibilidadCaidas')?.value === s.valor"
+          (click)="umbralesAlerta.get('sensibilidadCaidas')?.setValue(s.valor)">
+          <ion-icon [name]="s.valor === 'alta' ? 'alert-circle' : s.valor === 'media' ? 'shield-checkmark' : 'shield-outline'"></ion-icon>
+          <span class="sensitivity-label">{{ s.etiqueta }}</span>
+          <span class="sensitivity-desc">{{ s.descripcion }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECCIÓN 4 — DATOS DEL TUTOR                           -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-content" *ngIf="pasoActual === 3" formGroupName="datosTutor">
+    <div class="section-header tutor">
+      <ion-icon name="people-outline" class="section-icon"></ion-icon>
+      <h3>Tutor / Familiar Responsable</h3>
+    </div>
+
+    <!-- Nombre -->
+    <div class="field-group">
+      <label class="field-label">
+        Nombre Completo <span class="required">*</span>
+      </label>
+      <div class="input-wrapper">
+        <ion-icon name="person-outline" class="field-icon"></ion-icon>
+        <ion-input
+          formControlName="nombreCompleto"
+          placeholder="Nombre del tutor o familiar"
+          class="custom-input"
+          type="text">
+        </ion-input>
+        <button
+          *ngIf="vozSoportada"
+          class="voice-btn"
+          [class.recording]="grabandoVoz && campoVozActivo === 'datosTutor.nombreCompleto'"
+          (click)="grabandoVoz ? detenerVoz() : iniciarVoz('datosTutor.nombreCompleto')">
+          <ion-icon [name]="grabandoVoz && campoVozActivo === 'datosTutor.nombreCompleto' ? 'stop-circle' : 'mic-outline'"></ion-icon>
+        </button>
+      </div>
+      <span class="error-msg" *ngIf="datosTutor.get('nombreCompleto')?.touched && datosTutor.get('nombreCompleto')?.invalid">
+        Ingrese el nombre completo (mínimo 3 caracteres)
+      </span>
+    </div>
+
+    <!-- Parentesco -->
+    <div class="field-group">
+      <label class="field-label">
+        Parentesco <span class="required">*</span>
+      </label>
+      <div class="input-wrapper">
+        <ion-icon name="heart-outline" class="field-icon"></ion-icon>
+        <ion-select
+          formControlName="parentesco"
+          placeholder="Seleccionar parentesco"
+          interface="action-sheet"
+          class="custom-select">
+          <ion-select-option *ngFor="let p of healthConfig.parentescos" [value]="p">{{ p }}</ion-select-option>
+        </ion-select>
+      </div>
+    </div>
+
+    <!-- Teléfono principal -->
+    <div class="field-group">
+      <label class="field-label">
+        Teléfono Principal <span class="required">*</span>
+      </label>
+      <div class="input-wrapper">
+        <ion-icon name="call-outline" class="field-icon"></ion-icon>
+        <ion-input
+          formControlName="telefonoPrincipal"
+          placeholder="+52 55 1234 5678"
+          class="custom-input"
+          type="tel">
+        </ion-input>
+      </div>
+      <span class="error-msg" *ngIf="datosTutor.get('telefonoPrincipal')?.touched && datosTutor.get('telefonoPrincipal')?.invalid">
+        Ingrese un número de teléfono válido
+      </span>
+    </div>
+
+    <!-- Teléfono alternativo -->
+    <div class="field-group">
+      <label class="field-label">Teléfono Alternativo</label>
+      <div class="input-wrapper">
+        <ion-icon name="phone-portrait-outline" class="field-icon"></ion-icon>
+        <ion-input
+          formControlName="telefonoAlternativo"
+          placeholder="Número alternativo (opcional)"
+          class="custom-input"
+          type="tel">
+        </ion-input>
+      </div>
+    </div>
+
+    <!-- Correo -->
+    <div class="field-group">
+      <label class="field-label">
+        Correo Electrónico <span class="required">*</span>
+      </label>
+      <div class="input-wrapper">
+        <ion-icon name="mail-outline" class="field-icon"></ion-icon>
+        <ion-input
+          formControlName="correo"
+          placeholder="correo@ejemplo.com"
+          class="custom-input"
+          type="email">
+        </ion-input>
+      </div>
+      <span class="error-msg" *ngIf="datosTutor.get('correo')?.touched && datosTutor.get('correo')?.invalid">
+        Ingrese un correo electrónico válido
+      </span>
+    </div>
+
+    <!-- Notificaciones SMS -->
+    <div class="toggle-field">
+      <div class="toggle-info">
+        <ion-icon name="chatbubble-ellipses-outline" class="toggle-icon"></ion-icon>
+        <div>
+          <span class="toggle-label">¿Recibir notificaciones por SMS?</span>
+        </div>
+      </div>
+      <ion-toggle formControlName="notificacionesSMS" color="success"></ion-toggle>
+    </div>
+
+    <!-- Notificaciones Correo -->
+    <div class="toggle-field">
+      <div class="toggle-info">
+        <ion-icon name="mail-outline" class="toggle-icon"></ion-icon>
+        <div>
+          <span class="toggle-label">¿Recibir notificaciones por correo?</span>
+        </div>
+      </div>
+      <ion-toggle formControlName="notificacionesCorreo" color="success"></ion-toggle>
+    </div>
+
+    <!-- Dirección -->
+    <div class="field-group">
+      <label class="field-label">
+        Dirección (para emergencias) <span class="required">*</span>
+      </label>
+      <div class="input-wrapper">
+        <ion-icon name="location-outline" class="field-icon"></ion-icon>
+        <ion-input
+          formControlName="direccion"
+          placeholder="Dirección del tutor"
+          class="custom-input"
+          type="text">
+        </ion-input>
+        <button
+          *ngIf="vozSoportada"
+          class="voice-btn"
+          [class.recording]="grabandoVoz && campoVozActivo === 'datosTutor.direccion'"
+          (click)="grabandoVoz ? detenerVoz() : iniciarVoz('datosTutor.direccion')">
+          <ion-icon [name]="grabandoVoz && campoVozActivo === 'datosTutor.direccion' ? 'stop-circle' : 'mic-outline'"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECCIÓN 5 — CONTACTOS DE EMERGENCIA                   -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-content" *ngIf="pasoActual === 4">
+    <div class="section-header emergency">
+      <ion-icon name="call-outline" class="section-icon"></ion-icon>
+      <h3>Contactos de Emergencia</h3>
+    </div>
+    <p class="section-desc">
+      Agregue hasta {{ healthConfig.limites.maxContactosEmergencia }} contactos que serán notificados en caso de emergencia.
+    </p>
+
+    <!-- Lista de contactos -->
+    <div
+      *ngFor="let contacto of contactosEmergenciaArray.controls; let i = index"
+      class="emergency-contact-card"
+      [formGroupName]="'contactosEmergencia'">
+      <ng-container [formArrayName]="'contactosEmergencia'">
+        <ng-container [formGroupName]="i">
+          <div class="contact-header">
+            <span class="contact-number">Contacto {{ i + 1 }}</span>
+            <button
+              class="remove-contact-btn"
+              *ngIf="contactosEmergenciaArray.length > 1"
+              (click)="eliminarContactoEmergencia(i)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Nombre <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <ion-icon name="person-outline" class="field-icon"></ion-icon>
+              <ion-input formControlName="nombre" placeholder="Nombre del contacto" class="custom-input" type="text"></ion-input>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Teléfono <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <ion-icon name="call-outline" class="field-icon"></ion-icon>
+              <ion-input formControlName="telefono" placeholder="+52 55 1234 5678" class="custom-input" type="tel"></ion-input>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Parentesco <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <ion-icon name="heart-outline" class="field-icon"></ion-icon>
+              <ion-select formControlName="parentesco" placeholder="Parentesco" interface="action-sheet" class="custom-select">
+                <ion-select-option *ngFor="let p of healthConfig.parentescos" [value]="p">{{ p }}</ion-select-option>
+              </ion-select>
+            </div>
+          </div>
+
+          <div class="toggle-field compact">
+            <div class="toggle-info">
+              <ion-icon name="call-outline" class="toggle-icon"></ion-icon>
+              <span class="toggle-label">¿Llamar automáticamente en emergencia?</span>
+            </div>
+            <ion-toggle formControlName="llamarAutomaticamente" color="danger"></ion-toggle>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+
+    <!-- Botón agregar contacto -->
+    <button
+      class="add-contact-btn"
+      *ngIf="contactosEmergenciaArray.length < healthConfig.limites.maxContactosEmergencia"
+      (click)="agregarContactoEmergencia()">
+      <ion-icon name="add-circle-outline"></ion-icon>
+      Agregar Contacto de Emergencia
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECCIÓN 6 — CONFIGURACIÓN DE ALERTAS                  -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-content" *ngIf="pasoActual === 5" formGroupName="configuracionAlertas">
+    <div class="section-header alerts">
+      <ion-icon name="settings-outline" class="section-icon"></ion-icon>
+      <h3>Configuración de Alertas</h3>
+    </div>
+
+    <!-- Detección de caídas -->
+    <div class="toggle-field">
+      <div class="toggle-info">
+        <ion-icon name="body-outline" class="toggle-icon"></ion-icon>
+        <div>
+          <span class="toggle-label">¿Activar detección de caídas?</span>
+          <span class="toggle-desc">La banda notificará si detecta una caída del paciente</span>
+        </div>
+      </div>
+      <ion-toggle formControlName="deteccionCaidas" color="success"></ion-toggle>
+    </div>
+
+    <!-- Tiempo de inactividad -->
+    <div class="field-group">
+      <label class="field-label">
+        <ion-icon name="timer-outline"></ion-icon>
+        Tiempo de Inactividad para Alerta (minutos) <span class="required">*</span>
+      </label>
+      <p class="field-hint">Si la banda no detecta movimiento durante este tiempo, se enviará una alerta por posible desmayo.</p>
+      <div class="input-wrapper">
+        <ion-icon name="hourglass-outline" class="field-icon"></ion-icon>
+        <ion-input
+          formControlName="tiempoInactividad"
+          type="number"
+          placeholder="Ej: 5"
+          class="custom-input"
+          min="1"
+          max="60">
+        </ion-input>
+        <span class="input-suffix">min</span>
+      </div>
+    </div>
+
+    <!-- Notificar al tutor -->
+    <div class="toggle-field">
+      <div class="toggle-info">
+        <ion-icon name="notifications-outline" class="toggle-icon"></ion-icon>
+        <div>
+          <span class="toggle-label">¿Notificar al tutor cuando el pulso esté fuera de rango?</span>
+          <span class="toggle-desc">Se enviarán alertas basadas en los umbrales configurados</span>
+        </div>
+      </div>
+      <ion-toggle formControlName="notificarTutorPulso" color="success"></ion-toggle>
+    </div>
+
+    <!-- Número de emergencias -->
+    <div class="field-group">
+      <label class="field-label">
+        <ion-icon name="medkit-outline"></ion-icon>
+        Número de Emergencias Médicas <span class="required">*</span>
+      </label>
+      <div class="input-wrapper">
+        <ion-icon name="call-outline" class="field-icon"></ion-icon>
+        <ion-select
+          formControlName="numeroEmergencias"
+          placeholder="Seleccionar número"
+          interface="action-sheet"
+          class="custom-select">
+          <ion-select-option *ngFor="let n of healthConfig.numerosEmergencia" [value]="n.valor">{{ n.etiqueta }}</ion-select-option>
+        </ion-select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECCIÓN 7 — RESUMEN FINAL                             -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-content" *ngIf="pasoActual === 6">
+    <div class="section-header summary">
+      <ion-icon name="checkmark-circle-outline" class="section-icon"></ion-icon>
+      <h3>Resumen del Registro</h3>
+    </div>
+    <p class="section-desc">Revise los datos antes de guardar. Puede editar cualquier sección haciendo clic en su encabezado.</p>
+
+    <!-- Resumen Sección 1 -->
+    <div class="summary-card" (click)="irAPaso(0)">
+      <div class="summary-header">
+        <ion-icon name="person-outline"></ion-icon>
+        <h4>Datos del Paciente</h4>
+        <ion-icon name="create-outline" class="edit-icon"></ion-icon>
+      </div>
+      <div class="summary-body">
+        <div class="summary-row">
+          <span class="summary-label">Nombre:</span>
+          <span class="summary-value">{{ resumenDatos.dp.nombreCompleto || '—' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Edad:</span>
+          <span class="summary-value">{{ edadCalculada }} años</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Género:</span>
+          <span class="summary-value">{{ resumenDatos.dp.genero || '—' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Peso / Altura:</span>
+          <span class="summary-value">{{ resumenDatos.dp.peso }} kg / {{ resumenDatos.dp.altura }} cm</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Tipo de Sangre:</span>
+          <span class="summary-value">{{ resumenDatos.dp.tipoSangre || '—' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Teléfono:</span>
+          <span class="summary-value">{{ resumenDatos.dp.telefono || '—' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen Sección 2 -->
+    <div class="summary-card" (click)="irAPaso(1)">
+      <div class="summary-header">
+        <ion-icon name="heart-outline"></ion-icon>
+        <h4>Información Médica</h4>
+        <ion-icon name="create-outline" class="edit-icon"></ion-icon>
+      </div>
+      <div class="summary-body">
+        <div class="summary-row">
+          <span class="summary-label">Marcapasos:</span>
+          <span class="summary-value" [class.warning-text]="resumenDatos.im.tieneMarcapasos">{{ resumenDatos.im.tieneMarcapasos ? 'Sí' : 'No' }}</span>
+        </div>
+        <div class="summary-row" *ngIf="resumenDatos.im.enfermedadesCardiacas?.length">
+          <span class="summary-label">Enfermedades:</span>
+          <span class="summary-value">
+            <span *ngFor="let e of resumenDatos.im.enfermedadesCardiacas; let last = last">{{ obtenerEtiquetaEnfermedad(e) }}{{ last ? '' : ', ' }}</span>
+          </span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">FC Reposo:</span>
+          <span class="summary-value">{{ resumenDatos.im.fcReposo }} BPM</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Desfibrilador:</span>
+          <span class="summary-value">{{ resumenDatos.im.tieneDesfibrilador ? 'Sí' : 'No' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen Sección 3 -->
+    <div class="summary-card" (click)="irAPaso(2)">
+      <div class="summary-header">
+        <ion-icon name="pulse-outline"></ion-icon>
+        <h4>Umbrales de Alerta</h4>
+        <ion-icon name="create-outline" class="edit-icon"></ion-icon>
+      </div>
+      <div class="summary-body">
+        <div class="summary-row">
+          <span class="summary-label">Rango de Pulso:</span>
+          <span class="summary-value">{{ resumenDatos.ua.pulsoMinimo }} – {{ resumenDatos.ua.pulsoMaximo }} BPM</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Sensibilidad Caídas:</span>
+          <span class="summary-value">{{ obtenerEtiquetaSensibilidad(resumenDatos.ua.sensibilidadCaidas) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen Sección 4 -->
+    <div class="summary-card" (click)="irAPaso(3)">
+      <div class="summary-header">
+        <ion-icon name="people-outline"></ion-icon>
+        <h4>Tutor / Familiar</h4>
+        <ion-icon name="create-outline" class="edit-icon"></ion-icon>
+      </div>
+      <div class="summary-body">
+        <div class="summary-row">
+          <span class="summary-label">Nombre:</span>
+          <span class="summary-value">{{ resumenDatos.dt.nombreCompleto || '—' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Parentesco:</span>
+          <span class="summary-value">{{ resumenDatos.dt.parentesco || '—' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Teléfono:</span>
+          <span class="summary-value">{{ resumenDatos.dt.telefonoPrincipal || '—' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Correo:</span>
+          <span class="summary-value">{{ resumenDatos.dt.correo || '—' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen Sección 5 -->
+    <div class="summary-card" (click)="irAPaso(4)">
+      <div class="summary-header">
+        <ion-icon name="call-outline"></ion-icon>
+        <h4>Contactos de Emergencia ({{ resumenDatos.ce.length }})</h4>
+        <ion-icon name="create-outline" class="edit-icon"></ion-icon>
+      </div>
+      <div class="summary-body">
+        <div *ngFor="let c of resumenDatos.ce; let i = index" class="summary-row">
+          <span class="summary-label">{{ c.nombre }}:</span>
+          <span class="summary-value">{{ c.telefono }} ({{ c.parentesco }}) {{ c.llamarAutomaticamente ? '📞 Auto' : '' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen Sección 6 -->
+    <div class="summary-card" (click)="irAPaso(5)">
+      <div class="summary-header">
+        <ion-icon name="settings-outline"></ion-icon>
+        <h4>Configuración de Alertas</h4>
+        <ion-icon name="create-outline" class="edit-icon"></ion-icon>
+      </div>
+      <div class="summary-body">
+        <div class="summary-row">
+          <span class="summary-label">Detección de caídas:</span>
+          <span class="summary-value">{{ resumenDatos.ca.deteccionCaidas ? 'Activada' : 'Desactivada' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Inactividad:</span>
+          <span class="summary-value">{{ resumenDatos.ca.tiempoInactividad }} min</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Emergencias:</span>
+          <span class="summary-value">{{ resumenDatos.ca.numeroEmergencias }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- NAVEGACIÓN INFERIOR                                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="nav-buttons">
+    <button
+      class="btn-secondary btn-large"
+      *ngIf="pasoActual > 0"
+      (click)="pasoAnterior()">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+      Anterior
+    </button>
+    <div class="nav-spacer" *ngIf="pasoActual === 0"></div>
+
+    <button
+      class="btn-primary btn-large"
+      *ngIf="pasoActual < totalPasos - 1"
+      (click)="siguientePaso()"
+      [disabled]="!esPasoActualValido()">
+      Guardar y Continuar
+      <ion-icon name="arrow-forward-outline"></ion-icon>
+    </button>
+
+    <button
+      class="btn-submit btn-large"
+      *ngIf="pasoActual === totalPasos - 1"
+      (click)="enviarFormulario()"
+      [disabled]="guardando">
+      <ion-spinner *ngIf="guardando" name="crescent" class="btn-spinner"></ion-spinner>
+      <ion-icon name="cloud-upload-outline" *ngIf="!guardando"></ion-icon>
+      {{ guardando ? 'Guardando...' : 'Confirmar y Guardar' }}
+    </button>
+  </div>
+
+</div>
+
+<!-- Botón de Emergencia Flotante -->
+<button class="emergency-fab" (click)="llamarEmergencia()" *ngIf="!enviado">
+  <ion-icon name="medkit"></ion-icon>
+  <span>SOS</span>
+</button>

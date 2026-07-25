@@ -1,0 +1,1021 @@
+// ============================================================
+// Estilos del Formulario de Registro de Pacientes
+// Diseño profesional médico con accesibilidad para adultos mayores
+// ============================================================
+
+// ── Variables ─────────────────────────────────────────────
+$blue-primary: #1565C0;
+$blue-light: #1E88E5;
+$blue-pale: #E3F2FD;
+$teal: #0E9AA7;
+$teal-light: #E0F7FA;
+$white: #FFFFFF;
+$bg-gray: #F4F4F4;
+$text-dark: #11181C;
+$text-muted: #6B7280;
+$text-light: #9CA3AF;
+$green: #10B981;
+$green-pale: #ECFDF5;
+$yellow: #F59E0B;
+$yellow-pale: #FFFBEB;
+$red: #DC2626;
+$red-pale: #FEF2F2;
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+$radius: 16px;
+$radius-sm: 12px;
+$radius-xs: 8px;
+$transition: all 0.2s ease;
+
+// ── Pantalla de Éxito ─────────────────────────────────────
+.success-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 32px 24px;
+}
+
+.success-animation {
+  text-align: center;
+  animation: fadeInUp 0.6s ease;
+}
+
+.success-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $green, #059669);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  animation: bounceIn 0.8s ease;
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.4);
+}
+
+.success-icon {
+  font-size: 64px;
+  color: $white;
+}
+
+.success-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: $text-dark;
+  margin-bottom: 12px;
+}
+
+.success-text {
+  font-size: 16px;
+  color: $text-muted;
+  line-height: 1.6;
+  margin-bottom: 32px;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// ── Contenedor del Formulario ─────────────────────────────
+.form-container {
+  padding: 0 0 140px 0;
+}
+
+// ── Barra de Progreso ─────────────────────────────────────
+.progress-section {
+  padding: 16px 20px 8px;
+  background: $white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.progress-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: $blue-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.progress-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-muted;
+}
+
+.progress-track {
+  height: 6px;
+  background: #E5E7EB;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, $blue-primary, $teal);
+  border-radius: 3px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.step-indicators {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4px;
+  margin-bottom: 4px;
+}
+
+.step-dot {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid #E5E7EB;
+  background: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: $transition;
+  padding: 0;
+
+  ion-icon {
+    font-size: 14px;
+    color: $text-light;
+  }
+
+  &.active {
+    border-color: $blue-primary;
+    background: $blue-pale;
+    transform: scale(1.1);
+
+    ion-icon {
+      color: $blue-primary;
+    }
+  }
+
+  &.completed {
+    border-color: $green;
+    background: $green-pale;
+
+    ion-icon {
+      color: $green;
+    }
+  }
+}
+
+// ── Loading ───────────────────────────────────────────────
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 24px;
+  color: $text-muted;
+  font-size: 15px;
+}
+
+// ── Contenido de Sección ──────────────────────────────────
+.section-content {
+  padding: 20px 20px 0;
+  animation: fadeInUp 0.35s ease;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid $blue-pale;
+
+  .section-icon {
+    font-size: 28px;
+    color: $blue-primary;
+    background: $blue-pale;
+    padding: 10px;
+    border-radius: $radius-sm;
+  }
+
+  h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: $text-dark;
+    margin: 0;
+  }
+
+  &.medical {
+    border-bottom-color: $red-pale;
+    .section-icon { color: $red; background: $red-pale; }
+  }
+
+  &.pulse {
+    border-bottom-color: $green-pale;
+    .section-icon { color: $green; background: $green-pale; }
+  }
+
+  &.tutor {
+    border-bottom-color: $teal-light;
+    .section-icon { color: $teal; background: $teal-light; }
+  }
+
+  &.emergency {
+    border-bottom-color: $red-pale;
+    .section-icon { color: $red; background: $red-pale; }
+  }
+
+  &.alerts {
+    border-bottom-color: $yellow-pale;
+    .section-icon { color: $yellow; background: $yellow-pale; }
+  }
+
+  &.summary {
+    border-bottom-color: $green-pale;
+    .section-icon { color: $green; background: $green-pale; }
+  }
+}
+
+.section-desc {
+  font-size: 14px;
+  color: $text-muted;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+// ── Foto de Perfil ────────────────────────────────────────
+.photo-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  cursor: pointer;
+}
+
+.photo-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: $blue-pale;
+  border: 3px dashed $blue-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: $transition;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  ion-icon {
+    font-size: 36px;
+    color: $blue-light;
+  }
+}
+
+.photo-label {
+  font-size: 13px;
+  color: $text-muted;
+  font-weight: 500;
+}
+
+// ── Campos del Formulario ─────────────────────────────────
+.field-group {
+  margin-bottom: 18px;
+
+  &.half {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.field-row {
+  display: flex;
+  gap: 12px;
+}
+
+.field-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: $text-dark;
+  margin-bottom: 6px;
+
+  ion-icon {
+    font-size: 16px;
+    color: $blue-primary;
+  }
+}
+
+.required {
+  color: $red;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.field-hint {
+  font-size: 12px;
+  color: $text-light;
+  margin-bottom: 10px;
+  margin-top: -2px;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background: $white;
+  border: 2px solid #E5E7EB;
+  border-radius: $radius-sm;
+  padding: 0 12px;
+  transition: $transition;
+  min-height: 52px;
+
+  &:focus-within {
+    border-color: $blue-primary;
+    box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.12);
+  }
+}
+
+.field-icon {
+  font-size: 20px;
+  color: $text-light;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.custom-input {
+  --padding-start: 0;
+  --padding-end: 0;
+  --background: transparent;
+  --color: $text-dark;
+  font-size: 16px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.custom-select {
+  --padding-start: 0;
+  --padding-end: 0;
+  --background: transparent;
+  --color: $text-dark;
+  font-size: 16px;
+  font-weight: 500;
+  flex: 1;
+  max-width: 100%;
+}
+
+.input-suffix {
+  font-size: 14px;
+  font-weight: 700;
+  color: $text-muted;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.error-msg {
+  display: block;
+  font-size: 12px;
+  color: $red;
+  font-weight: 600;
+  margin-top: 4px;
+  padding-left: 4px;
+  animation: fadeInUp 0.2s ease;
+}
+
+// ── Badge de Edad ─────────────────────────────────────────
+.age-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: $blue-pale;
+  font-size: 13px;
+  font-weight: 600;
+  color: $blue-primary;
+
+  ion-icon {
+    font-size: 14px;
+  }
+}
+
+.age-warning {
+  color: $red;
+  font-weight: 700;
+}
+
+// ── Botón de Voz ──────────────────────────────────────────
+.voice-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: $blue-pale;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: 8px;
+  transition: $transition;
+
+  ion-icon {
+    font-size: 18px;
+    color: $blue-primary;
+  }
+
+  &.recording {
+    background: $red;
+    animation: pulse 1.2s infinite;
+
+    ion-icon {
+      color: $white;
+    }
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+// ── Toggles ───────────────────────────────────────────────
+.toggle-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: $white;
+  border: 2px solid #E5E7EB;
+  border-radius: $radius-sm;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  gap: 12px;
+
+  &.compact {
+    padding: 10px 14px;
+  }
+}
+
+.toggle-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+}
+
+.toggle-icon {
+  font-size: 22px;
+  color: $blue-primary;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.toggle-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: $text-dark;
+}
+
+.toggle-desc {
+  display: block;
+  font-size: 12px;
+  color: $text-muted;
+  margin-top: 2px;
+}
+
+// ── Warning Banner ────────────────────────────────────────
+.warning-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: $yellow-pale;
+  border: 1px solid #FCD34D;
+  border-radius: $radius-xs;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  animation: fadeInUp 0.3s ease;
+
+  ion-icon {
+    font-size: 22px;
+    color: $yellow;
+    flex-shrink: 0;
+  }
+
+  span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #92400E;
+  }
+}
+
+// ── Chips (Enfermedades / Medicamentos) ───────────────────
+.chip-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.medical-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 24px;
+  border: 2px solid #E5E7EB;
+  background: $white;
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-dark;
+  cursor: pointer;
+  transition: $transition;
+
+  ion-icon {
+    font-size: 16px;
+    color: $text-light;
+  }
+
+  &.selected {
+    border-color: $blue-primary;
+    background: $blue-pale;
+    color: $blue-primary;
+
+    ion-icon {
+      color: $blue-primary;
+    }
+  }
+
+  &.med-chip.selected {
+    border-color: $teal;
+    background: $teal-light;
+    color: #0B7A85;
+
+    ion-icon {
+      color: $teal;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// ── Range Sliders (Pulso) ─────────────────────────────────
+.range-field {
+  margin-bottom: 24px;
+}
+
+.range-value-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 4px;
+
+  ion-icon {
+    font-size: 28px;
+  }
+}
+
+.range-bpm {
+  font-size: 32px;
+  font-weight: 800;
+  font-family: 'SF Mono', monospace;
+}
+
+.pulse-range {
+  --bar-height: 8px;
+  --bar-border-radius: 4px;
+  --knob-size: 28px;
+  --knob-background: $white;
+  --knob-border-radius: 50%;
+  --knob-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding: 8px 0;
+}
+
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: $text-light;
+  font-weight: 600;
+  padding: 0 2px;
+}
+
+// ── Zonas de Pulso ────────────────────────────────────────
+.pulse-zone-preview {
+  display: flex;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: $shadow-sm;
+}
+
+.zone {
+  flex: 1;
+  padding: 12px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .zone-label {
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  span:last-child {
+    font-size: 11px;
+    font-weight: 600;
+  }
+}
+
+.zone-danger-low {
+  background: $red-pale;
+  color: $red;
+}
+
+.zone-normal {
+  background: $green-pale;
+  color: #0D9468;
+}
+
+.zone-danger-high {
+  background: $red-pale;
+  color: $red;
+}
+
+// ── Sensibilidad Cards ────────────────────────────────────
+.sensitivity-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sensitivity-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 2px solid #E5E7EB;
+  border-radius: $radius-sm;
+  background: $white;
+  cursor: pointer;
+  transition: $transition;
+  text-align: left;
+
+  ion-icon {
+    font-size: 26px;
+    color: $text-light;
+    flex-shrink: 0;
+  }
+
+  .sensitivity-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: $text-dark;
+    display: block;
+  }
+
+  .sensitivity-desc {
+    font-size: 12px;
+    color: $text-muted;
+    display: block;
+    margin-top: 2px;
+  }
+
+  &.selected {
+    border-color: $blue-primary;
+    background: $blue-pale;
+
+    ion-icon {
+      color: $blue-primary;
+    }
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// ── Contactos de Emergencia ───────────────────────────────
+.emergency-contact-card {
+  background: $white;
+  border: 2px solid #E5E7EB;
+  border-radius: $radius;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.contact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.contact-number {
+  font-size: 14px;
+  font-weight: 700;
+  color: $blue-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.remove-contact-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: $red-pale;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 18px;
+    color: $red;
+  }
+}
+
+.add-contact-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border: 2px dashed $blue-light;
+  border-radius: $radius-sm;
+  background: $blue-pale;
+  font-size: 15px;
+  font-weight: 700;
+  color: $blue-primary;
+  cursor: pointer;
+  transition: $transition;
+  margin-bottom: 16px;
+
+  ion-icon {
+    font-size: 22px;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// ── Resumen ───────────────────────────────────────────────
+.summary-card {
+  background: $white;
+  border: 2px solid #E5E7EB;
+  border-radius: $radius;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: $transition;
+  overflow: hidden;
+
+  &:active {
+    transform: scale(0.99);
+    border-color: $blue-light;
+  }
+}
+
+.summary-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #FAFAFA;
+  border-bottom: 1px solid #F3F4F6;
+
+  ion-icon:first-child {
+    font-size: 20px;
+    color: $blue-primary;
+  }
+
+  h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: $text-dark;
+    margin: 0;
+    flex: 1;
+  }
+
+  .edit-icon {
+    font-size: 16px;
+    color: $text-light;
+  }
+}
+
+.summary-body {
+  padding: 12px 16px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 4px 0;
+  gap: 8px;
+}
+
+.summary-label {
+  font-size: 13px;
+  color: $text-muted;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.summary-value {
+  font-size: 13px;
+  color: $text-dark;
+  font-weight: 700;
+  text-align: right;
+}
+
+.warning-text {
+  color: $red !important;
+}
+
+// ── Botones de Navegación ─────────────────────────────────
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px 32px;
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(to top, $bg-gray 60%, transparent);
+  z-index: 5;
+}
+
+.nav-spacer {
+  flex: 1;
+}
+
+.btn-large {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 24px;
+  border-radius: $radius-sm;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: $transition;
+  min-height: 54px;
+  flex: 1;
+
+  ion-icon {
+    font-size: 20px;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:active {
+      transform: none;
+    }
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, $blue-primary, $blue-light);
+  color: $white;
+  box-shadow: 0 4px 16px rgba(21, 101, 192, 0.3);
+}
+
+.btn-secondary {
+  background: $white;
+  color: $text-dark;
+  border: 2px solid #E5E7EB;
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, $green, #059669);
+  color: $white;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.btn-spinner {
+  width: 20px;
+  height: 20px;
+  --color: #{$white};
+}
+
+// ── Botón de Emergencia Flotante ──────────────────────────
+.emergency-fab {
+  position: fixed;
+  bottom: calc(110px + var(--ion-safe-area-bottom, 0px));
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $red, #B91C1C);
+  border: none;
+  color: $white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+  cursor: pointer;
+  z-index: 1000;
+  animation: emergencyPulse 2s infinite;
+
+  ion-icon {
+    font-size: 22px;
+  }
+
+  span {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+}
+
+// ── Animaciones ───────────────────────────────────────────
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(220, 38, 38, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+}
+
+@keyframes emergencyPulse {
+  0% {
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.7), 0 0 0 8px rgba(220, 38, 38, 0.1);
+  }
+  100% {
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+  }
+}
