@@ -41,17 +41,30 @@ ion-content {
   z-index: 1;
 }
 
-.location-btn {
+.map-controls-bottom {
   position: absolute;
-  bottom: 140px;
+  bottom: calc(105px + var(--ion-safe-area-bottom, 0px));
+  left: 20px;
   right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.location-btn {
   width: 50px;
   height: 50px;
   border-radius: 50%;
   background-color: #FFFFFF;
   border: none;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -69,15 +82,11 @@ ion-content {
 }
 
 .device-card-overlay {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
+  width: 100%;
   background: #FFFFFF;
   border-radius: 20px;
   padding: 16px 20px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14);
-  z-index: 1000;
 
   .device-card-header {
     display: flex;
