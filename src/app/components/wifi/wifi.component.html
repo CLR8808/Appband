@@ -1,68 +1,51 @@
-<ion-content class="bg-light">
+<ion-content scroll-y="false" class="bg-light">
   <div class="container">
     <div class="header">
       <ion-icon name="chevron-back" class="back-btn" (click)="goBack()"></ion-icon>
-      <span class="title">Configurar Wi-Fi</span>
-      <button class="refresh-btn" (click)="iniciarEscaneo()" [disabled]="wifiService.isScanning()" title="Re-escanear redes">
-        <ion-icon name="refresh" [class.spinning]="wifiService.isScanning()"></ion-icon>
-      </button>
+      <span class="title">Conectar Dispositivo</span>
     </div>
 
+    <div class="icon-container">
+      <div class="icon-circle">
+        <ion-icon name="wifi" class="wifi-icon"></ion-icon>
+      </div>
+    </div>
+
+    <h2 class="main-title">Conexión WiFi</h2>
     <p class="description">
-      La pulsera necesita conexión Wi-Fi para enviar alertas de emergencia de forma autónoma.
+      Ingresa la dirección IP de tu ESP32 / Safeband.<br/>
+      Asegúrate de estar conectado a la misma red WiFi.
     </p>
 
-    <!-- Indicador de escaneo activo -->
-    <div class="scanning-status" *ngIf="wifiService.isScanning()">
-      <ion-spinner name="crescent" color="primary"></ion-spinner>
-      <span>Buscando redes Wi-Fi cercanas...</span>
-    </div>
+    <div class="form-wrapper">
+      <label class="input-label">Dirección IP del dispositivo</label>
+      <input
+        type="text"
+        class="input"
+        placeholder="192.168.4.1"
+        [(ngModel)]="ipAddress"
+        [disabled]="wifiService.isConnecting()"
+      />
 
-    <div class="section-header">
-      <h3 class="info-titulo">Redes disponibles en el área</h3>
-      <span class="count-badge" *ngIf="!wifiService.isScanning()">
-        {{ wifiService.networks().length }} encontradas
-      </span>
-    </div>
+      <div *ngIf="wifiService.error()" class="error-box">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <span>{{ wifiService.error() }}</span>
+      </div>
 
-    <!-- Lista de redes detectadas -->
-    <div class="card" *ngIf="wifiService.networks().length > 0">
-      @for (net of wifiService.networks(); track net.ssid; let last = $last) {
-        <div class="wifi-item" (click)="conectar(net)">
-          <div class="wifi-info">
-            <div class="wifi-name-row">
-              <span class="wifi-nombre">{{ net.ssid }}</span>
-              <span class="tag-current" *ngIf="net.isCurrent">Conectada</span>
-            </div>
-            <div class="wifi-meta">
-              <span class="meta-tag">{{ net.frequency }}</span>
-              <span class="meta-tag security">
-                <ion-icon name="lock-closed-outline"></ion-icon> {{ net.security }}
-              </span>
-            </div>
-          </div>
-
-          <div class="wifi-signal">
-            <ion-icon [name]="getSignalIcon(net)" [class]="'signal-' + net.signalLevel"></ion-icon>
-          </div>
-        </div>
-        <div class="divider" *ngIf="!last"></div>
-      }
-    </div>
-
-    <!-- Estado si no hay redes encontradas y terminó de escanear -->
-    <div class="empty-card" *ngIf="!wifiService.isScanning() && wifiService.networks().length === 0">
-      <ion-icon name="wifi-outline" class="empty-icon"></ion-icon>
-      <p>No se encontraron redes Wi-Fi en el rango.</p>
-      <ion-button fill="outline" size="small" (click)="iniciarEscaneo()">Reintentar búsqueda</ion-button>
-    </div>
-
-    <!-- Botón para conectar a red manual u oculta -->
-    <div class="manual-section">
-      <button class="manual-btn" (click)="conectarNombreManual()">
-        <ion-icon name="add-circle-outline"></ion-icon>
-        <span>Agregar otra red (Red oculta)</span>
+      <button
+        class="btn-primary"
+        [disabled]="wifiService.isConnecting()"
+        (click)="conectar()">
+        <span *ngIf="!wifiService.isConnecting()">Conectar</span>
+        <span *ngIf="wifiService.isConnecting()" class="connecting">
+          <ion-spinner name="crescent"></ion-spinner> Conectando...
+        </span>
       </button>
+    </div>
+
+    <div class="help-text">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <span>Por defecto el ESP32 en modo AP usa la IP <strong>192.168.4.1</strong></span>
     </div>
   </div>
 </ion-content>
