@@ -37,7 +37,6 @@ export class BuscandoComponent implements OnInit, OnDestroy {
 
   cancelar() {
     this.bluetoothService.stopScan();
-    this.router.navigate(['/bluetooth']);
+    this.router.navigate(['/preparar-dispositivo']);
   }
 }
-

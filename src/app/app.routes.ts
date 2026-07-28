@@ -15,7 +15,6 @@ import { PerfilComponent } from './components/perfil/perfil.component';
 
 // Aux
 import { PrepararDispositivoComponent } from './components/preparar-dispositivo/preparar-dispositivo.component';
-import { BluetoothComponent } from './components/bluetooth/bluetooth.component';
 import { BuscandoComponent } from './components/buscando/buscando.component';
 import { DetectadoComponent } from './components/detectado/detectado.component';
 import { WifiComponent } from './components/wifi/wifi.component';
@@ -75,10 +74,6 @@ export const routes: Routes = [
   {
     path: 'preparar-dispositivo',
     component: PrepararDispositivoComponent
-  },
-  {
-    path: 'bluetooth',
-    component: BluetoothComponent
   },
   {
     path: 'buscando',

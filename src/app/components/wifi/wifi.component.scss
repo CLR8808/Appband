@@ -12,7 +12,7 @@ ion-content {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .back-btn {
@@ -27,27 +27,95 @@ ion-content {
   color: #11181C;
 }
 
+.refresh-btn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #0E9AA7;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(14, 154, 167, 0.1);
+  }
+
+  &[disabled] {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .description {
-  font-size: 15px;
+  font-size: 14px;
   color: #7A7A80;
-  margin-bottom: 28px;
-  line-height: 22px;
+  margin-bottom: 20px;
+  line-height: 20px;
+}
+
+.scanning-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #EBF8F9;
+  border: 1px solid #BCE5E8;
+  color: #0E9AA7;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 20px;
+
+  ion-spinner {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 .info-titulo {
   font-size: 12px;
   color: #A0A0A8;
-  margin-bottom: 12px;
+  margin: 0;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
+}
+
+.count-badge {
+  font-size: 11px;
+  background: #E2E8F0;
+  color: #475569;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
 }
 
 .card {
   background-color: #FFFFFF;
   border-radius: 16px;
   padding: 4px 0;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
 
 .wifi-item {
@@ -55,28 +123,138 @@ ion-content {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 18px 20px;
+  padding: 16px 20px;
   cursor: pointer;
   transition: background-color 0.15s ease;
+
+  &:hover, &:active {
+    background-color: #F8FAFC;
+  }
 }
 
-.wifi-item:active {
-  background-color: #F5F5F7;
+.wifi-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wifi-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .wifi-nombre {
-  font-size: 16px;
-  font-weight: 600;
-  color: #11181C;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0F172A;
 }
 
-.wifi-item ion-icon {
-  color: #0E9AA7;
-  font-size: 20px;
+.tag-current {
+  font-size: 10px;
+  background: #DCFCE7;
+  color: #15803D;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.wifi-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.meta-tag {
+  font-size: 12px;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+
+  &.security ion-icon {
+    font-size: 12px;
+    color: #64748B;
+  }
+}
+
+.wifi-signal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 22px;
+    color: #0E9AA7;
+
+    &.signal-excelente {
+      color: #0E9AA7;
+    }
+    &.signal-buena {
+      color: #0284C7;
+    }
+    &.signal-regular {
+      color: #EAB308;
+    }
+    &.signal-débil {
+      color: #94A3B8;
+    }
+  }
 }
 
 .divider {
   height: 1px;
-  background-color: #F0F0F2;
+  background-color: #F1F5F9;
   margin: 0 20px;
+}
+
+.empty-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 32px 20px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+
+  .empty-icon {
+    font-size: 40px;
+    color: #CBD5E1;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 14px;
+    color: #64748B;
+    margin-bottom: 16px;
+  }
+}
+
+.manual-section {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.manual-btn {
+  background: transparent;
+  border: 1.5px dashed #0E9AA7;
+  color: #0E9AA7;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover, &:active {
+    background: #EBF8F9;
+  }
+
+  ion-icon {
+    font-size: 20px;
+  }
 }

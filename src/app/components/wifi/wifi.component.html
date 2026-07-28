@@ -1,36 +1,68 @@
-<ion-content scroll-y="false" class="bg-light">
+<ion-content class="bg-light">
   <div class="container">
     <div class="header">
       <ion-icon name="chevron-back" class="back-btn" (click)="goBack()"></ion-icon>
       <span class="title">Configurar Wi-Fi</span>
+      <button class="refresh-btn" (click)="iniciarEscaneo()" [disabled]="wifiService.isScanning()" title="Re-escanear redes">
+        <ion-icon name="refresh" [class.spinning]="wifiService.isScanning()"></ion-icon>
+      </button>
     </div>
 
     <p class="description">
-      la pulsera necesita conexion para enviar alertas<br/>
-      de emergencia de forma autonoma
+      La pulsera necesita conexión Wi-Fi para enviar alertas de emergencia de forma autónoma.
     </p>
 
-    <h3 class="info-titulo">Información del dispositivo</h3>
+    <!-- Indicador de escaneo activo -->
+    <div class="scanning-status" *ngIf="wifiService.isScanning()">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <span>Buscando redes Wi-Fi cercanas...</span>
+    </div>
 
-    <div class="card">
-      <div class="wifi-item" (click)="conectar('Casa_Familia_5G')">
-        <span class="wifi-nombre">Casa_Familia_5G</span>
-        <ion-icon name="wifi" color="dark"></ion-icon>
-      </div>
+    <div class="section-header">
+      <h3 class="info-titulo">Redes disponibles en el área</h3>
+      <span class="count-badge" *ngIf="!wifiService.isScanning()">
+        {{ wifiService.networks().length }} encontradas
+      </span>
+    </div>
 
-      <div class="divider"></div>
+    <!-- Lista de redes detectadas -->
+    <div class="card" *ngIf="wifiService.networks().length > 0">
+      @for (net of wifiService.networks(); track net.ssid; let last = $last) {
+        <div class="wifi-item" (click)="conectar(net)">
+          <div class="wifi-info">
+            <div class="wifi-name-row">
+              <span class="wifi-nombre">{{ net.ssid }}</span>
+              <span class="tag-current" *ngIf="net.isCurrent">Conectada</span>
+            </div>
+            <div class="wifi-meta">
+              <span class="meta-tag">{{ net.frequency }}</span>
+              <span class="meta-tag security">
+                <ion-icon name="lock-closed-outline"></ion-icon> {{ net.security }}
+              </span>
+            </div>
+          </div>
 
-      <div class="wifi-item" (click)="conectar('Megacable_DDB55_2.5G')">
-        <span class="wifi-nombre">Megacable_DDB55_2.5G</span>
-        <ion-icon name="wifi" color="dark"></ion-icon>
-      </div>
+          <div class="wifi-signal">
+            <ion-icon [name]="getSignalIcon(net)" [class]="'signal-' + net.signalLevel"></ion-icon>
+          </div>
+        </div>
+        <div class="divider" *ngIf="!last"></div>
+      }
+    </div>
 
-      <div class="divider"></div>
+    <!-- Estado si no hay redes encontradas y terminó de escanear -->
+    <div class="empty-card" *ngIf="!wifiService.isScanning() && wifiService.networks().length === 0">
+      <ion-icon name="wifi-outline" class="empty-icon"></ion-icon>
+      <p>No se encontraron redes Wi-Fi en el rango.</p>
+      <ion-button fill="outline" size="small" (click)="iniciarEscaneo()">Reintentar búsqueda</ion-button>
+    </div>
 
-      <div class="wifi-item" (click)="conectar('Megacable_DDB55_5G')">
-        <span class="wifi-nombre">Megacable_DDB55_5G</span>
-        <ion-icon name="wifi" color="dark"></ion-icon>
-      </div>
+    <!-- Botón para conectar a red manual u oculta -->
+    <div class="manual-section">
+      <button class="manual-btn" (click)="conectarNombreManual()">
+        <ion-icon name="add-circle-outline"></ion-icon>
+        <span>Agregar otra red (Red oculta)</span>
+      </button>
     </div>
   </div>
 </ion-content>

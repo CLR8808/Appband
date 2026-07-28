@@ -17,6 +17,6 @@ export class PrepararDispositivoComponent {
   }
 
   next() {
-    this.router.navigate(['/bluetooth']);
+    this.router.navigate(['/buscando']);
   }
 }
