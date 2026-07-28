@@ -13,9 +13,12 @@ import { EventosComponent } from './components/eventos/eventos.component';
 import { MapaComponent } from './components/mapa/mapa.component';
 import { PerfilComponent } from './components/perfil/perfil.component';
 
-// Aux — Flujo de configuración de dispositivo
+// Aux
 import { PrepararDispositivoComponent } from './components/preparar-dispositivo/preparar-dispositivo.component';
+import { BuscandoComponent } from './components/buscando/buscando.component';
+import { DetectadoComponent } from './components/detectado/detectado.component';
 import { WifiComponent } from './components/wifi/wifi.component';
+import { PasswordComponent } from './components/password/password.component';
 import { NombreComponent } from './components/nombre/nombre.component';
 import { AnadidaComponent } from './components/anadida/anadida.component';
 import { DispositivoComponent } from './components/dispositivo/dispositivo.component';
@@ -73,8 +76,20 @@ export const routes: Routes = [
     component: PrepararDispositivoComponent
   },
   {
+    path: 'buscando',
+    component: BuscandoComponent
+  },
+  {
+    path: 'detectado',
+    component: DetectadoComponent
+  },
+  {
     path: 'wifi',
     component: WifiComponent
+  },
+  {
+    path: 'password',
+    component: PasswordComponent
   },
   {
     path: 'nombre',

@@ -23,7 +23,7 @@ interface PerfilVista {
 export class PerfilComponent {
   notificaciones = true;
   ubicacion = true;
-  wifi = true;
+  bluetooth = true;
   readonly perfil$: Observable<PerfilVista>;
 
   /** Pestaña activa: 'perfil' o 'paciente' */

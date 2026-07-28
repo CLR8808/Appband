@@ -18,7 +18,7 @@ export class NombreComponent {
   constructor(private router: Router, private storage: StorageService) {}
 
   goBack() {
-    this.router.navigate(['/wifi']); 
+    this.router.navigate(['/password']); 
   }
 
   guardar() {

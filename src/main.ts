@@ -17,7 +17,7 @@ import {
   lockClosedOutline, eyeOutline, eyeOffOutline, checkmarkCircleOutline, checkmarkCircle,
   checkmark, logoApple, logoGoogle, logoFacebook,
   createOutline, saveOutline, closeCircleOutline, maleOutline, femaleOutline,
-  transgenderOutline, informationCircleOutline, wifiOutline, alertCircleOutline
+  transgenderOutline
 } from 'ionicons/icons';
 
 import { routes } from './app/app.routes';
@@ -47,10 +47,7 @@ addIcons({
   'watch-outline': watchOutline,
   'bluetooth': bluetooth,
   'wifi': wifi,
-  'wifi-outline': wifiOutline,
   'battery-half': batteryHalf,
-  'information-circle-outline': informationCircleOutline,
-  'alert-circle-outline': alertCircleOutline,
   'happy': happy,
   'mail-outline': mailOutline,
   'call-outline': callOutline,
