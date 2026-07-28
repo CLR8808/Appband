@@ -1,11 +1,13 @@
 import { Injectable, signal } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
+import { CapacitorWifi } from '@capgo/capacitor-wifi';
 
 export interface WifiNetwork {
   ssid: string;
-  rssi: number; // dBm p.ej. -45, -62, -78
+  rssi: number;
   signalLevel: 'excelente' | 'buena' | 'regular' | 'débil';
-  security: 'WPA2' | 'WPA3' | 'WPA2/WPA3' | 'Abierta';
-  frequency: '2.4 GHz' | '5 GHz';
+  security: 'WPA2' | 'WPA3' | 'WPA2/WPA3' | 'Abierta' | 'Desconocida';
+  frequency: '2.4 GHz' | '5 GHz' | 'Desconocida';
   isCurrent?: boolean;
 }
 
@@ -22,67 +24,37 @@ export class Wifi {
 
   constructor() {}
 
-  /**
-   * Inicia el escaneo en tiempo real de redes Wi-Fi del área
-   */
-  async startScan(durationMs: number = 2000): Promise<void> {
+  async startScan(durationMs: number = 4000): Promise<void> {
     this.isScanning.set(true);
     this.error.set(null);
+    this.networks.set([]);
 
     if (this.scanTimeout) clearTimeout(this.scanTimeout);
 
+    try {
+      if (Capacitor.isNativePlatform()) {
+        const result = await CapacitorWifi.getAvailableNetworks();
+        const list = Array.isArray(result?.networks) ? result.networks : [];
+        const mapped = list
+          .map((item: any) => this.mapNetwork(item))
+          .filter((item: WifiNetwork | null): item is WifiNetwork => !!item)
+          .sort((a: WifiNetwork, b: WifiNetwork) => b.rssi - a.rssi);
+
+        this.networks.set(mapped);
+      } else {
+        this.error.set('El escaneo de redes Wi‑Fi requiere ejecutarse en dispositivo o emulador Android.');
+        this.networks.set([]);
+      }
+    } catch (err: any) {
+      console.error('[Wifi] Scan error:', err);
+      this.error.set(err?.message || 'No se pudo obtener la lista de redes Wi‑Fi.');
+      this.networks.set([]);
+    } finally {
+      this.isScanning.set(false);
+    }
+
+    if (this.scanTimeout) clearTimeout(this.scanTimeout);
     this.scanTimeout = setTimeout(() => {
-      const baseNetworks: WifiNetwork[] = [
-        {
-          ssid: 'Casa_Familia_5G',
-          rssi: -45,
-          signalLevel: 'excelente',
-          security: 'WPA3',
-          frequency: '5 GHz',
-          isCurrent: true,
-        },
-        {
-          ssid: 'Megacable_DDB55_2.5G',
-          rssi: -62,
-          signalLevel: 'buena',
-          security: 'WPA2',
-          frequency: '2.4 GHz',
-        },
-        {
-          ssid: 'Megacable_DDB55_5G',
-          rssi: -68,
-          signalLevel: 'buena',
-          security: 'WPA2/WPA3',
-          frequency: '5 GHz',
-        },
-        {
-          ssid: 'INFINITUM_E820_5G',
-          rssi: -75,
-          signalLevel: 'regular',
-          security: 'WPA2',
-          frequency: '5 GHz',
-        },
-        {
-          ssid: 'Totalplay-99A1',
-          rssi: -84,
-          signalLevel: 'débil',
-          security: 'WPA2',
-          frequency: '2.4 GHz',
-        },
-      ];
-
-      // Pequeñas fluctuaciones de señal para simular escaneo vivo
-      const updated = baseNetworks.map((net) => {
-        const delta = Math.floor(Math.random() * 7) - 3;
-        const newRssi = Math.min(-35, Math.max(-92, net.rssi + delta));
-        return {
-          ...net,
-          rssi: newRssi,
-          signalLevel: this.calculateSignalLevel(newRssi),
-        };
-      });
-
-      this.networks.set(updated);
       this.isScanning.set(false);
     }, durationMs);
   }
@@ -97,6 +69,40 @@ export class Wifi {
 
   selectNetwork(network: WifiNetwork): void {
     this.selectedNetwork.set(network);
+  }
+
+  private mapNetwork(item: any): WifiNetwork | null {
+    if (!item?.ssid) return null;
+
+    const rssi = typeof item?.rssi === 'number' ? item.rssi : -90;
+    const signalLevel = this.calculateSignalLevel(rssi);
+    const security = this.normalizeSecurity(item?.security);
+
+    return {
+      ssid: item.ssid,
+      rssi,
+      signalLevel,
+      security,
+      frequency: this.normalizeFrequency(item?.frequency),
+      isCurrent: !!item?.isCurrent,
+    };
+  }
+
+  private normalizeSecurity(security: any): WifiNetwork['security'] {
+    if (typeof security === 'string') {
+      const value = security.toLowerCase();
+      if (value.includes('wpa3')) return 'WPA3';
+      if (value.includes('wpa2')) return 'WPA2';
+      if (value.includes('open')) return 'Abierta';
+    }
+    return 'Desconocida';
+  }
+
+  private normalizeFrequency(frequency: any): WifiNetwork['frequency'] {
+    if (typeof frequency === 'number') {
+      return frequency >= 5000 ? '5 GHz' : '2.4 GHz';
+    }
+    return 'Desconocida';
   }
 
   private calculateSignalLevel(rssi: number): 'excelente' | 'buena' | 'regular' | 'débil' {

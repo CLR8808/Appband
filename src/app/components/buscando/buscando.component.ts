@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-import { Bluetooth, BluetoothDeviceItem } from '../../services/bluetooth';
 
 @Component({
   selector: 'app-buscando',
@@ -11,32 +10,14 @@ import { Bluetooth, BluetoothDeviceItem } from '../../services/bluetooth';
   standalone: true,
   imports: [IonicModule, CommonModule]
 })
-export class BuscandoComponent implements OnInit, OnDestroy {
-  public bluetoothService = inject(Bluetooth);
-
+export class BuscandoComponent implements OnInit {
   constructor(private router: Router) {}
 
   ngOnInit() {
-    // Iniciar escaneo real de Bluetooth al entrar a esta pantalla
-    this.iniciarEscaneo();
-  }
-
-  ngOnDestroy() {
-    // Detener escaneo al salir
-    this.bluetoothService.stopScan();
-  }
-
-  async iniciarEscaneo() {
-    await this.bluetoothService.startScan(12000);
-  }
-
-  seleccionarDispositivo(device: BluetoothDeviceItem) {
-    this.bluetoothService.selectDevice(device);
-    this.router.navigate(['/detectado']);
+    this.router.navigate(['/wifi']);
   }
 
   cancelar() {
-    this.bluetoothService.stopScan();
     this.router.navigate(['/preparar-dispositivo']);
   }
 }

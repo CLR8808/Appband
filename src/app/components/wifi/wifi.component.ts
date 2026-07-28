@@ -29,7 +29,7 @@ export class WifiComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate(['/detectado']);
+    this.router.navigate(['/preparar-dispositivo']);
   }
 
   conectar(network: WifiNetwork) {

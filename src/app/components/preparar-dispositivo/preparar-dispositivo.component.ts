@@ -17,6 +17,6 @@ export class PrepararDispositivoComponent {
   }
 
   next() {
-    this.router.navigate(['/buscando']);
+    this.router.navigate(['/wifi']);
   }
 }

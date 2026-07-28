@@ -15,8 +15,6 @@ import { PerfilComponent } from './components/perfil/perfil.component';
 
 // Aux
 import { PrepararDispositivoComponent } from './components/preparar-dispositivo/preparar-dispositivo.component';
-import { BuscandoComponent } from './components/buscando/buscando.component';
-import { DetectadoComponent } from './components/detectado/detectado.component';
 import { WifiComponent } from './components/wifi/wifi.component';
 import { PasswordComponent } from './components/password/password.component';
 import { NombreComponent } from './components/nombre/nombre.component';
@@ -77,11 +75,13 @@ export const routes: Routes = [
   },
   {
     path: 'buscando',
-    component: BuscandoComponent
+    redirectTo: '/wifi',
+    pathMatch: 'full'
   },
   {
     path: 'detectado',
-    component: DetectadoComponent
+    redirectTo: '/wifi',
+    pathMatch: 'full'
   },
   {
     path: 'wifi',

@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, inject, ElementRef, ViewCh
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { Location, DeviceCoordinates } from '../../services/location';
-import { Bluetooth } from '../../services/bluetooth';
+import { Wifi } from '../../services/wifi';
 import * as L from 'leaflet';
 
 @Component({
@@ -14,7 +14,7 @@ import * as L from 'leaflet';
 })
 export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
   public locationService = inject(Location);
-  public bluetoothService = inject(Bluetooth);
+  public wifiService = inject(Wifi);
 
   private map: L.Map | null = null;
   private marker: L.Marker | null = null;
@@ -76,9 +76,9 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.map) return;
 
     const latLng = L.latLng(coords.lat, coords.lng);
-    const selectedDev = this.bluetoothService.selectedDevice();
-    const deviceName = selectedDev?.name || 'Safeband / Dispositivo';
-    const deviceId = selectedDev?.deviceId || 'Dispositivo Principal';
+    const selectedNetwork = this.wifiService.selectedNetwork();
+    const deviceName = selectedNetwork?.ssid || 'Pulsera / Dispositivo';
+    const deviceId = selectedNetwork?.frequency || 'Wi‑Fi Principal';
 
     // Icono personalizado SVG para el pin del dispositivo
     const customIcon = L.divIcon({
