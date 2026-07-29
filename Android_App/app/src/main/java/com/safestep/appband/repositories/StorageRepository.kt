@@ -51,4 +51,18 @@ class StorageRepository(private val context: Context) {
             prefs.remove(KEY_DISPOSITIVOS)
         }
     }
+
+    suspend fun saveLocal(keyName: String, value: String) {
+        val prefKey = stringPreferencesKey(keyName)
+        context.dataStoreDispositivos.edit { prefs ->
+            prefs[prefKey] = value
+        }
+    }
+
+    fun getLocalFlow(keyName: String): Flow<String?> {
+        val prefKey = stringPreferencesKey(keyName)
+        return context.dataStoreDispositivos.data.map { prefs ->
+            prefs[prefKey]
+        }
+    }
 }
