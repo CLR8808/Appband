@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layoutStep2"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <!-- Section Title: Información Médica -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_today"
+            android:tint="#E91E63"
+            android:layout_marginEnd="8dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Información Médica"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#263238" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Historial médico relevante"
+        android:textSize="13sp"
+        android:textColor="#78909C"
+        android:layout_marginBottom="20dp" />
+
+    <!-- ¿Tiene marcapasos? -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="6dp">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿Tiene marcapasos?"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#263238" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dispositivo implantado que regula el ritmo cardíaco"
+                android:textSize="12sp"
+                android:textColor="#90A4AE" />
+        </LinearLayout>
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchMarcapasos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:trackTintList="@color/design_default_color_primary" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F0F0F0"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Enfermedades Cardíacas Diagnosticadas -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enfermedades Cardíacas Diagnosticadas"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#263238"
+        android:layout_marginBottom="10dp" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupEnfermedades"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:singleSelection="false"
+        android:layout_marginBottom="16dp">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipArritmia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Arritmia"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipBradicardia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bradicardia"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipTaquicardia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Taquicardia"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipFibrilacion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fibrilación auricular"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipInsuficiencia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Insuficiencia cardíaca"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipHipertension"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hipertensión"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipHipotension"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hipotensión"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipCardiopatia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cardiopatía isquémica"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipInfarto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Infarto previo"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipOtraEnfermedad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Otra"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <!-- Medicamentos que Afectan el Ritmo Cardíaco -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Medicamentos que Afectan el Ritmo Cardíaco"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#263238"
+        android:layout_marginBottom="10dp" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupMedicamentos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:singleSelection="false"
+        android:layout_marginBottom="16dp">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipBetabloqueadores"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Betabloqueadores"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipDigitalicos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Digitálicos"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipAntiarritmicos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Antiarrítmicos"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipCalcioantagonistas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Calcioantagonistas"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipNinguno"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ninguno"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipOtroMedicamento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Otros"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="#F5F5F5"
+            app:chipCornerRadius="12dp" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <!-- Frecuencia Cardíaca en Reposo -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Frecuencia Cardíaca en Reposo (BPM)"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#263238"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etFrecuenciaReposo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:text="70"
+                android:gravity="center" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BPM"
+            android:textSize="16sp"
+            android:textColor="#78909C"
+            android:textStyle="bold"
+            android:layout_marginStart="12dp" />
+    </LinearLayout>
+
+    <!-- Expandable Questions -->
+    <!-- ¿Ha sufrido desmayos o mareos? -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_contact_card"
+        android:padding="14dp"
+        android:layout_marginBottom="8dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="¿Ha sufrido desmayos o mareos frecuentes?"
+            android:textSize="14sp"
+            android:textColor="#263238" />
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchDesmayos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- ¿Tiene historial de caídas previas? -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_contact_card"
+        android:padding="14dp"
+        android:layout_marginBottom="8dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="¿Tiene historial de caídas previas?"
+            android:textSize="14sp"
+            android:textColor="#263238" />
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchCaidas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- ¿Usa desfibrilador implantado? -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_contact_card"
+        android:padding="14dp"
+        android:layout_marginBottom="4dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="¿Usa desfibrilador implantado (DAI)?"
+            android:textSize="14sp"
+            android:textColor="#263238" />
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchDesfibrilador"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</LinearLayout>

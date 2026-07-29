@@ -45,6 +45,9 @@
         <action
             android:id="@+id/action_perfil_to_soporte"
             app:destination="@id/soporteFragment" />
+        <action
+            android:id="@+id/action_perfil_to_registroPaciente"
+            app:destination="@id/registroPacienteFragment" />
     </fragment>
 
     <!-- Pantallas Auxiliares de Configuración / Dispositivo -->
@@ -135,4 +138,11 @@
         android:label="Soporte"
         tools:layout="@layout/fragment_soporte" />
 
+    <fragment
+        android:id="@+id/registroPacienteFragment"
+        android:name="com.safestep.appband.fragments.RegistroPacienteFragment"
+        android:label="Registro de Paciente"
+        tools:layout="@layout/fragment_registro_paciente" />
+
 </navigation>
+

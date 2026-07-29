@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layoutStep3"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <!-- Section Title: Umbrales de Alerta -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_dialog_alert"
+            android:tint="#FF9800"
+            android:layout_marginEnd="8dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Umbrales de Alerta"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#263238" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Define los límites para activar alertas de pulso cardíaco y sensibilidad de detección de caídas."
+        android:textSize="13sp"
+        android:textColor="#78909C"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Pulso Máximo antes de Alerta -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pulso Máximo antes de Alerta *"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#263238"
+        android:layout_marginBottom="8dp" />
+
+    <!-- BPM Display Box for Max -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/bg_bpm_display"
+        android:padding="16dp"
+        android:layout_marginBottom="8dp">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/arrow_up_float"
+            android:tint="#4CAF50"
+            android:layout_marginEnd="12dp" />
+        <TextView
+            android:id="@+id/tvPulsoMaxValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="120"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:textColor="#2E7D32" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" BPM"
+            android:textSize="18sp"
+            android:textColor="#4CAF50"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Slider for Max Pulse -->
+    <com.google.android.material.slider.Slider
+        android:id="@+id/sliderPulsoMax"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:valueFrom="30"
+        android:valueTo="220"
+        android:value="120"
+        android:stepSize="1"
+        app:trackColorActive="#FF5252"
+        app:trackColorInactive="#64B5F6"
+        app:thumbColor="#00BFA5"
+        app:haloColor="#8000BFA5"
+        android:layout_marginBottom="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="30"
+            android:textSize="12sp"
+            android:textColor="#90A4AE" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="220"
+            android:textSize="12sp"
+            android:textColor="#90A4AE"
+            android:gravity="end" />
+    </LinearLayout>
+
+    <!-- Pulso Mínimo antes de Alerta -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pulso Mínimo antes de Alerta *"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#263238"
+        android:layout_marginBottom="8dp" />
+
+    <!-- BPM Display Box for Min -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/bg_bpm_display"
+        android:padding="16dp"
+        android:layout_marginBottom="8dp">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/arrow_down_float"
+            android:tint="#4CAF50"
+            android:layout_marginEnd="12dp" />
+        <TextView
+            android:id="@+id/tvPulsoMinValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="50"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:textColor="#2E7D32" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" BPM"
+            android:textSize="18sp"
+            android:textColor="#4CAF50"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Slider for Min Pulse -->
+    <com.google.android.material.slider.Slider
+        android:id="@+id/sliderPulsoMin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:valueFrom="30"
+        android:valueTo="220"
+        android:value="50"
+        android:stepSize="1"
+        app:trackColorActive="#64B5F6"
+        app:trackColorInactive="#FF5252"
+        app:thumbColor="#00BFA5"
+        app:haloColor="#8000BFA5"
+        android:layout_marginBottom="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="30"
+            android:textSize="12sp"
+            android:textColor="#90A4AE" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="220"
+            android:textSize="12sp"
+            android:textColor="#90A4AE"
+            android:gravity="end" />
+    </LinearLayout>
+
+    <!-- Color Legend -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="20dp">
+
+        <!-- Peligro rojo <50 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginEnd="12dp">
+            <View
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:background="#FF5252"
+                android:layout_marginEnd="4dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Peligro"
+                android:textSize="11sp"
+                android:textColor="#FF5252" />
+        </LinearLayout>
+
+        <!-- Normal verde -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginEnd="12dp">
+            <View
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:background="#4CAF50"
+                android:layout_marginEnd="4dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Normal (50-120)"
+                android:textSize="11sp"
+                android:textColor="#4CAF50" />
+        </LinearLayout>
+
+        <!-- Peligro rojo >120 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <View
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:background="#FF5252"
+                android:layout_marginEnd="4dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Peligro"
+                android:textSize="11sp"
+                android:textColor="#FF5252" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F0F0F0"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Sensibilidad de Detección de Caídas -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sensibilidad de Detección de Caídas *"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#263238"
+        android:layout_marginBottom="12dp" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupSensibilidad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radioAlta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="  Alta"
+            android:textSize="15sp"
+            android:textColor="#263238"
+            android:padding="12dp"
+            android:background="@drawable/bg_contact_card"
+            android:layout_marginBottom="6dp"
+            android:buttonTint="#00BFA5" />
+
+        <RadioButton
+            android:id="@+id/radioMedia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="  Media"
+            android:textSize="15sp"
+            android:textColor="#263238"
+            android:padding="12dp"
+            android:background="@drawable/bg_contact_card"
+            android:layout_marginBottom="6dp"
+            android:buttonTint="#00BFA5"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/radioBaja"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="  Baja"
+            android:textSize="15sp"
+            android:textColor="#263238"
+            android:padding="12dp"
+            android:background="@drawable/bg_contact_card"
+            android:layout_marginBottom="6dp"
+            android:buttonTint="#00BFA5" />
+
+    </RadioGroup>
+
+</LinearLayout>

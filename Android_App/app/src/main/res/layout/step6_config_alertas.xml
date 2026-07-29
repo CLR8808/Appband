@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layoutStep6"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <!-- Section Title: Configuración de Alertas -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_manage"
+            android:tint="#2196F3"
+            android:layout_marginEnd="8dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Configuración de Alertas"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#263238" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Personaliza cómo y cuándo recibir alertas"
+        android:textSize="13sp"
+        android:textColor="#78909C"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Modo de alerta -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Modo de Alerta"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#263238"
+        android:layout_marginBottom="10dp" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupModoAlerta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
+
+        <RadioButton
+            android:id="@+id/radioSonido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="  Sonido y Vibración"
+            android:textSize="15sp"
+            android:textColor="#263238"
+            android:padding="12dp"
+            android:background="@drawable/bg_contact_card"
+            android:layout_marginBottom="6dp"
+            android:buttonTint="#00BFA5"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/radioVibracion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="  Solo Vibración"
+            android:textSize="15sp"
+            android:textColor="#263238"
+            android:padding="12dp"
+            android:background="@drawable/bg_contact_card"
+            android:layout_marginBottom="6dp"
+            android:buttonTint="#00BFA5" />
+
+        <RadioButton
+            android:id="@+id/radioSilencioso"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="  Silencioso (solo visual)"
+            android:textSize="15sp"
+            android:textColor="#263238"
+            android:padding="12dp"
+            android:background="@drawable/bg_contact_card"
+            android:layout_marginBottom="6dp"
+            android:buttonTint="#00BFA5" />
+    </RadioGroup>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F0F0F0"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Notificaciones toggle switches -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tipos de Notificación"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#263238"
+        android:layout_marginBottom="10dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_contact_card"
+        android:padding="14dp"
+        android:layout_marginBottom="8dp">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Alerta por Pulso Anormal"
+                android:textSize="14sp"
+                android:textColor="#263238" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notificar cuando el pulso salga de rango"
+                android:textSize="11sp"
+                android:textColor="#90A4AE" />
+        </LinearLayout>
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchAlertaPulso"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_contact_card"
+        android:padding="14dp"
+        android:layout_marginBottom="8dp">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Alerta por Caída Detectada"
+                android:textSize="14sp"
+                android:textColor="#263238" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notificar cuando se detecte una caída"
+                android:textSize="11sp"
+                android:textColor="#90A4AE" />
+        </LinearLayout>
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchAlertaCaida"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_contact_card"
+        android:padding="14dp"
+        android:layout_marginBottom="8dp">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Alerta por Inactividad"
+                android:textSize="14sp"
+                android:textColor="#263238" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notificar si no hay movimiento prolongado"
+                android:textSize="11sp"
+                android:textColor="#90A4AE" />
+        </LinearLayout>
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchAlertaInactividad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_contact_card"
+        android:padding="14dp"
+        android:layout_marginBottom="8dp">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enviar Ubicación GPS"
+                android:textSize="14sp"
+                android:textColor="#263238" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Incluir ubicación en alertas de emergencia"
+                android:textSize="11sp"
+                android:textColor="#90A4AE" />
+        </LinearLayout>
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchEnviarGPS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F0F0F0"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Intervalo de monitoreo -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Intervalo de Monitoreo (segundos)"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#263238"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/bg_bpm_display"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp">
+        <TextView
+            android:id="@+id/tvIntervaloValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="30"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#2E7D32" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" seg"
+            android:textSize="16sp"
+            android:textColor="#4CAF50" />
+    </LinearLayout>
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/sliderIntervalo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:valueFrom="5"
+        android:valueTo="120"
+        android:value="30"
+        android:stepSize="5"
+        app:thumbColor="#00BFA5"
+        app:trackColorActive="#00BFA5"
+        app:trackColorInactive="#E0E0E0"
+        app:haloColor="#8000BFA5" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="4dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="5 seg"
+            android:textSize="12sp"
+            android:textColor="#90A4AE" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="120 seg"
+            android:textSize="12sp"
+            android:textColor="#90A4AE"
+            android:gravity="end" />
+    </LinearLayout>
+
+</LinearLayout>
