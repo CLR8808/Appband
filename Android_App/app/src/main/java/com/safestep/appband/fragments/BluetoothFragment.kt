@@ -179,25 +179,20 @@ class BluetoothFragment : Fragment() {
 
         devices.forEach { device ->
             val mac = device.macAddress
-            var cardView = deviceViewsMap[mac]
-
-            if (cardView == null) {
-                // Inflar vista solo si es un dispositivo nuevo
-                cardView = inflater.inflate(R.layout.item_bluetooth_device, containerDevicesList, false)
-                deviceViewsMap[mac] = cardView
-                containerDevicesList.addView(cardView)
-
-                cardView.findViewById<MaterialButton>(R.id.btnConnectBt).setOnClickListener {
-                    viewModel.conectar(mac)
+            val cardView = deviceViewsMap.getOrPut(mac) {
+                inflater.inflate(R.layout.item_bluetooth_device, containerDevicesList, false).also { newView ->
+                    containerDevicesList.addView(newView)
+                    newView.findViewById<MaterialButton>(R.id.btnConnectBt)?.setOnClickListener {
+                        viewModel.conectar(mac)
+                    }
                 }
             }
 
-            // Actualizar rápidamente únicamente el contenido textual sin reinflar
             val tvName = cardView.findViewById<TextView>(R.id.tvDeviceName)
             val tvMac = cardView.findViewById<TextView>(R.id.tvMacAddress)
 
-            tvName.text = device.nombre
-            tvMac.text = "MAC: $mac  •  Señal: ${device.rssi} dBm"
+            tvName?.text = device.nombre
+            tvMac?.text = "MAC: $mac  •  Señal: ${device.rssi} dBm"
         }
     }
 
