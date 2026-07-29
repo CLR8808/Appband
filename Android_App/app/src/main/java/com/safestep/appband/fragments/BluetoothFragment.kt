@@ -23,7 +23,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
- * Fragment para la búsqueda, escaneo y conexión Bluetooth BLE con la pulsera SafeBand.
+ * Fragment ultra-optimizado para búsqueda y conexión Bluetooth BLE con la pulsera SafeBand.
+ * Evita congelamientos usando reciclaje directo de vistas en contenedor vertical.
  */
 class BluetoothFragment : Fragment() {
 
@@ -36,7 +37,9 @@ class BluetoothFragment : Fragment() {
     private lateinit var containerDevicesList: LinearLayout
     private lateinit var tvEmptyState: TextView
 
-    // Request permissions launcher for Bluetooth BLE & Location
+    // Cache de vistas por dirección MAC para evitar reinstanciar layouts innecesariamente
+    private val deviceViewsMap = mutableMapOf<String, View>()
+
     private val requestPermissionsLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -105,6 +108,7 @@ class BluetoothFragment : Fragment() {
         if (permissionsToRequest.isNotEmpty()) {
             requestPermissionsLauncher.launch(permissionsToRequest.toTypedArray())
         } else {
+            deviceViewsMap.clear()
             viewModel.iniciarEscaneo()
         }
     }
@@ -153,34 +157,47 @@ class BluetoothFragment : Fragment() {
         // Observe Devices Found List
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.dispositivosEncontrados.collectLatest { devices ->
-                renderDevicesList(devices)
+                renderDevicesListOptimized(devices)
             }
         }
     }
 
-    private fun renderDevicesList(devices: List<DispositivoBluetooth>) {
-        containerDevicesList.removeAllViews()
-
+    private fun renderDevicesListOptimized(devices: List<DispositivoBluetooth>) {
         if (devices.isEmpty()) {
+            containerDevicesList.removeAllViews()
+            deviceViewsMap.clear()
             containerDevicesList.addView(tvEmptyState)
             return
         }
 
+        // Quitar estado vacío si hay elementos
+        if (containerDevicesList.indexOfChild(tvEmptyState) != -1) {
+            containerDevicesList.removeView(tvEmptyState)
+        }
+
         val inflater = LayoutInflater.from(requireContext())
+
         devices.forEach { device ->
-            val cardView = inflater.inflate(R.layout.item_bluetooth_device, containerDevicesList, false)
-            val tvName = cardView.findViewById<TextView>(R.id.tvDeviceName)
-            val tvMac = cardView.findViewById<TextView>(R.id.tvMacAddress)
-            val btnConnect = cardView.findViewById<MaterialButton>(R.id.btnConnectBt)
+            val mac = device.macAddress
+            var cardView = deviceViewsMap[mac]
 
-            tvName.text = device.nombre
-            tvMac.text = "MAC: ${device.macAddress}  •  Signal: ${device.rssi} dBm"
+            if (cardView == null) {
+                // Inflar vista solo si es un dispositivo nuevo
+                cardView = inflater.inflate(R.layout.item_bluetooth_device, containerDevicesList, false)
+                deviceViewsMap[mac] = cardView
+                containerDevicesList.addView(cardView)
 
-            btnConnect.setOnClickListener {
-                viewModel.conectar(device.macAddress)
+                cardView.findViewById<MaterialButton>(R.id.btnConnectBt).setOnClickListener {
+                    viewModel.conectar(mac)
+                }
             }
 
-            containerDevicesList.addView(cardView)
+            // Actualizar rápidamente únicamente el contenido textual sin reinflar
+            val tvName = cardView.findViewById<TextView>(R.id.tvDeviceName)
+            val tvMac = cardView.findViewById<TextView>(R.id.tvMacAddress)
+
+            tvName.text = device.nombre
+            tvMac.text = "MAC: $mac  •  Señal: ${device.rssi} dBm"
         }
     }
 
