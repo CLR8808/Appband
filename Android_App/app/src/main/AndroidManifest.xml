@@ -26,6 +26,11 @@
         android:theme="@style/Theme.SafeStep"
         android:usesCleartextTraffic="true">
 
+        <!-- Google Maps API Key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCchgKOdAmHFC9-xr9rWy5gUS5K7tfH5CQ" />
+
         <!-- Splash Activity (Launcher Entry Point) -->
         <activity
             android:name=".activities.SplashActivity"

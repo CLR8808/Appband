@@ -6,12 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.safestep.appband.R
 import com.safestep.appband.databinding.FragmentRegistroPacienteBinding
 import com.safestep.appband.helpers.HealthConfigHelper
 import com.safestep.appband.models.DatosPaciente
@@ -23,6 +26,7 @@ import java.util.Locale
 
 /**
  * Fragment de Registro de Pacientes.
+ * Adaptado a la interfaz visual por pasos (1 de 7) idéntica al prototipo.
  * Migrado desde components/registro-paciente/registro-paciente.component.ts
  */
 class RegistroPacienteFragment : Fragment() {
@@ -75,16 +79,14 @@ class RegistroPacienteFragment : Fragment() {
 
         binding.btnNextStep.setOnClickListener {
             val stepActual = viewModel.currentStep.value
-            if (stepActual == 0) {
-                // Avanzar al paso 2
+            if (stepActual < 2) {
                 viewModel.siguientePaso()
             } else {
-                // Guardar registro
                 val nombre = binding.etNombrePaciente.text.toString()
                 val pesoStr = binding.etPeso.text.toString()
                 val alturaStr = binding.etAltura.text.toString()
                 val peso = pesoStr.toDoubleOrNull() ?: 70.0
-                val altura = alturaStr.toDoubleOrNull() ?: 170.0
+                val altura = alturaStr.toDoubleOrNull() ?: 165.0
                 val direccion = binding.etDireccionPaciente.text.toString()
                 val telefono = binding.etTelefonoPaciente.text.toString()
 
@@ -113,7 +115,7 @@ class RegistroPacienteFragment : Fragment() {
             if (isChecked) {
                 Toast.makeText(
                     requireContext(),
-                    "⚠️ Advertencia: Consulte con el cardiólogo sobre la compatibilidad de la banda de monitoreo con el marcapasos.",
+                    "⚠️ Advertencia: Consulte con el cardiólogo sobre la compatibilidad de la banda.",
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -129,9 +131,6 @@ class RegistroPacienteFragment : Fragment() {
                 val dayStr = String.format(Locale.getDefault(), "%02d", dayOfMonth)
                 fechaNacimientoIso = "$year-$monthStr-$dayStr"
                 binding.tvFechaNacPaciente.text = fechaNacimientoIso
-
-                val edad = HealthConfigHelper.calcularEdad(fechaNacimientoIso)
-                binding.tvEdadCalculada.text = "$edad años"
             },
             calendar.get(Calendar.YEAR) - 60,
             calendar.get(Calendar.MONTH),
@@ -179,20 +178,37 @@ class RegistroPacienteFragment : Fragment() {
             "Resumen Final"
         )
 
-        binding.tvStepTitle.text = titulos.getOrElse(step) { "Registro Paciente" }
-        binding.progressStep.progress = ((step + 1) * 100) / titulos.size
+        val stepIndex = step.coerceIn(0, titulos.size - 1)
+        binding.tvStepNumber.text = "PASO ${stepIndex + 1} DE 7"
+        binding.tvStepNameHeader.text = titulos[stepIndex]
+        binding.tvStepMainTitle.text = titulos[stepIndex]
 
-        if (step == 0) {
-            binding.step1Container.visibility = View.VISIBLE
-            binding.step2Container.visibility = View.GONE
-            binding.btnPrevStep.visibility = View.GONE
-            binding.btnNextStep.text = "Siguiente"
-        } else {
-            binding.step1Container.visibility = View.GONE
-            binding.step2Container.visibility = View.VISIBLE
-            binding.btnPrevStep.visibility = View.VISIBLE
-            binding.btnNextStep.text = "Guardar"
+        val stepDots = listOf(
+            binding.stepDot1, binding.stepDot2, binding.stepDot3,
+            binding.stepDot4, binding.stepDot5, binding.stepDot6, binding.stepDot7
+        )
+
+        stepDots.forEachIndexed { idx, tv ->
+            if (idx == stepIndex) {
+                tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                tv.setBackgroundResource(R.drawable.bg_primary_button)
+            } else if (idx < stepIndex) {
+                tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.success_green))
+                tv.setBackgroundResource(R.drawable.bg_input_container)
+                tv.text = "✓"
+            } else {
+                tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_muted))
+                tv.setBackgroundResource(R.drawable.bg_input_container)
+                tv.text = "${idx + 1}"
+            }
         }
+
+        binding.step1Container.visibility = if (stepIndex == 0) View.VISIBLE else View.GONE
+        binding.step2Container.visibility = if (stepIndex == 1) View.VISIBLE else View.GONE
+        binding.step3Container.visibility = if (stepIndex == 2) View.VISIBLE else View.GONE
+
+        binding.btnPrevStep.visibility = if (stepIndex > 0) View.VISIBLE else View.GONE
+        binding.btnNextStep.text = if (stepIndex >= 2) "Guardar y Finalizar ✓" else "Guardar y Continuar →"
     }
 
     override fun onDestroyView() {

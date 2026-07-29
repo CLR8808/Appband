@@ -1,244 +1,604 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingStart="24dp"
-    android:paddingTop="20dp"
-    android:paddingEnd="24dp"
-    android:paddingBottom="120dp">
+    android:layout_height="match_parent"
+    android:background="#F8FAFC"
+    android:fillViewport="true">
 
-    <!-- Title & Progress Bar Header -->
-    <TextView
-        android:id="@+id/tvStepTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:textColor="@color/text_primary"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        tools:text="Datos del Paciente" />
-
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/progressStep"
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:layout_marginBottom="24dp"
-        app:indicatorColor="@color/primary_teal"
-        app:trackColor="@color/divider_color"
-        app:trackCornerRadius="4dp" />
-
-    <!-- Step 1 Container: Datos del Paciente -->
     <LinearLayout
-        android:id="@+id/step1Container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="120dp">
 
-        <EditText
-            android:id="@+id/etNombrePaciente"
+        <!-- Top Header Step Info: PASO 1 DE 7 | Datos del Paciente -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginBottom="12dp"
-            android:background="@drawable/bg_input_container"
-            android:hint="Nombre completo del paciente"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp" />
-
-        <LinearLayout
-            android:id="@+id/containerFechaNacPaciente"
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginBottom="12dp"
-            android:background="@drawable/bg_input_container"
-            android:gravity="center_vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
 
             <TextView
-                android:id="@+id/tvFechaNacPaciente"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Fecha de nacimiento (yyyy-MM-dd)"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/tvEdadCalculada"
+                android:id="@+id/tvStepNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:letterSpacing="0.05"
                 android:textColor="@color/primary_teal"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
-                tools:text="72 años" />
+                tools:text="PASO 1 DE 7" />
+
+            <TextView
+                android:id="@+id/tvStepNameHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:textColor="@color/text_muted"
+                android:textSize="13sp"
+                tools:text="Datos del Paciente" />
+        </RelativeLayout>
+
+        <!-- Step Indicator (7 Circular Step Indicators) -->
+        <LinearLayout
+            android:id="@+id/containerStepIndicators"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/stepDot1"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_input_container"
+                android:gravity="center"
+                android:text="1"
+                android:textColor="@color/primary_teal"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/stepDot2"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_input_container"
+                android:gravity="center"
+                android:text="2"
+                android:textColor="@color/text_muted" />
+
+            <TextView
+                android:id="@+id/stepDot3"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_input_container"
+                android:gravity="center"
+                android:text="3"
+                android:textColor="@color/text_muted" />
+
+            <TextView
+                android:id="@+id/stepDot4"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_input_container"
+                android:gravity="center"
+                android:text="4"
+                android:textColor="@color/text_muted" />
+
+            <TextView
+                android:id="@+id/stepDot5"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_input_container"
+                android:gravity="center"
+                android:text="5"
+                android:textColor="@color/text_muted" />
+
+            <TextView
+                android:id="@+id/stepDot6"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_input_container"
+                android:gravity="center"
+                android:text="6"
+                android:textColor="@color/text_muted" />
+
+            <TextView
+                android:id="@+id/stepDot7"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_input_container"
+                android:gravity="center"
+                android:text="7"
+                android:textColor="@color/text_muted" />
         </LinearLayout>
 
-        <Spinner
-            android:id="@+id/spGeneroPaciente"
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginBottom="12dp"
-            android:background="@drawable/bg_input_container"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp" />
-
+        <!-- Step Title Box -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/etPeso"
-                android:layout_width="0dp"
-                android:layout_height="54dp"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="1"
+            <ImageView
+                android:id="@+id/ivStepIcon"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="12dp"
                 android:background="@drawable/bg_input_container"
-                android:hint="Peso (kg)"
-                android:inputType="numberDecimal"
+                android:contentDescription="Paso Icono"
+                android:padding="10dp"
+                android:src="@drawable/ic_person"
+                app:tint="@color/primary_teal" />
+
+            <TextView
+                android:id="@+id/tvStepMainTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                tools:text="Datos del Paciente" />
+        </LinearLayout>
+
+        <!-- ================= PASO 1: DATOS DEL PACIENTE ================= -->
+        <LinearLayout
+            android:id="@+id/step1Container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <!-- Avatar Picker Button -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/ivPickPhoto"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/bg_input_container"
+                    android:contentDescription="Foto Paciente"
+                    android:padding="26dp"
+                    android:src="@drawable/ic_person"
+                    app:tint="@color/primary_teal" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tomar o elegir foto (opcional)"
+                    android:textColor="@color/text_muted"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="Nombre Completo *"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etNombrePaciente"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_input_container"
+                android:hint="Nombre completo del paciente"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="Fecha de Nacimiento *"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/containerFechaNacPaciente"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_input_container"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="10dp"
+                    android:contentDescription="Fecha"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="@color/text_muted" />
+
+                <TextView
+                    android:id="@+id/tvFechaNacPaciente"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="dd/mm/aaaa"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="Género *"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spGeneroPaciente"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_input_container"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+
+            <!-- Peso & Altura 2 Columns -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="Peso (kg) *"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/etPeso"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:background="@drawable/bg_input_container"
+                        android:hint="Ej: 70"
+                        android:inputType="numberDecimal"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:textColor="@color/text_primary" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="Altura (cm) *"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/etAltura"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:background="@drawable/bg_input_container"
+                        android:hint="Ej: 165"
+                        android:inputType="number"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:textColor="@color/text_primary" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="Tipo de Sangre *"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spTipoSangre"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_input_container"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="Dirección *"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etDireccionPaciente"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_input_container"
+                android:hint="Dirección completa"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:textColor="@color/text_primary" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="Teléfono de Contacto *"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
             <EditText
-                android:id="@+id/etAltura"
-                android:layout_width="0dp"
-                android:layout_height="54dp"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
+                android:id="@+id/etTelefonoPaciente"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/bg_input_container"
-                android:hint="Altura (cm)"
-                android:inputType="number"
+                android:hint="+52 55 1234 5678"
+                android:inputType="phone"
+                android:maxLength="10"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:textColor="@color/text_primary" />
         </LinearLayout>
 
-        <Spinner
-            android:id="@+id/spTipoSangre"
+        <!-- ================= PASO 2: INFORMACIÓN MÉDICA ================= -->
+        <LinearLayout
+            android:id="@+id/step2Container"
             android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginBottom="12dp"
-            android:background="@drawable/bg_input_container"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <EditText
-            android:id="@+id/etDireccionPaciente"
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginBottom="12dp"
-            android:background="@drawable/bg_input_container"
-            android:hint="Dirección completa"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textColor="@color/text_primary" />
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
 
-        <EditText
-            android:id="@+id/etTelefonoPaciente"
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchMarcapasos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="¿Tiene marcapasos?\nDispositivo implantado para regular el ritmo"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:text="Frecuencia Cardíaca en Reposo (BPM)"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_input_container"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="10dp"
+                    android:contentDescription="BPM"
+                    android:src="@drawable/ic_time"
+                    app:tint="@color/primary_teal" />
+
+                <TextView
+                    android:id="@+id/tvFcValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="70"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BPM"
+                    android:textColor="@color/text_muted"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/sliderFcReposo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:valueFrom="30"
+                android:valueTo="220"
+                app:thumbColor="@color/primary_teal"
+                app:trackColorActive="@color/primary_teal" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchDesmayos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="¿Ha sufrido desmayos o mareos en los últimos 6 meses?"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchCaidas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="¿Tiene historial de caídas previas?"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp" />
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
+        <!-- ================= PASO 3: UMBRALES DE ALERTA ================= -->
+        <LinearLayout
+            android:id="@+id/step3Container"
             android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/bg_input_container"
-            android:hint="Teléfono (10 dígitos)"
-            android:inputType="phone"
-            android:maxLength="10"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textColor="@color/text_primary" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:lineSpacingExtra="3dp"
+                android:text="Configure los límites de pulso que activarán alertas automáticas. Los valores fuera de este rango generarán notificaciones al tutor."
+                android:textColor="@color/text_muted"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="Pulso Máximo antes de Alerta *"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvMaxPulse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="↑ 120 BPM"
+                android:textColor="@color/success_green"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="4dp"
+                android:text="Pulso Mínimo antes de Alerta *"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvMinPulse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="↓ 50 BPM"
+                android:textColor="@color/success_green"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Footer Nav Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPrevStep"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="← Anterior"
+                android:textColor="@color/text_primary"
+                android:visibility="gone"
+                app:cornerRadius="14dp"
+                app:strokeColor="@color/divider_color" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNextStep"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_primary_button"
+                android:text="Guardar y Continuar →"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:backgroundTint="@null"
+                app:cornerRadius="14dp"
+                app:elevation="4dp" />
+        </LinearLayout>
+
     </LinearLayout>
 
-    <!-- Step 2 Container: Info Médica -->
-    <LinearLayout
-        android:id="@+id/step2Container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switchMarcapasos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="¿Tiene marcapasos implantado?"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="FC en reposo (BPM):"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <com.google.android.material.slider.Slider
-            android:id="@+id/sliderFcReposo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:valueFrom="30"
-            android:valueTo="220"
-            app:thumbColor="@color/primary_teal"
-            app:trackColorActive="@color/primary_teal" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switchDesmayos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="¿Tiene historial de desmayos?"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switchCaidas"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="¿Historial de caídas previas?"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <!-- Navigation Stepper Buttons -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:gravity="end"
-        android:orientation="horizontal">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPrevStep"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_marginEnd="12dp"
-            android:text="Anterior"
-            android:textColor="@color/primary_teal"
-            android:visibility="gone"
-            app:cornerRadius="12dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnNextStep"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:background="@drawable/bg_primary_button"
-            android:text="Siguiente"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            app:backgroundTint="@null"
-            app:cornerRadius="12dp" />
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>
