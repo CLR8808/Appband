@@ -66,8 +66,7 @@
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchMarcapasos"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:trackTintList="@color/design_default_color_primary" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <View
