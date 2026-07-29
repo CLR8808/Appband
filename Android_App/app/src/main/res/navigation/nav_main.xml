@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/inicioFragment">
+
+    <!-- 4 Tabs Principales -->
+    <fragment
+        android:id="@+id/inicioFragment"
+        android:name="com.safestep.appband.fragments.InicioFragment"
+        android:label="Inicio"
+        tools:layout="@layout/fragment_inicio">
+        <action
+            android:id="@+id/action_inicio_to_prepararDispositivo"
+            app:destination="@id/prepararDispositivoFragment" />
+        <action
+            android:id="@+id/action_inicio_to_dispositivo"
+            app:destination="@id/dispositivoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mapaFragment"
+        android:name="com.safestep.appband.fragments.MapaFragment"
+        android:label="Mapa"
+        tools:layout="@layout/fragment_mapa" />
+
+    <fragment
+        android:id="@+id/eventosFragment"
+        android:name="com.safestep.appband.fragments.EventosFragment"
+        android:label="Eventos"
+        tools:layout="@layout/fragment_eventos" />
+
+    <fragment
+        android:id="@+id/perfilFragment"
+        android:name="com.safestep.appband.fragments.PerfilFragment"
+        android:label="Perfil"
+        tools:layout="@layout/fragment_perfil">
+        <action
+            android:id="@+id/action_perfil_to_detallesUsuario"
+            app:destination="@id/detallesUsuarioFragment" />
+        <action
+            android:id="@+id/action_perfil_to_configuracion"
+            app:destination="@id/configuracionFragment" />
+        <action
+            android:id="@+id/action_perfil_to_soporte"
+            app:destination="@id/soporteFragment" />
+    </fragment>
+
+    <!-- Pantallas Auxiliares de Configuración / Dispositivo -->
+    <fragment
+        android:id="@+id/prepararDispositivoFragment"
+        android:name="com.safestep.appband.fragments.PrepararDispositivoFragment"
+        android:label="Preparar Dispositivo"
+        tools:layout="@layout/fragment_preparar_dispositivo">
+        <action
+            android:id="@+id/action_prepararDispositivo_to_wifi"
+            app:destination="@id/wifiFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/wifiFragment"
+        android:name="com.safestep.appband.fragments.WifiFragment"
+        android:label="Configurar Wi-Fi"
+        tools:layout="@layout/fragment_wifi">
+        <action
+            android:id="@+id/action_wifi_to_password"
+            app:destination="@id/passwordFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/passwordFragment"
+        android:name="com.safestep.appband.fragments.PasswordFragment"
+        android:label="Contraseña Wi-Fi"
+        tools:layout="@layout/fragment_password">
+        <argument
+            android:name="ssid"
+            app:argType="string"
+            android:defaultValue="Red Wi-Fi" />
+        <action
+            android:id="@+id/action_password_to_nombre"
+            app:destination="@id/nombreFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nombreFragment"
+        android:name="com.safestep.appband.fragments.NombreFragment"
+        android:label="Nombre Dispositivo"
+        tools:layout="@layout/fragment_nombre">
+        <action
+            android:id="@+id/action_nombre_to_anadida"
+            app:destination="@id/anadidaFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/anadidaFragment"
+        android:name="com.safestep.appband.fragments.AnadidaFragment"
+        android:label="Añadida"
+        tools:layout="@layout/fragment_anadida">
+        <action
+            android:id="@+id/action_anadida_to_inicio"
+            app:destination="@id/inicioFragment"
+            app:popUpTo="@id/inicioFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/dispositivoFragment"
+        android:name="com.safestep.appband.fragments.DispositivoFragment"
+        android:label="Mi SafeBand"
+        tools:layout="@layout/fragment_dispositivo">
+        <action
+            android:id="@+id/action_dispositivo_to_eventos"
+            app:destination="@id/eventosFragment" />
+        <action
+            android:id="@+id/action_dispositivo_to_configuracion"
+            app:destination="@id/configuracionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/configuracionFragment"
+        android:name="com.safestep.appband.fragments.ConfiguracionFragment"
+        android:label="Configuración"
+        tools:layout="@layout/fragment_configuracion" />
+
+    <fragment
+        android:id="@+id/detallesUsuarioFragment"
+        android:name="com.safestep.appband.fragments.DetallesUsuarioFragment"
+        android:label="Detalles Usuario"
+        tools:layout="@layout/fragment_detalles_usuario" />
+
+    <fragment
+        android:id="@+id/soporteFragment"
+        android:name="com.safestep.appband.fragments.SoporteFragment"
+        android:label="Soporte"
+        tools:layout="@layout/fragment_soporte" />
+
+</navigation>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base Application Theme (Material 3 Light) -->
+    <style name="Theme.SafeStep" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary Brand Colors -->
+        <item name="colorPrimary">@color/primary_teal</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/primary_bg_cyan_light</item>
+        <item name="colorOnPrimaryContainer">@color/primary_teal_dark</item>
+
+        <!-- Secondary Colors -->
+        <item name="colorSecondary">@color/primary_cyan</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Background & Surface Colors -->
+        <item name="android:colorBackground">@color/bg_main</item>
+        <item name="colorSurface">@color/card_bg</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+
+        <!-- Status Bar & Navigation Bar -->
+        <item name="android:statusBarColor">@color/primary_cyan</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/bg_main</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+    <!-- Theme for SplashActivity -->
+    <style name="Theme.SafeStep.Splash" parent="Theme.SafeStep">
+        <item name="android:statusBarColor">@color/primary_cyan</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand Primary Colors (Gradient #0FB8C7 -> #0A7F8A -> #085E66 / #0E9AA7) -->
+    <color name="primary_cyan">#0FB8C7</color>
+    <color name="primary_cyan_dark">#0A7F8A</color>
+    <color name="primary_teal">#0E9AA7</color>
+    <color name="primary_teal_dark">#085E66</color>
+    <color name="primary_cyan_light">#36C9DB</color>
+    <color name="primary_bg_cyan_light">#E8F7F8</color>
+
+    <!-- Neutral & Background Colors -->
+    <color name="bg_main">#F4F4F4</color>
+    <color name="card_bg">#FFFFFF</color>
+    <color name="input_bg">#F5F5F7</color>
+    <color name="card_add_bg">#EDEDED</color>
+    <color name="divider_color">#E5E7EB</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#11181C</color>
+    <color name="text_secondary">#555555</color>
+    <color name="text_muted">#7A7A80</color>
+    <color name="text_hint">#BEBEC8</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <!-- Status & Functional Colors -->
+    <color name="success_green">#10B981</color>
+    <color name="success_green_bg">#ECFDF5</color>
+    <color name="warning_yellow">#F59E0B</color>
+    <color name="danger_red">#DC2626</color>
+    <color name="danger_red_bg">#FEF2F2</color>
+    <color name="danger_red_border">#FECACA</color>
+
+    <!-- Social Colors -->
+    <color name="google_red">#DB4437</color>
+    <color name="facebook_blue">#1877F2</color>
+</resources>

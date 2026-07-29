@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SafeStep</string>
+    <string name="app_tagline">Tu seguridad en cada paso</string>
+    
+    <!-- Login & Register -->
+    <string name="iniciar_sesion">Ingresar</string>
+    <string name="iniciando_sesion">Ingresando...</string>
+    <string name="crear_cuenta">Crear cuenta</string>
+    <string name="creando_cuenta">Creando cuenta...</string>
+    <string name="recuerdame">Recuérdame</string>
+    <string name="olvide_contrasena">Olvidé mi contraseña</string>
+    <string name="no_tienes_cuenta">¿No tienes cuenta? </string>
+    <string name="registrate_aqui">Regístrate aquí</string>
+    <string name="ya_tienes_cuenta">¿Ya tienes cuenta? </string>
+    <string name="inicia_sesion">Inicia sesión</string>
+
+    <!-- Tabs -->
+    <string name="tab_mapa">Mapa</string>
+    <string name="tab_inicio">Inicio</string>
+    <string name="tab_perfil">Perfil</string>
+    <string name="tab_eventos">Eventos</string>
+    <string name="tab_paciente">Paciente</string>
+
+    <!-- Wifi & Device -->
+    <string name="dispositivos">Dispositivos</string>
+    <string name="agregar_dispositivo">Agregar Dispositivo</string>
+    <string name="mis_dispositivos">Mis Dispositivos</string>
+    <string name="no_hay_dispositivos">No hay dispositivos agregados</string>
+    <string name="agrega_tu_safeband">Agrega tu Safeband para comenzar.</string>
+    <string name="configurar_wifi">Configurar Wi-Fi</string>
+    <string name="buscar_redes">Buscando redes Wi-Fi cercanas...</string>
+    <string name="desvincular_safeband">Desvincular Safeband</string>
+</resources>

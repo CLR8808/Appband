@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_auth"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.safestep.appband.fragments.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@id/registerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.safestep.appband.fragments.RegisterFragment"
+        android:label="Register"
+        tools:layout="@layout/fragment_register">
+        <action
+            android:id="@+id/action_register_to_verifyCode"
+            app:destination="@id/verifyCodeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/verifyCodeFragment"
+        android:name="com.safestep.appband.fragments.VerifyCodeFragment"
+        android:label="VerifyCode"
+        tools:layout="@layout/fragment_verify_code">
+        <argument
+            android:name="telefono"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
+
+</navigation>
