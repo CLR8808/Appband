@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_inicio_to_dispositivo"
             app:destination="@id/dispositivoFragment" />
+        <action
+            android:id="@+id/action_inicio_to_bluetooth"
+            app:destination="@id/bluetoothFragment" />
     </fragment>
 
     <fragment
@@ -59,6 +62,9 @@
         <action
             android:id="@+id/action_prepararDispositivo_to_wifi"
             app:destination="@id/wifiFragment" />
+        <action
+            android:id="@+id/action_prepararDispositivo_to_bluetooth"
+            app:destination="@id/bluetoothFragment" />
     </fragment>
 
     <fragment
@@ -118,6 +124,9 @@
         <action
             android:id="@+id/action_dispositivo_to_configuracion"
             app:destination="@id/configuracionFragment" />
+        <action
+            android:id="@+id/action_dispositivo_to_bluetooth"
+            app:destination="@id/bluetoothFragment" />
     </fragment>
 
     <fragment
@@ -143,6 +152,12 @@
         android:name="com.safestep.appband.fragments.RegistroPacienteFragment"
         android:label="Registro de Paciente"
         tools:layout="@layout/fragment_registro_paciente" />
+
+    <fragment
+        android:id="@+id/bluetoothFragment"
+        android:name="com.safestep.appband.fragments.BluetoothFragment"
+        android:label="Conexión Bluetooth BLE"
+        tools:layout="@layout/fragment_bluetooth" />
 
 </navigation>
 

@@ -11,11 +11,15 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <!-- Permiso de Dictado por Voz / Micrófono -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Permisos de Bluetooth y BLE -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
 
-    <!-- Permiso de Llamadas de Emergencia -->
-    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <!-- Feature de hardware Bluetooth LE -->
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true" />
 
     <application
         android:allowBackup="true"

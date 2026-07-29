@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F7FA"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- Header -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Atrás"
+            android:src="@drawable/ic_chevron_left"
+            app:tint="#263238" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Conexión Bluetooth BLE"
+            android:textColor="#263238"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <!-- Bluetooth Status Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="3dp"
+        app:strokeWidth="0dp"
+        android:layout_marginBottom="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <ImageView
+                    android:id="@+id/ivStatusDot"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/bg_status_dot_active"
+                    android:layout_marginEnd="10dp" />
+
+                <TextView
+                    android:id="@+id/tvStatusTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Estado: Desconectado"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#263238" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvStatusDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Presiona 'Buscar Pulsera' para iniciar el escaneo Bluetooth de la SafeBand."
+                android:textSize="13sp"
+                android:textColor="#78909C"
+                android:layout_marginBottom="16dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnScanBle"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="🔍 Buscar Pulsera SafeBand"
+                android:textAllCaps="false"
+                android:textSize="15sp"
+                app:cornerRadius="12dp"
+                app:backgroundTint="#00BFA5"
+                android:textColor="#FFFFFF" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Dispositivos Encontrados Header -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DISPOSITIVOS CERCANOS DETECTADOS"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.08"
+        android:textColor="#78909C"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Container for list of devices -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/containerDevicesList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Empty state illustration -->
+            <TextView
+                android:id="@+id/tvEmptyState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No se han encontrado dispositivos BLE aún.\nAsegúrate de que la pulsera esté encendida."
+                android:gravity="center"
+                android:padding="32dp"
+                android:textSize="14sp"
+                android:textColor="#B0BEC5" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

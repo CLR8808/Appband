@@ -41,6 +41,10 @@ class PrepararDispositivoFragment : Fragment() {
         binding.btnNext.setOnClickListener {
             findNavController().navigate(R.id.action_prepararDispositivo_to_wifi)
         }
+
+        binding.btnBluetooth.setOnClickListener {
+            findNavController().navigate(R.id.action_prepararDispositivo_to_bluetooth)
+        }
     }
 
     override fun onDestroyView() {
