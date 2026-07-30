@@ -136,12 +136,12 @@ class BluetoothFragment : Fragment() {
                     }
                     is BluetoothRepository.EstadoConexionBle.Conectado -> {
                         tvStatusTitle.text = "Estado: ¡Conectado por Bluetooth!"
-                        tvStatusDetail.text = "Conectado exitosamente a ${state.dispositivo.nombre} (${state.dispositivo.macAddress})."
+                        tvStatusDetail.text = "Conectado exitosamente a ${state.dispositivo.nombre} (${state.dispositivo.macAddress}) • ${state.serviciosCount} servicios GATT activos."
                         btnScanBle.isEnabled = true
-                        btnScanBle.text = "Desconectar"
+                        btnScanBle.text = "Desconectar Pulsera"
                         btnScanBle.setOnClickListener { viewModel.desconectar() }
 
-                        Toast.makeText(requireContext(), "✅ Conectado a ${state.dispositivo.nombre}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "✅ Conexión BLE Real Establecida con ${state.dispositivo.nombre}", Toast.LENGTH_LONG).show()
                     }
                     is BluetoothRepository.EstadoConexionBle.Error -> {
                         tvStatusTitle.text = "Estado: Error"
