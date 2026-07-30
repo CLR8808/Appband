@@ -1,6 +1,7 @@
 package com.safestep.appband.fragments
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,8 +28,7 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 /**
- * Fragment de Ubicación en Tiempo Real con Google Maps SDK.
- * Migrado desde components/mapa/mapa.component.ts
+ * Fragment de Ubicación en Tiempo Real del Dispositivo SafeBand y Teléfono con Google Maps SDK.
  */
 class MapaFragment : Fragment(), OnMapReadyCallback {
 
@@ -45,6 +45,7 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
         val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
                 permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
         if (granted) {
+            habilitarCapaUbicacionNativa()
             viewModel.obtenerUbicacionActual()
         }
     }
@@ -82,6 +83,8 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 )
             )
+        } else {
+            viewModel.obtenerUbicacionActual()
         }
     }
 
@@ -90,7 +93,7 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
             val coords = viewModel.currentLocation.value
             if (coords != null && googleMap != null) {
                 val latLng = LatLng(coords.lat, coords.lng)
-                googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f))
+                googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17f))
             } else {
                 viewModel.obtenerUbicacionActual()
             }
@@ -100,13 +103,29 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap?.uiSettings?.isZoomControlsEnabled = false
+        googleMap?.uiSettings?.isCompassEnabled = true
 
-        // Coordenadas por defecto (CDMX 19.432608, -99.133209)
-        val initialLatLng = LatLng(19.432608, -99.133209)
-        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLatLng, 15f))
+        habilitarCapaUbicacionNativa()
 
         viewModel.currentLocation.value?.let { coords ->
             actualizarMapa(coords)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun habilitarCapaUbicacionNativa() {
+        val fineLocation = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (fineLocation && googleMap != null) {
+            try {
+                googleMap?.isMyLocationEnabled = true
+                googleMap?.uiSettings?.isMyLocationButtonEnabled = false
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -137,16 +156,17 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
             if (deviceMarker == null) {
                 val markerOptions = MarkerOptions()
                     .position(latLng)
-                    .title("📍 SafeBand")
-                    .snippet("Lat: ${coords.lat}, Lng: ${coords.lng}")
+                    .title("📍 SafeBand (Dispositivo Conectado)")
+                    .snippet("Ubicación exacta GPS: ${coords.lat}, ${coords.lng}")
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
 
                 deviceMarker = map.addMarker(markerOptions)
             } else {
                 deviceMarker?.position = latLng
+                deviceMarker?.snippet = "Ubicación exacta GPS: ${coords.lat}, ${coords.lng}"
             }
 
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f))
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17f))
         }
     }
 

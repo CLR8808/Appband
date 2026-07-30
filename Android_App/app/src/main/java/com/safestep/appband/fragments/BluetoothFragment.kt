@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
- * Fragment ultra-optimizado para búsqueda, conexión real y telemetría continua Bluetooth BLE con la pulsera SafeBand.
+ * Fragment ultra-optimizado para búsqueda, conexión real, telemetría continua y guardado local de la pulsera SafeBand.
  */
 class BluetoothFragment : Fragment() {
 
@@ -39,6 +39,7 @@ class BluetoothFragment : Fragment() {
 
     // Live Telemetry & Control Panel Views
     private lateinit var panelConnected: View
+    private lateinit var btnSaveAndContinue: MaterialButton
     private lateinit var tvLiveBpm: TextView
     private lateinit var tvLastMessage: TextView
     private lateinit var etBleWifiSsid: TextInputEditText
@@ -48,6 +49,8 @@ class BluetoothFragment : Fragment() {
     private lateinit var btnTestPing: MaterialButton
 
     private val deviceViewsMap = mutableMapOf<String, View>()
+    private var lastConnectedMac = ""
+    private var lastConnectedName = ""
 
     private val requestPermissionsLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -89,6 +92,7 @@ class BluetoothFragment : Fragment() {
 
         // Panel de Telemetría
         panelConnected = view.findViewById(R.id.panelConnected)
+        btnSaveAndContinue = view.findViewById(R.id.btnSaveAndContinue)
         tvLiveBpm = view.findViewById(R.id.tvLiveBpm)
         tvLastMessage = view.findViewById(R.id.tvLastMessage)
         etBleWifiSsid = view.findViewById(R.id.etBleWifiSsid)
@@ -105,6 +109,16 @@ class BluetoothFragment : Fragment() {
 
         btnScanBle.setOnClickListener {
             checkPermissionsAndScan()
+        }
+
+        // Save device and proceed to completion screen
+        btnSaveAndContinue.setOnClickListener {
+            val name = lastConnectedName.ifBlank { "SafeBand" }
+            val mac = lastConnectedMac
+            viewModel.guardarDispositivoConectado(name, mac) {
+                Toast.makeText(requireContext(), "✅ Dispositivo $name guardado en tu cuenta", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.anadidaFragment)
+            }
         }
 
         // Send Wi-Fi credentials over BLE
@@ -191,6 +205,9 @@ class BluetoothFragment : Fragment() {
                         panelConnected.visibility = View.GONE
                     }
                     is BluetoothRepository.EstadoConexionBle.Conectado -> {
+                        lastConnectedName = state.dispositivo.nombre
+                        lastConnectedMac = state.dispositivo.macAddress
+
                         tvStatusTitle.text = "Estado: ¡Conectado por Bluetooth!"
                         tvStatusDetail.text = "Conectado exitosamente a ${state.dispositivo.nombre} (${state.dispositivo.macAddress}) • ${state.serviciosCount} servicios GATT activos."
                         btnScanBle.isEnabled = true
@@ -198,7 +215,11 @@ class BluetoothFragment : Fragment() {
                         btnScanBle.setOnClickListener { viewModel.desconectar() }
 
                         panelConnected.visibility = View.VISIBLE
-                        Toast.makeText(requireContext(), "✅ Conexión BLE Real Establecida con ${state.dispositivo.nombre}", Toast.LENGTH_LONG).show()
+
+                        // Auto-guardar en Storage local
+                        viewModel.guardarDispositivoConectado(lastConnectedName, lastConnectedMac)
+
+                        Toast.makeText(requireContext(), "✅ Conexión BLE Establecida y Guardada: ${state.dispositivo.nombre}", Toast.LENGTH_SHORT).show()
                     }
                     is BluetoothRepository.EstadoConexionBle.Error -> {
                         tvStatusTitle.text = "Estado: Error"

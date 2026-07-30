@@ -111,6 +111,21 @@
             android:visibility="gone"
             android:layout_marginBottom="20dp">
 
+            <!-- Botón de Continuar y Guardar Dispositivo -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveAndContinue"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="✅ Guardar Dispositivo y Continuar →"
+                android:textAllCaps="false"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:cornerRadius="14dp"
+                app:backgroundTint="#00BFA5"
+                android:textColor="#FFFFFF"
+                app:elevation="4dp"
+                android:layout_marginBottom="16dp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

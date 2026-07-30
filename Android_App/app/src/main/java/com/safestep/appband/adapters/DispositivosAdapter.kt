@@ -39,7 +39,7 @@ class DispositivosAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(dispositivo: Dispositivo) {
-            binding.tvDeviceName.text = dispositivo.nombre
+            binding.tvDeviceName.text = dispositivo.nombre.ifBlank { "SafeBand" }
             binding.root.setOnClickListener {
                 onItemClick(dispositivo)
             }

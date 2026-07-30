@@ -2,7 +2,6 @@ package com.safestep.appband.models
 
 /**
  * Modelo para dispositivo ESP32 / SafeBand conectado vía Wi-Fi HTTP.
- * Migrado desde services/dispositivo-wifi.ts
  */
 data class DispositivoConectado(
     val ip: String = "",
@@ -11,9 +10,13 @@ data class DispositivoConectado(
 )
 
 /**
- * Modelo para lista de dispositivos guardados en Storage.
- * Migrado desde services/storage.ts
+ * Modelo completo para lista de dispositivos guardados en Storage.
  */
 data class Dispositivo(
-    val nombre: String = ""
+    val nombre: String = "SafeBand",
+    val macAddress: String = "",
+    val ip: String = "",
+    val tipoConexion: String = "BLE",
+    val fechaAgregado: String = "",
+    val estado: String = "Conectado"
 )
