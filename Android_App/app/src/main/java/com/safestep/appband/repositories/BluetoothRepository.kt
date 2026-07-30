@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.bluetooth.*
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
+import android.bluetooth.le.ScanSettings
 import android.content.Context
+import android.location.LocationManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -14,15 +16,15 @@ import kotlinx.coroutines.flow.StateFlow
 import java.util.UUID
 
 /**
- * Repositorio optimizado para la gestión de conectividad Bluetooth LE con la pulsera SafeBand / ESP32.
- * Incluye procesamiento de bajo impacto en CPU (Throttling / Batching) para evitar congelamientos de interfaz.
+ * Repositorio optimizado para la gestión de conectividad Bluetooth LE real con la pulsera SafeBand / ESP32.
+ * Incluye escaneo activo SCAN_MODE_LOW_LATENCY y parseo del payload GAP (scanRecord.deviceName).
  */
 class BluetoothRepository(private val context: Context) {
 
     companion object {
         private const val TAG = "BluetoothRepository"
-        private const val SCAN_PERIOD_MS = 12000L // Detener escaneo automáticamente a los 12 seg.
-        private const val PUBLISH_INTERVAL_MS = 800L // Publicar cambios de UI máximo cada 800ms
+        private const val SCAN_PERIOD_MS = 15000L // Escaneo activo por 15 segundos
+        private const val PUBLISH_INTERVAL_MS = 600L // Refresco de UI cada 600ms
 
         val SERVICE_UUID: UUID = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb")
         val WIFI_CONFIG_CHAR_UUID: UUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
@@ -32,6 +34,8 @@ class BluetoothRepository(private val context: Context) {
     private val bluetoothManager: BluetoothManager? =
         context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
     private val bluetoothAdapter: BluetoothAdapter? get() = bluetoothManager?.adapter
+    private val locationManager: LocationManager? =
+        context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
 
     private val mainHandler = Handler(Looper.getMainLooper())
 
@@ -64,7 +68,12 @@ class BluetoothRepository(private val context: Context) {
     private val publishRunnable = object : Runnable {
         override fun run() {
             if (isDirty) {
-                _dispositivosEncontrados.value = dispositivosMap.values.sortedByDescending { it.rssi }
+                synchronized(dispositivosMap) {
+                    _dispositivosEncontrados.value = dispositivosMap.values.sortedWith(
+                        compareByDescending<DispositivoBluetooth> { it.isSafeBand }
+                            .thenByDescending { it.rssi }
+                    )
+                }
                 isDirty = false
             }
             if (isScanning) {
@@ -82,16 +91,27 @@ class BluetoothRepository(private val context: Context) {
         return bluetoothAdapter?.isEnabled == true
     }
 
+    fun isUbicacionHabilitada(): Boolean {
+        val isGpsEnabled = locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) ?: false
+        val isNetworkEnabled = locationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ?: false
+        return isGpsEnabled || isNetworkEnabled
+    }
+
     @SuppressLint("MissingPermission")
     fun iniciarEscaneoBle() {
         if (!isBluetoothHabilitado()) {
-            _estadoConexion.value = EstadoConexionBle.Error("El Bluetooth no está activado")
+            _estadoConexion.value = EstadoConexionBle.Error("El Bluetooth está desactivado. Por favor actívalo.")
+            return
+        }
+
+        if (!isUbicacionHabilitada()) {
+            _estadoConexion.value = EstadoConexionBle.Error("La ubicación (GPS) del teléfono está desactivada. Android la requiere para buscar dispositivos Bluetooth BLE.")
             return
         }
 
         val scanner = bluetoothAdapter?.bluetoothLeScanner
         if (scanner == null) {
-            _estadoConexion.value = EstadoConexionBle.Error("Escáner BLE no disponible")
+            _estadoConexion.value = EstadoConexionBle.Error("El escáner BLE no está disponible")
             return
         }
 
@@ -101,11 +121,16 @@ class BluetoothRepository(private val context: Context) {
         isScanning = true
         isDirty = false
 
-        try {
-            scanner.startScan(scanCallback)
-            Log.d(TAG, "Escaneo BLE iniciado")
+        // Configuración de escaneo activo agresivo para encontrar ESP32
+        val settings = ScanSettings.Builder()
+            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+            .setReportDelay(0)
+            .build()
 
-            // Iniciar bucle de publicación por intervalos y timeout de seguridad
+        try {
+            scanner.startScan(null, settings, scanCallback)
+            Log.d(TAG, "Escaneo BLE activo (LOW_LATENCY) iniciado")
+
             mainHandler.post(publishRunnable)
             mainHandler.postDelayed(stopScanRunnable, SCAN_PERIOD_MS)
 
@@ -125,8 +150,12 @@ class BluetoothRepository(private val context: Context) {
                 mainHandler.removeCallbacks(publishRunnable)
                 mainHandler.removeCallbacks(stopScanRunnable)
 
-                // Publicar última foto limpia de dispositivos encontrados
-                _dispositivosEncontrados.value = dispositivosMap.values.sortedByDescending { it.rssi }
+                synchronized(dispositivosMap) {
+                    _dispositivosEncontrados.value = dispositivosMap.values.sortedWith(
+                        compareByDescending<DispositivoBluetooth> { it.isSafeBand }
+                            .thenByDescending { it.rssi }
+                    )
+                }
 
                 if (_estadoConexion.value is EstadoConexionBle.Escaneando) {
                     _estadoConexion.value = EstadoConexionBle.Desconectado
@@ -142,12 +171,18 @@ class BluetoothRepository(private val context: Context) {
         @SuppressLint("MissingPermission")
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             val device = result?.device ?: return
-            val nombre = device.name ?: "SafeBand BLE (${device.address.takeLast(5)})"
-            val mac = device.address
+            val mac = device.address ?: return
             val rssi = result.rssi
+
+            // Extraer nombre desde BluetoothDevice o desde el payload del paquete GAP (scanRecord)
+            val scanRecordName = result.scanRecord?.deviceName
+            val rawName = device.name ?: scanRecordName ?: ""
+            val nombre = if (rawName.isNotBlank()) rawName else "Dispositivo BLE (${mac.takeLast(5)})"
+
             val isSafeBand = nombre.contains("SafeBand", ignoreCase = true) ||
                     nombre.contains("ESP32", ignoreCase = true) ||
-                    nombre.contains("Band", ignoreCase = true)
+                    nombre.contains("Band", ignoreCase = true) ||
+                    nombre.contains("Safe", ignoreCase = true)
 
             val item = DispositivoBluetooth(
                 nombre = nombre,
@@ -156,7 +191,6 @@ class BluetoothRepository(private val context: Context) {
                 isSafeBand = isSafeBand
             )
 
-            // Guardar en el mapa sin actualizar la UI inmediatamente
             synchronized(dispositivosMap) {
                 dispositivosMap[mac] = item
                 isDirty = true
@@ -244,7 +278,6 @@ class BluetoothRepository(private val context: Context) {
                 _estadoConexion.value = EstadoConexionBle.Conectado(dev)
                 Log.d(TAG, "Servicios descubiertos exitosamente. Conexión completa.")
 
-                // Suscribir a notificaciones de pulso/telemetría si existe la característica
                 val service = gatt.getService(SERVICE_UUID)
                 val charVitals = service?.getCharacteristic(VITAL_SIGNS_CHAR_UUID)
                 if (charVitals != null) {
