@@ -1,9 +1,10 @@
 package com.safestep.appband.fragments
 
 import android.Manifest
-import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,30 +15,30 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.safestep.appband.databinding.FragmentMapaBinding
 import com.safestep.appband.models.DeviceCoordinates
 import com.safestep.appband.viewmodels.MapaViewModel
 import kotlinx.coroutines.launch
+import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.CustomZoomButtonsController
+import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.util.Locale
 
 /**
- * Fragment de Ubicación en Tiempo Real del Dispositivo SafeBand y Teléfono con Google Maps SDK.
+ * Fragment de Ubicación en Tiempo Real del Dispositivo SafeBand con mapa HD (OsmDroid / OpenStreetMap).
  */
-class MapaFragment : Fragment(), OnMapReadyCallback {
+class MapaFragment : Fragment() {
 
     private var _binding: FragmentMapaBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: MapaViewModel by viewModels()
-    private var googleMap: GoogleMap? = null
     private var deviceMarker: Marker? = null
+    private var myLocationOverlay: MyLocationNewOverlay? = null
 
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -45,9 +46,16 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
         val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
                 permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
         if (granted) {
-            habilitarCapaUbicacionNativa()
+            habilitarUbicacionOverlay()
             viewModel.obtenerUbicacionActual()
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val ctx: Context = requireActivity().applicationContext
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
+        Configuration.getInstance().userAgentValue = requireActivity().packageName
     }
 
     override fun onCreateView(
@@ -62,12 +70,41 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.mapView.onCreate(savedInstanceState)
-        binding.mapView.getMapAsync(this)
-
+        configurarMapaOsm()
         verificarPermisosUbicacion()
         configurarListeners()
         observarEstado()
+    }
+
+    private fun configurarMapaOsm() {
+        binding.mapView.setTileSource(TileSourceFactory.MAPNIK)
+        binding.mapView.setMultiTouchControls(true)
+        binding.mapView.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+
+        val controller = binding.mapView.controller
+        controller.setZoom(17.5)
+
+        // Ubicación por defecto inicial (23.264864, -106.430832 Mazatlán)
+        val initialPoint = GeoPoint(23.264864, -106.430832)
+        controller.setCenter(initialPoint)
+
+        habilitarUbicacionOverlay()
+    }
+
+    private fun habilitarUbicacionOverlay() {
+        val fineLocation = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (fineLocation && _binding != null) {
+            if (myLocationOverlay == null) {
+                myLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), binding.mapView)
+                myLocationOverlay?.enableMyLocation()
+                myLocationOverlay?.enableFollowLocation()
+                binding.mapView.overlays.add(myLocationOverlay)
+            }
+        }
     }
 
     private fun verificarPermisosUbicacion() {
@@ -91,40 +128,11 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
     private fun configurarListeners() {
         binding.fabCenterMap.setOnClickListener {
             val coords = viewModel.currentLocation.value
-            if (coords != null && googleMap != null) {
-                val latLng = LatLng(coords.lat, coords.lng)
-                googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17f))
+            if (coords != null) {
+                val point = GeoPoint(coords.lat, coords.lng)
+                binding.mapView.controller.animateTo(point, 18.0, 1000L)
             } else {
                 viewModel.obtenerUbicacionActual()
-            }
-        }
-    }
-
-    override fun onMapReady(map: GoogleMap) {
-        googleMap = map
-        googleMap?.uiSettings?.isZoomControlsEnabled = false
-        googleMap?.uiSettings?.isCompassEnabled = true
-
-        habilitarCapaUbicacionNativa()
-
-        viewModel.currentLocation.value?.let { coords ->
-            actualizarMapa(coords)
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun habilitarCapaUbicacionNativa() {
-        val fineLocation = ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
-        if (fineLocation && googleMap != null) {
-            try {
-                googleMap?.isMyLocationEnabled = true
-                googleMap?.uiSettings?.isMyLocationButtonEnabled = false
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
         }
     }
@@ -150,24 +158,23 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
             coords.accuracy ?: 0f
         )
 
-        googleMap?.let { map ->
-            val latLng = LatLng(coords.lat, coords.lng)
+        val geoPoint = GeoPoint(coords.lat, coords.lng)
 
-            if (deviceMarker == null) {
-                val markerOptions = MarkerOptions()
-                    .position(latLng)
-                    .title("📍 SafeBand (Dispositivo Conectado)")
-                    .snippet("Ubicación exacta GPS: ${coords.lat}, ${coords.lng}")
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
-
-                deviceMarker = map.addMarker(markerOptions)
-            } else {
-                deviceMarker?.position = latLng
-                deviceMarker?.snippet = "Ubicación exacta GPS: ${coords.lat}, ${coords.lng}"
+        if (deviceMarker == null) {
+            deviceMarker = Marker(binding.mapView).apply {
+                position = geoPoint
+                title = "📍 SafeBand (Dispositivo Conectado)"
+                snippet = "GPS Lat: ${coords.lat}, Lng: ${coords.lng}"
+                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             }
-
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17f))
+            binding.mapView.overlays.add(deviceMarker)
+        } else {
+            deviceMarker?.position = geoPoint
+            deviceMarker?.snippet = "GPS Lat: ${coords.lat}, Lng: ${coords.lng}"
         }
+
+        binding.mapView.controller.animateTo(geoPoint, 17.5, 800L)
+        binding.mapView.invalidate()
     }
 
     override fun onResume() {
@@ -182,12 +189,6 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.mapView.onDestroy()
         _binding = null
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        binding.mapView.onLowMemory()
     }
 }

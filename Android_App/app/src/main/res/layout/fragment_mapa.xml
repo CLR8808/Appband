@@ -44,8 +44,8 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Google Map View -->
-    <com.google.android.gms.maps.MapView
+    <!-- Interactive Map View (OsmDroid - OpenStreetMap HD) -->
+    <org.osmdroid.views.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -101,7 +101,7 @@
                         android:textColor="@color/text_primary"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        tools:text="📍 Pulsera / SafeBand" />
+                        android:text="📍 SafeBand Conectada" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -147,7 +147,7 @@
                             android:textColor="@color/text_primary"
                             android:textSize="13sp"
                             android:textStyle="bold"
-                            tools:text="19.432608" />
+                            tools:text="23.264864" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -171,7 +171,7 @@
                             android:textColor="@color/text_primary"
                             android:textSize="13sp"
                             android:textStyle="bold"
-                            tools:text="-99.133209" />
+                            tools:text="-106.430832" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -194,7 +194,7 @@
                             android:textColor="@color/text_primary"
                             android:textSize="13sp"
                             android:textStyle="bold"
-                            tools:text="±12 m" />
+                            tools:text="±9 m" />
                     </RelativeLayout>
                 </LinearLayout>
 
