@@ -15,7 +15,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.TextInputEditText
 import com.safestep.appband.R
 import com.safestep.appband.models.DispositivoBluetooth
@@ -25,7 +24,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
- * Fragment ultra-optimizado para búsqueda, conexión real y modo simulación de prueba Bluetooth BLE.
+ * Fragment ultra-optimizado para búsqueda, conexión real y telemetría continua Bluetooth BLE con la pulsera SafeBand.
  */
 class BluetoothFragment : Fragment() {
 
@@ -37,7 +36,6 @@ class BluetoothFragment : Fragment() {
     private lateinit var btnScanBle: MaterialButton
     private lateinit var containerDevicesList: LinearLayout
     private lateinit var tvEmptyState: TextView
-    private lateinit var switchSimulacion: SwitchMaterial
 
     // Live Telemetry & Control Panel Views
     private lateinit var panelConnected: View
@@ -88,7 +86,6 @@ class BluetoothFragment : Fragment() {
         btnScanBle = view.findViewById(R.id.btnScanBle)
         containerDevicesList = view.findViewById(R.id.containerDevicesList)
         tvEmptyState = view.findViewById(R.id.tvEmptyState)
-        switchSimulacion = view.findViewById(R.id.switchSimulacion)
 
         // Panel de Telemetría
         panelConnected = view.findViewById(R.id.panelConnected)
@@ -108,13 +105,6 @@ class BluetoothFragment : Fragment() {
 
         btnScanBle.setOnClickListener {
             checkPermissionsAndScan()
-        }
-
-        switchSimulacion.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setModoSimulacion(isChecked)
-            if (isChecked) {
-                Toast.makeText(requireContext(), "🧪 Modo Simulación Activado. Puedes probar conectar a 'SafeBand ESP32 (SIMULADO)'", Toast.LENGTH_LONG).show()
-            }
         }
 
         // Send Wi-Fi credentials over BLE
@@ -153,11 +143,6 @@ class BluetoothFragment : Fragment() {
     }
 
     private fun checkPermissionsAndScan() {
-        if (viewModel.modoSimulacion.value) {
-            viewModel.iniciarEscaneo()
-            return
-        }
-
         val permissionsToRequest = mutableListOf<String>()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -213,7 +198,7 @@ class BluetoothFragment : Fragment() {
                         btnScanBle.setOnClickListener { viewModel.desconectar() }
 
                         panelConnected.visibility = View.VISIBLE
-                        Toast.makeText(requireContext(), "✅ Conexión BLE Establecida con ${state.dispositivo.nombre}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "✅ Conexión BLE Real Establecida con ${state.dispositivo.nombre}", Toast.LENGTH_LONG).show()
                     }
                     is BluetoothRepository.EstadoConexionBle.Error -> {
                         tvStatusTitle.text = "Estado: Error"
@@ -245,15 +230,6 @@ class BluetoothFragment : Fragment() {
                     if (telem.alertaActiva != null) {
                         Toast.makeText(requireContext(), telem.alertaActiva, Toast.LENGTH_LONG).show()
                     }
-                }
-            }
-        }
-
-        // Observe Modo Simulación
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.modoSimulacion.collectLatest { isSimulated ->
-                if (switchSimulacion.isChecked != isSimulated) {
-                    switchSimulacion.isChecked = isSimulated
                 }
             }
         }

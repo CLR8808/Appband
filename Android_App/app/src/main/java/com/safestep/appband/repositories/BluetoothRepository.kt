@@ -19,9 +19,9 @@ import org.json.JSONObject
 import java.util.UUID
 
 /**
- * Repositorio profesional de conectividad Bluetooth LE para la pulsera SafeBand / ESP32.
- * Incluye escaneo activo real BLE, conexión GATT real y un MODO SIMULACIÓN INTEGRADO para probar
- * toda la interfaz, gráficos de pulso y comandos sin necesidad de tener el ESP32 físico a la mano.
+ * Repositorio nativo de conectividad Bluetooth LE real con la pulsera SafeBand / ESP32.
+ * Maneja escaneo activo BLE LOW_LATENCY, parseo de bytes GAP raw, conexiones GATT (TRANSPORT_LE),
+ * suscripción CCCD (0x2902) y envío de comandos/Wi-Fi sobre BLE.
  */
 class BluetoothRepository(private val context: Context) {
 
@@ -67,34 +67,10 @@ class BluetoothRepository(private val context: Context) {
     private val _telemetria = MutableStateFlow(DatosTelemetriaBle())
     val telemetria: StateFlow<DatosTelemetriaBle> = _telemetria
 
-    // Modo simulación sin hardware físico
-    private val _modoSimulacion = MutableStateFlow(false)
-    val modoSimulacion: StateFlow<Boolean> = _modoSimulacion
-
     private var bluetoothGatt: BluetoothGatt? = null
     private var isScanning = false
     private var isDirty = false
     private val dispositivosMap = mutableMapOf<String, DispositivoBluetooth>()
-    private var simBpmCounter = 72
-
-    private val simRunnable = object : Runnable {
-        override fun run() {
-            if (_modoSimulacion.value && _estadoConexion.value is EstadoConexionBle.Conectado) {
-                simBpmCounter += (-2..3).random()
-                if (simBpmCounter < 60) simBpmCounter = 68
-                if (simBpmCounter > 120) simBpmCounter = 95
-
-                _pulsoActual.value = simBpmCounter
-                _telemetria.value = _telemetria.value.copy(
-                    pulsoBpm = simBpmCounter,
-                    bateriaPorcentaje = 92,
-                    ultimoMensaje = "BPM:$simBpmCounter (Simulación SafeBand)",
-                    timestampMs = System.currentTimeMillis()
-                )
-                mainHandler.postDelayed(this, 1200L)
-            }
-        }
-    }
 
     private val publishRunnable = object : Runnable {
         override fun run() {
@@ -118,51 +94,17 @@ class BluetoothRepository(private val context: Context) {
     }
 
     fun isBluetoothHabilitado(): Boolean {
-        return bluetoothAdapter?.isEnabled == true || _modoSimulacion.value
+        return bluetoothAdapter?.isEnabled == true
     }
 
     fun isUbicacionHabilitada(): Boolean {
         val isGpsEnabled = locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) ?: false
         val isNetworkEnabled = locationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ?: false
-        return isGpsEnabled || isNetworkEnabled || _modoSimulacion.value
-    }
-
-    fun setModoSimulacion(activado: Boolean) {
-        _modoSimulacion.value = activado
-        if (activado) {
-            val demoDevice = DispositivoBluetooth(
-                nombre = "SafeBand ESP32 (SIMULADO)",
-                macAddress = "30:AE:A4:77:88:99",
-                rssi = -42,
-                isSafeBand = true
-            )
-            dispositivosMap[demoDevice.macAddress] = demoDevice
-            _dispositivosEncontrados.value = listOf(demoDevice)
-        } else {
-            desconectar()
-            dispositivosMap.clear()
-            _dispositivosEncontrados.value = emptyList()
-        }
+        return isGpsEnabled || isNetworkEnabled
     }
 
     @SuppressLint("MissingPermission")
     fun iniciarEscaneoBle() {
-        if (_modoSimulacion.value) {
-            _estadoConexion.value = EstadoConexionBle.Escaneando
-            mainHandler.postDelayed({
-                val demoDevice = DispositivoBluetooth(
-                    nombre = "SafeBand ESP32 (SIMULADO)",
-                    macAddress = "30:AE:A4:77:88:99",
-                    rssi = -42,
-                    isSafeBand = true
-                )
-                dispositivosMap[demoDevice.macAddress] = demoDevice
-                _dispositivosEncontrados.value = listOf(demoDevice)
-                _estadoConexion.value = EstadoConexionBle.Desconectado
-            }, 1000)
-            return
-        }
-
         if (!isBluetoothHabilitado()) {
             _estadoConexion.value = EstadoConexionBle.Error("El Bluetooth está desactivado en el teléfono.")
             return
@@ -293,27 +235,6 @@ class BluetoothRepository(private val context: Context) {
     @SuppressLint("MissingPermission")
     fun conectarDispositivo(macAddress: String) {
         detenerEscaneoBle()
-
-        if (_modoSimulacion.value) {
-            val demo = dispositivosMap[macAddress] ?: DispositivoBluetooth("SafeBand ESP32 (SIMULADO)", macAddress, -42, true, true)
-            _estadoConexion.value = EstadoConexionBle.Conectando(demo.nombre)
-
-            mainHandler.postDelayed({
-                _estadoConexion.value = EstadoConexionBle.Conectado(demo, 3)
-                _telemetria.value = DatosTelemetriaBle(
-                    dispositivoNombre = demo.nombre,
-                    macAddress = demo.macAddress,
-                    conectado = true,
-                    pulsoBpm = 75,
-                    bateriaPorcentaje = 95,
-                    ultimoMensaje = "¡Conexión Simulado de Prueba Activa!",
-                    serviciosCount = 3
-                )
-                mainHandler.post(simRunnable)
-            }, 800)
-            return
-        }
-
         val device = bluetoothAdapter?.getRemoteDevice(macAddress)
         if (device == null) {
             _estadoConexion.value = EstadoConexionBle.Error("Dispositivo no encontrado ($macAddress)")
@@ -344,7 +265,6 @@ class BluetoothRepository(private val context: Context) {
     @SuppressLint("MissingPermission")
     fun desconectar() {
         try {
-            mainHandler.removeCallbacks(simRunnable)
             bluetoothGatt?.disconnect()
             bluetoothGatt?.close()
             bluetoothGatt = null
@@ -358,13 +278,6 @@ class BluetoothRepository(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     fun enviarComando(comando: String): Boolean {
-        if (_modoSimulacion.value) {
-            _telemetria.value = _telemetria.value.copy(
-                ultimoMensaje = "Comando enviado (Simulación): '$comando'"
-            )
-            return true
-        }
-
         val gatt = bluetoothGatt ?: return false
         val services = gatt.services ?: return false
 
