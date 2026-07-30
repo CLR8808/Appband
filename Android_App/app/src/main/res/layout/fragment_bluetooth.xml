@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Conexión Bluetooth BLE"
+                android:text="Conexión Bluetooth Clásico"
                 android:textColor="#263238"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -129,14 +129,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TELEMETRÍA EN TIEMPO REAL"
+                android:text="DATOS DEL SENSOR DHT11"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.08"
                 android:textColor="#78909C"
                 android:layout_marginBottom="10dp" />
 
-            <!-- Heart Rate BPM Display Card -->
+            <!-- Sensor Data Display Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -150,56 +150,122 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp"
-                    android:gravity="center">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="❤️ Pulso Cardíaco Actual"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#00BFA5"
-                        android:layout_marginBottom="8dp" />
+                    android:padding="20dp">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:baselineAligned="false">
 
-                        <TextView
-                            android:id="@+id/tvLiveBpm"
-                            android:layout_width="wrap_content"
+                        <!-- Temperatura -->
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="--"
-                            android:textSize="48sp"
-                            android:textStyle="bold"
-                            android:textColor="#263238" />
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🌡️ Temperatura"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="#00BFA5"
+                                android:layout_marginBottom="8dp" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:id="@+id/tvTemperature"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--"
+                                    android:textSize="32sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#263238" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text=" °C"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#00BFA5"
+                                    android:layout_marginStart="4dp" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <!-- Divisor -->
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="#E0E0E0"
+                            android:layout_marginHorizontal="10dp" />
+
+                        <!-- Humedad -->
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text=" BPM"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
-                            android:textColor="#00BFA5"
-                            android:layout_marginStart="6dp" />
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="💧 Humedad"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="#00BFA5"
+                                android:layout_marginBottom="8dp" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:id="@+id/tvHumidity"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--"
+                                    android:textSize="32sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#263238" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text=" %"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#00BFA5"
+                                    android:layout_marginStart="4dp" />
+                            </LinearLayout>
+                        </LinearLayout>
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/tvLastMessage"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Recibiendo paquetes de datos..."
+                        android:text="Recibiendo telemetría del sensor..."
                         android:textSize="12sp"
                         android:textColor="#78909C"
-                        android:layout_marginTop="6dp" />
+                        android:gravity="center"
+                        android:layout_marginTop="16dp" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Send Wi-Fi Config over BLE -->
+            <!-- Send Wi-Fi Config over Bluetooth -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -218,7 +284,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📶 Configurar Wi-Fi por Bluetooth BLE"
+                        android:text="📶 Configurar Wi-Fi por Bluetooth"
                         android:textSize="15sp"
                         android:textStyle="bold"
                         android:textColor="#263238"
@@ -262,7 +328,7 @@
                         android:id="@+id/btnSendBleWifi"
                         android:layout_width="match_parent"
                         android:layout_height="44dp"
-                        android:text="Enviar Wi-Fi a Pulsera por BLE"
+                        android:text="Enviar Wi-Fi a Pulsera"
                         android:textAllCaps="false"
                         android:textSize="13sp"
                         app:cornerRadius="10dp"
@@ -333,7 +399,7 @@
                 android:id="@+id/tvEmptyState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No se han encontrado dispositivos BLE aún.\nAsegúrate de que la pulsera esté encendida."
+                android:text="No se han encontrado dispositivos aún.\nAsegúrate de que la pulsera esté encendida y sea visible."
                 android:gravity="center"
                 android:padding="32dp"
                 android:textSize="14sp"

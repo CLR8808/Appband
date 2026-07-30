@@ -24,7 +24,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
- * Fragment ultra-optimizado para búsqueda, conexión real, telemetría continua y guardado local de la pulsera SafeBand.
+ * Fragment para búsqueda, conexión y telemetría usando Bluetooth Clásico (SPP).
+ * Actualizado para mostrar datos de sensor DHT11 (Temperatura y Humedad).
  */
 class BluetoothFragment : Fragment() {
 
@@ -40,7 +41,8 @@ class BluetoothFragment : Fragment() {
     // Live Telemetry & Control Panel Views
     private lateinit var panelConnected: View
     private lateinit var btnSaveAndContinue: MaterialButton
-    private lateinit var tvLiveBpm: TextView
+    private lateinit var tvTemperature: TextView
+    private lateinit var tvHumidity: TextView
     private lateinit var tvLastMessage: TextView
     private lateinit var etBleWifiSsid: TextInputEditText
     private lateinit var etBleWifiPass: TextInputEditText
@@ -93,7 +95,8 @@ class BluetoothFragment : Fragment() {
         // Panel de Telemetría
         panelConnected = view.findViewById(R.id.panelConnected)
         btnSaveAndContinue = view.findViewById(R.id.btnSaveAndContinue)
-        tvLiveBpm = view.findViewById(R.id.tvLiveBpm)
+        tvTemperature = view.findViewById(R.id.tvTemperature)
+        tvHumidity = view.findViewById(R.id.tvHumidity)
         tvLastMessage = view.findViewById(R.id.tvLastMessage)
         etBleWifiSsid = view.findViewById(R.id.etBleWifiSsid)
         etBleWifiPass = view.findViewById(R.id.etBleWifiPass)
@@ -111,48 +114,38 @@ class BluetoothFragment : Fragment() {
             checkPermissionsAndScan()
         }
 
-        // Save device and proceed to completion screen
         btnSaveAndContinue.setOnClickListener {
             val name = lastConnectedName.ifBlank { "SafeBand" }
             val mac = lastConnectedMac
             viewModel.guardarDispositivoConectado(name, mac) {
-                Toast.makeText(requireContext(), "✅ Dispositivo $name guardado en tu cuenta", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "✅ Dispositivo $name guardado", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.anadidaFragment)
             }
         }
 
-        // Send Wi-Fi credentials over BLE
         btnSendBleWifi.setOnClickListener {
             val ssid = etBleWifiSsid.text?.toString()?.trim() ?: ""
             val pass = etBleWifiPass.text?.toString()?.trim() ?: ""
 
             if (ssid.isBlank()) {
-                Toast.makeText(requireContext(), "Ingresa el nombre de tu red Wi-Fi (SSID)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Ingresa el nombre de la red", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             val sent = viewModel.enviarWifiConfig(ssid, pass)
             if (sent) {
-                Toast.makeText(requireContext(), "📶 Credenciales Wi-Fi enviadas a la pulsera por BLE", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "📶 Configuración enviada por Bluetooth", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(requireContext(), "Fallo al enviar credenciales. Verifica la conexión BLE.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Fallo al enviar. Verifica la conexión.", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Test Buzzer / Alarma
         btnTestBuzzer.setOnClickListener {
-            val sent = viewModel.enviarComando("BUZZER:1")
-            if (sent) {
-                Toast.makeText(requireContext(), "🔊 Comando de alarma enviado a la pulsera", Toast.LENGTH_SHORT).show()
-            }
+            viewModel.enviarComando("BUZZER:1\n")
         }
 
-        // Test Ping
         btnTestPing.setOnClickListener {
-            val sent = viewModel.enviarComando("PING")
-            if (sent) {
-                Toast.makeText(requireContext(), "📡 Ping enviado", Toast.LENGTH_SHORT).show()
-            }
+            viewModel.enviarComando("PING\n")
         }
     }
 
@@ -166,7 +159,15 @@ class BluetoothFragment : Fragment() {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.BLUETOOTH_CONNECT)
             }
+        } else {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.BLUETOOTH)
+            }
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.BLUETOOTH_ADMIN)
+            }
         }
+
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
         }
@@ -180,83 +181,71 @@ class BluetoothFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        // Observe Connection State
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.estadoConexion.collectLatest { state ->
                 when (state) {
-                    is BluetoothRepository.EstadoConexionBle.Desconectado -> {
+                    is BluetoothRepository.EstadoConexion.Desconectado -> {
                         tvStatusTitle.text = "Estado: Desconectado"
-                        tvStatusDetail.text = "Presiona 'Buscar Pulsera' para escanear."
+                        tvStatusDetail.text = "Busca tu pulsera vinculada o cercana."
                         btnScanBle.isEnabled = true
-                        btnScanBle.text = "🔍 Buscar Pulsera SafeBand"
+                        btnScanBle.text = "🔍 Buscar Pulsera"
                         panelConnected.visibility = View.GONE
                     }
-                    is BluetoothRepository.EstadoConexionBle.Escaneando -> {
-                        tvStatusTitle.text = "Estado: Buscando pulseras BLE..."
-                        tvStatusDetail.text = "Buscando dispositivos cercanos. Mantén la pulsera cerca."
+                    is BluetoothRepository.EstadoConexion.Escaneando -> {
+                        tvStatusTitle.text = "Estado: Buscando..."
+                        tvStatusDetail.text = "Asegúrate de que la pulsera sea visible."
                         btnScanBle.isEnabled = false
                         btnScanBle.text = "Buscando..."
                         panelConnected.visibility = View.GONE
                     }
-                    is BluetoothRepository.EstadoConexionBle.Conectando -> {
+                    is BluetoothRepository.EstadoConexion.Conectando -> {
                         tvStatusTitle.text = "Estado: Conectando..."
-                        tvStatusDetail.text = "Estableciendo conexión GATT con ${state.nombre}."
+                        tvStatusDetail.text = "Iniciando puerto serie con ${state.nombre}."
                         btnScanBle.isEnabled = false
                         panelConnected.visibility = View.GONE
                     }
-                    is BluetoothRepository.EstadoConexionBle.Conectado -> {
-                        lastConnectedName = state.dispositivo.nombre
-                        lastConnectedMac = state.dispositivo.macAddress
+                    is BluetoothRepository.EstadoConexion.Conectado -> {
+                        lastConnectedName = state.nombre
+                        lastConnectedMac = state.mac
 
-                        tvStatusTitle.text = "Estado: ¡Conectado por Bluetooth!"
-                        tvStatusDetail.text = "Conectado exitosamente a ${state.dispositivo.nombre} (${state.dispositivo.macAddress}) • ${state.serviciosCount} servicios GATT activos."
+                        tvStatusTitle.text = "Estado: ¡Conectado!"
+                        tvStatusDetail.text = "Conectado a ${state.nombre} (${state.mac})"
                         btnScanBle.isEnabled = true
-                        btnScanBle.text = "Desconectar Pulsera"
+                        btnScanBle.text = "Desconectar"
                         btnScanBle.setOnClickListener { viewModel.desconectar() }
 
                         panelConnected.visibility = View.VISIBLE
-
-                        // Auto-guardar en Storage local
                         viewModel.guardarDispositivoConectado(lastConnectedName, lastConnectedMac)
-
-                        Toast.makeText(requireContext(), "✅ Conexión BLE Establecida y Guardada: ${state.dispositivo.nombre}", Toast.LENGTH_SHORT).show()
                     }
-                    is BluetoothRepository.EstadoConexionBle.Error -> {
+                    is BluetoothRepository.EstadoConexion.Error -> {
                         tvStatusTitle.text = "Estado: Error"
                         tvStatusDetail.text = state.mensaje
                         btnScanBle.isEnabled = true
-                        btnScanBle.text = "Reintentar Escaneo"
+                        btnScanBle.text = "Reintentar"
                         panelConnected.visibility = View.GONE
                     }
                 }
             }
         }
 
-        // Observe Devices Found List
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.dispositivosEncontrados.collectLatest { devices ->
-                renderDevicesListOptimized(devices)
+                renderDevicesList(devices)
             }
         }
 
-        // Observe Real-Time Continuous Telemetry
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.telemetria.collectLatest { telem ->
                 if (telem.conectado) {
-                    if (telem.pulsoBpm != null) {
-                        tvLiveBpm.text = telem.pulsoBpm.toString()
-                    }
+                    tvTemperature.text = telem.temperatura?.toString() ?: "--"
+                    tvHumidity.text = telem.humedad?.toString() ?: "--"
                     tvLastMessage.text = telem.ultimoMensaje
-
-                    if (telem.alertaActiva != null) {
-                        Toast.makeText(requireContext(), telem.alertaActiva, Toast.LENGTH_LONG).show()
-                    }
                 }
             }
         }
     }
 
-    private fun renderDevicesListOptimized(devices: List<DispositivoBluetooth>) {
+    private fun renderDevicesList(devices: List<DispositivoBluetooth>) {
         if (devices.isEmpty()) {
             containerDevicesList.removeAllViews()
             deviceViewsMap.clear()
@@ -269,7 +258,6 @@ class BluetoothFragment : Fragment() {
         }
 
         val inflater = LayoutInflater.from(requireContext())
-
         devices.forEach { device ->
             val mac = device.macAddress
             val cardView = deviceViewsMap.getOrPut(mac) {
@@ -281,15 +269,8 @@ class BluetoothFragment : Fragment() {
                 }
             }
 
-            val tvName = cardView.findViewById<TextView>(R.id.tvDeviceName)
-            val tvMac = cardView.findViewById<TextView>(R.id.tvMacAddress)
-
-            tvName?.text = device.nombre
-            tvMac?.text = "MAC: $mac  •  Señal: ${device.rssi} dBm"
+            cardView.findViewById<TextView>(R.id.tvDeviceName)?.text = device.nombre
+            cardView.findViewById<TextView>(R.id.tvMacAddress)?.text = "MAC: $mac"
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
     }
 }

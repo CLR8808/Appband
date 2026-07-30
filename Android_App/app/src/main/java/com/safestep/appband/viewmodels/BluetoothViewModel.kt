@@ -14,16 +14,15 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
- * ViewModel nativo para conectividad Bluetooth BLE real, telemetría continua y persistencia local del dispositivo.
+ * ViewModel para conectividad Bluetooth Clásico, telemetría continua y persistencia local del dispositivo.
  */
 class BluetoothViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val bluetoothRepo = BluetoothRepository(application)
+    private val bluetoothRepo = BluetoothRepository.getInstance(application)
     private val storageRepo = StorageRepository(application)
 
     val dispositivosEncontrados: StateFlow<List<DispositivoBluetooth>> = bluetoothRepo.dispositivosEncontrados
-    val estadoConexion: StateFlow<BluetoothRepository.EstadoConexionBle> = bluetoothRepo.estadoConexion
-    val pulsoActual: StateFlow<Int?> = bluetoothRepo.pulsoActual
+    val estadoConexion: StateFlow<BluetoothRepository.EstadoConexion> = bluetoothRepo.estadoConexion
     val telemetria: StateFlow<DatosTelemetriaBle> = bluetoothRepo.telemetria
 
     val dispositivoGuardadoActivo: StateFlow<Dispositivo?> = storageRepo.dispositivoActivoFlow.stateIn(
@@ -33,7 +32,6 @@ class BluetoothViewModel(application: Application) : AndroidViewModel(applicatio
     )
 
     fun isBluetoothEnabled(): Boolean = bluetoothRepo.isBluetoothHabilitado()
-    fun isUbicacionEnabled(): Boolean = bluetoothRepo.isUbicacionHabilitada()
 
     fun iniciarEscaneo() {
         bluetoothRepo.iniciarEscaneoBle()
@@ -53,7 +51,7 @@ class BluetoothViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun guardarDispositivoConectado(nombre: String, macAddress: String, onGuardado: () -> Unit = {}) {
         viewModelScope.launch {
-            storageRepo.agregarDispositivoCompleto(nombre, macAddress, "BLE")
+            storageRepo.agregarDispositivoCompleto(nombre, macAddress, "Classic")
             onGuardado()
         }
     }
@@ -63,6 +61,6 @@ class BluetoothViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun enviarWifiConfig(ssid: String, pass: String): Boolean {
-        return bluetoothRepo.enviarConfiguracionWifiOverBle(ssid, pass)
+        return bluetoothRepo.enviarComando("WIFI:$ssid:$pass\n")
     }
 }

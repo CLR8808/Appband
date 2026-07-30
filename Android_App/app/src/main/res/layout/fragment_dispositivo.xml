@@ -3,17 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_main"
+    android:background="#F5F7FA"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="24dp"
-        android:paddingTop="54dp"
-        android:paddingEnd="24dp"
-        android:paddingBottom="40dp">
+        android:padding="24dp">
 
         <!-- Header -->
         <RelativeLayout
@@ -25,41 +22,37 @@
                 android:id="@+id/btnBack"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_alignParentStart="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Atrás"
                 android:src="@drawable/ic_chevron_left"
-                app:tint="@color/text_primary" />
+                app:tint="#263238" />
 
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Mi SafeBand V1"
-                android:textColor="@color/text_primary"
-                android:textSize="22sp"
+                android:text="Estado de SafeBand"
+                android:textColor="#263238"
+                android:textSize="20sp"
                 android:textStyle="bold" />
         </RelativeLayout>
 
-        <!-- Reloj Image -->
+        <!-- Device Image -->
         <ImageView
-            android:layout_width="220dp"
-            android:layout_height="220dp"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="28dp"
-            android:contentDescription="Reloj"
-            android:scaleType="fitCenter"
-            android:src="@drawable/reloj" />
+            android:src="@drawable/reloj"
+            android:layout_marginBottom="24dp" />
 
-        <!-- Info Box Card -->
-        <androidx.cardview.widget.CardView
+        <!-- Sensor Data Card -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            app:cardBackgroundColor="@color/card_bg"
             app:cardCornerRadius="20dp"
-            app:cardElevation="4dp">
+            app:cardElevation="4dp"
+            app:strokeWidth="0dp"
+            android:layout_marginBottom="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -67,154 +60,106 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <!-- Row 1: Batería & Estado -->
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="horizontal">
+                    android:text="Lecturas del Sensor DHT11"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#78909C"
+                    android:layout_marginBottom="16dp" />
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="10dp"
-                            android:contentDescription="Batería"
-                            android:src="@drawable/ic_mail"
-                            app:tint="@color/primary_cyan" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Batería\n85%"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <View
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
-                            android:layout_marginEnd="10dp"
-                            android:background="@drawable/bg_status_dot_active" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Activa"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@color/divider_color" />
-
-                <!-- Row 2: Conexión & Incidentes -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
+                    <!-- Temp -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="10dp"
-                            android:contentDescription="Wi-Fi"
-                            android:src="@drawable/ic_mail"
-                            app:tint="@color/success_green" />
-
+                        android:gravity="center"
+                        android:orientation="vertical">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Buena conexión"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
+                            android:text="Temperatura"
+                            android:textSize="13sp"
+                            android:textColor="#546E7A" />
+                        <TextView
+                            android:id="@+id/tvMainTemp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-- °C"
+                            android:textSize="28sp"
+                            android:textStyle="bold"
+                            android:textColor="#00BFA5" />
                     </LinearLayout>
 
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#E0E0E0" />
+
+                    <!-- Hum -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="10dp"
-                            android:contentDescription="Sin incidentes"
-                            android:src="@drawable/ic_checkmark_circle"
-                            app:tint="@color/success_green" />
-
+                        android:gravity="center"
+                        android:orientation="vertical">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Sin incidentes"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
+                            android:text="Humedad"
+                            android:textSize="13sp"
+                            android:textColor="#546E7A" />
+                        <TextView
+                            android:id="@+id/tvMainHum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-- %"
+                            android:textSize="28sp"
+                            android:textStyle="bold"
+                            android:textColor="#00BFA5" />
                     </LinearLayout>
-
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvConnectionStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Buscando conexión..."
+                    android:textSize="11sp"
+                    android:gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:textColor="#90A4AE" />
 
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-        <!-- Primary Button Eventos -->
+        <!-- Buttons -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEventos"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/bg_primary_button"
-            android:text="Eventos"
-            android:textColor="@color/white"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            app:backgroundTint="@null"
+            android:text="Ver Historial de Eventos"
+            android:textAllCaps="false"
             app:cornerRadius="14dp"
-            app:elevation="6dp" />
+            android:layout_marginBottom="12dp"
+            app:backgroundTint="#00BFA5" />
 
-        <!-- Secondary Button Configuración -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnConfiguracion"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Configuración"
-            android:textColor="@color/text_primary"
-            android:textSize="17sp"
-            android:textStyle="bold"
+            android:text="Configuración del Dispositivo"
+            android:textAllCaps="false"
             app:cornerRadius="14dp"
-            app:strokeColor="@color/divider_color" />
+            app:strokeColor="#B0BEC5"
+            android:textColor="#263238" />
 
     </LinearLayout>
-
 </androidx.core.widget.NestedScrollView>
