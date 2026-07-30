@@ -67,6 +67,9 @@ class BluetoothRepository(private val context: Context) {
     private val _estadoConexion = MutableStateFlow<EstadoConexionBle>(EstadoConexionBle.Desconectado)
     val estadoConexion: StateFlow<EstadoConexionBle> = _estadoConexion
 
+    private val _pulsoActual = MutableStateFlow<Int?>(null)
+    val pulsoActual: StateFlow<Int?> = _pulsoActual
+
     // Telemetría continua en tiempo real recibida por BLE
     private val _telemetria = MutableStateFlow(DatosTelemetriaBle())
     val telemetria: StateFlow<DatosTelemetriaBle> = _telemetria
