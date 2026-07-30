@@ -11,15 +11,17 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import com.safestep.appband.models.DatosTelemetriaBle
 import com.safestep.appband.models.DispositivoBluetooth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.json.JSONObject
 import java.util.UUID
 
 /**
- * Repositorio profesional para la gestión de conectividad Bluetooth LE real con la pulsera SafeBand / ESP32.
- * Incluye parseador de bytes AD raw (Complete Local Name 0x09), soporte TRANSPORT_LE para evitar error 133,
- * y lectura de servicios GATT reales.
+ * Repositorio profesional de conectividad Bluetooth LE para la pulsera SafeBand / ESP32.
+ * Habilita suscripción real CCCD (descriptor 0x2902), telemetría continua en tiempo real,
+ * parseo de JSON/Key-Value/HeartRate profile y envío interactivo de comandos BLE.
  */
 class BluetoothRepository(private val context: Context) {
 
@@ -28,14 +30,17 @@ class BluetoothRepository(private val context: Context) {
         private const val SCAN_PERIOD_MS = 15000L
         private const val PUBLISH_INTERVAL_MS = 500L
 
-        // UUIDs estándar de servicio y características para SafeBand / ESP32 BLE
+        // Descriptor CCCD estándar exigido por Android/BLE para activar NOTIFY/INDICATE en ESP32
+        val CCCD_DESCRIPTOR_UUID: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
+
+        // UUIDs estándar de servicio y características para SafeBand / ESP32
         val SERVICE_UUID: UUID = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb")
         val WIFI_CONFIG_CHAR_UUID: UUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
         val VITAL_SIGNS_CHAR_UUID: UUID = UUID.fromString("0000ffe2-0000-1000-8000-00805f9b34fb")
 
-        // Generic Access Service & Device Name Characteristic
-        val GENERIC_ACCESS_SERVICE_UUID: UUID = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb")
-        val DEVICE_NAME_CHAR_UUID: UUID = UUID.fromString("00002a00-0000-1000-8000-00805f9b34fb")
+        // Standard Heart Rate Service (0x180D) and Measurement (0x2A37)
+        val HEART_RATE_SERVICE_UUID: UUID = UUID.fromString("0000180d-0000-1000-8000-00805f9b34fb")
+        val HEART_RATE_MEASUREMENT_CHAR_UUID: UUID = UUID.fromString("00002a37-0000-1000-8000-00805f9b34fb")
     }
 
     private val bluetoothManager: BluetoothManager? =
@@ -62,9 +67,9 @@ class BluetoothRepository(private val context: Context) {
     private val _estadoConexion = MutableStateFlow<EstadoConexionBle>(EstadoConexionBle.Desconectado)
     val estadoConexion: StateFlow<EstadoConexionBle> = _estadoConexion
 
-    // Pulso actual recibido por BLE
-    private val _pulsoActual = MutableStateFlow<Int?>(null)
-    val pulsoActual: StateFlow<Int?> = _pulsoActual
+    // Telemetría continua en tiempo real recibida por BLE
+    private val _telemetria = MutableStateFlow(DatosTelemetriaBle())
+    val telemetria: StateFlow<DatosTelemetriaBle> = _telemetria
 
     private var bluetoothGatt: BluetoothGatt? = null
     private var isScanning = false
@@ -105,12 +110,12 @@ class BluetoothRepository(private val context: Context) {
     @SuppressLint("MissingPermission")
     fun iniciarEscaneoBle() {
         if (!isBluetoothHabilitado()) {
-            _estadoConexion.value = EstadoConexionBle.Error("El Bluetooth está desactivado. Por favor actívalo.")
+            _estadoConexion.value = EstadoConexionBle.Error("El Bluetooth está desactivado en el teléfono.")
             return
         }
 
         if (!isUbicacionHabilitada()) {
-            _estadoConexion.value = EstadoConexionBle.Error("Activa la Ubicación (GPS) de tu teléfono. Android la exige para conectar a dispositivos BLE.")
+            _estadoConexion.value = EstadoConexionBle.Error("Activa la Ubicación (GPS). Android la exige para conectar a dispositivos BLE.")
             return
         }
 
@@ -126,7 +131,6 @@ class BluetoothRepository(private val context: Context) {
         isScanning = true
         isDirty = false
 
-        // Escaneo activo LOW_LATENCY
         val settings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
             .setReportDelay(0)
@@ -134,7 +138,7 @@ class BluetoothRepository(private val context: Context) {
 
         try {
             scanner.startScan(null, settings, scanCallback)
-            Log.d(TAG, "Escaneo BLE activo iniciado")
+            Log.d(TAG, "Escaneo BLE iniciado")
 
             mainHandler.post(publishRunnable)
             mainHandler.postDelayed(stopScanRunnable, SCAN_PERIOD_MS)
@@ -172,9 +176,6 @@ class BluetoothRepository(private val context: Context) {
         }
     }
 
-    /**
-     * Extrae el nombre del dispositivo leyendo los bytes crudos GAP (Complete / Shortened Local Name: 0x09, 0x08).
-     */
     private fun parseBleLocalName(bytes: ByteArray?): String? {
         if (bytes == null) return null
         var index = 0
@@ -184,7 +185,6 @@ class BluetoothRepository(private val context: Context) {
             if (index + length >= bytes.size) break
 
             val type = bytes[index + 1].toInt() and 0xFF
-            // 0x09: Complete Local Name, 0x08: Shortened Local Name
             if (type == 0x09 || type == 0x08) {
                 val nameBytes = bytes.copyOfRange(index + 2, index + 1 + length)
                 val name = String(nameBytes, Charsets.UTF_8).trim()
@@ -202,11 +202,8 @@ class BluetoothRepository(private val context: Context) {
             val mac = device.address ?: return
             val rssi = result.rssi
 
-            // 1. Nombre de la pila Bluetooth nativa de Android
             val devName = device.name
-            // 2. Nombre del ScanRecord parsed por Android
             val scanRecordName = result.scanRecord?.deviceName
-            // 3. Parseo directo de bytes crudos GAP (0x09 Complete Local Name)
             val rawBytesName = parseBleLocalName(result.scanRecord?.bytes)
 
             val rawName = devName ?: scanRecordName ?: rawBytesName ?: ""
@@ -248,23 +245,21 @@ class BluetoothRepository(private val context: Context) {
             return
         }
 
-        val nombre = dispositivosMap[macAddress]?.nombre ?: "Dispositivo BLE"
+        val nombre = dispositivosMap[macAddress]?.nombre ?: "SafeBand"
         _estadoConexion.value = EstadoConexionBle.Conectando(nombre)
 
         try {
-            // Desconectar cliente GATT previo si existía
             bluetoothGatt?.disconnect()
             bluetoothGatt?.close()
             bluetoothGatt = null
 
-            // Usar TRANSPORT_LE explícitamente en Android M+ (evita error 133 / falla de conexión)
             bluetoothGatt = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 device.connectGatt(context, false, gattCallback, BluetoothDevice.TRANSPORT_LE)
             } else {
                 device.connectGatt(context, false, gattCallback)
             }
 
-            Log.d(TAG, "Conectando GATT (TRANSPORT_LE) a $macAddress ($nombre)")
+            Log.d(TAG, "Iniciando conexión GATT REAL a $macAddress ($nombre)")
         } catch (e: Exception) {
             Log.e(TAG, "Error al conectar GATT: ${e.message}")
             _estadoConexion.value = EstadoConexionBle.Error("Error de conexión: ${e.message}")
@@ -278,7 +273,7 @@ class BluetoothRepository(private val context: Context) {
             bluetoothGatt?.close()
             bluetoothGatt = null
             _estadoConexion.value = EstadoConexionBle.Desconectado
-            _pulsoActual.value = null
+            _telemetria.value = DatosTelemetriaBle(conectado = false)
             Log.d(TAG, "Desconectado de Bluetooth BLE")
         } catch (e: Exception) {
             Log.e(TAG, "Error al desconectar: ${e.message}")
@@ -286,40 +281,57 @@ class BluetoothRepository(private val context: Context) {
     }
 
     @SuppressLint("MissingPermission")
-    fun enviarConfiguracionWifiOverBle(ssid: String, pass: String): Boolean {
+    fun enviarComando(comando: String): Boolean {
         val gatt = bluetoothGatt ?: return false
-        val service = gatt.getService(SERVICE_UUID)
-            ?: gatt.services.firstOrNull() // Fallback al primer servicio writable
-            ?: return false
+        val services = gatt.services ?: return false
 
-        val characteristic = service.getCharacteristic(WIFI_CONFIG_CHAR_UUID)
-            ?: service.characteristics.firstOrNull()
-            ?: return false
+        // Buscar característica con propiedad WRITE
+        var targetChar: BluetoothGattCharacteristic? = null
+        for (service in services) {
+            for (char in service.characteristics) {
+                val props = char.properties
+                if ((props and BluetoothGattCharacteristic.PROPERTY_WRITE != 0) ||
+                    (props and BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE != 0)) {
+                    targetChar = char
+                    break
+                }
+            }
+            if (targetChar != null) break
+        }
 
-        val payload = "WIFI:$ssid:$pass"
-        characteristic.value = payload.toByteArray(Charsets.UTF_8)
-        return gatt.writeCharacteristic(characteristic)
+        if (targetChar == null) {
+            Log.e(TAG, "No se encontró característica GATT con permiso de escritura")
+            return false
+        }
+
+        targetChar.value = comando.toByteArray(Charsets.UTF_8)
+        val success = gatt.writeCharacteristic(targetChar)
+        Log.d(TAG, "Envío de comando BLE '$comando': $success")
+        return success
+    }
+
+    fun enviarConfiguracionWifiOverBle(ssid: String, pass: String): Boolean {
+        return enviarComando("WIFI:$ssid:$pass")
     }
 
     private val gattCallback = object : BluetoothGattCallback() {
         @SuppressLint("MissingPermission")
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
             if (status != BluetoothGatt.GATT_SUCCESS) {
-                Log.e(TAG, "Fallo en estado de conexión GATT (código $status)")
-                _estadoConexion.value = EstadoConexionBle.Error("Fallo de conexión GATT (código $status). Reintenta.")
+                Log.e(TAG, "Error de estado de conexión GATT (código $status)")
+                _estadoConexion.value = EstadoConexionBle.Error("Error de conexión GATT (código $status). Reintenta.")
                 try { gatt?.close() } catch (_: Exception) {}
                 bluetoothGatt = null
                 return
             }
 
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                Log.d(TAG, "GATT Conectado exitosamente. Descubriendo servicios...")
-                mainHandler.postDelayed({
-                    gatt?.discoverServices()
-                }, 300) // 300ms de retraso estándar para estabilidad GATT en Android
+                Log.d(TAG, "GATT Conectado. Descubriendo servicios...")
+                mainHandler.postDelayed({ gatt?.discoverServices() }, 350)
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.d(TAG, "GATT Desconectado")
                 _estadoConexion.value = EstadoConexionBle.Desconectado
+                _telemetria.value = _telemetria.value.copy(conectado = false)
                 try { gatt?.close() } catch (_: Exception) {}
                 bluetoothGatt = null
             }
@@ -330,38 +342,121 @@ class BluetoothRepository(private val context: Context) {
             if (status == BluetoothGatt.GATT_SUCCESS && gatt != null) {
                 val numServicios = gatt.services?.size ?: 0
                 val realName = gatt.device.name ?: "SafeBand BLE"
+                val mac = gatt.device.address
 
                 val dev = DispositivoBluetooth(
                     nombre = realName,
-                    macAddress = gatt.device.address,
+                    macAddress = mac,
                     conectado = true,
                     isSafeBand = true
                 )
 
                 _estadoConexion.value = EstadoConexionBle.Conectado(dev, numServicios)
+                _telemetria.value = _telemetria.value.copy(
+                    dispositivoNombre = realName,
+                    macAddress = mac,
+                    conectado = true,
+                    serviciosCount = numServicios,
+                    ultimoMensaje = "¡Conexión BLE 100% activa! Recibiendo telemetría..."
+                )
+
                 Log.d(TAG, "Conexión GATT 100% Real Establecida. Descubiertos $numServicios servicios.")
 
-                // Suscribir a notificaciones de pulso si la característica existe
-                val service = gatt.getService(SERVICE_UUID)
-                val charVitals = service?.getCharacteristic(VITAL_SIGNS_CHAR_UUID)
-                if (charVitals != null) {
-                    gatt.setCharacteristicNotification(charVitals, true)
+                // Suscribirse a TODAS las características NOTIFY/INDICATE en el ESP32 con descriptor CCCD 0x2902
+                for (service in gatt.services) {
+                    for (char in service.characteristics) {
+                        val props = char.properties
+                        if ((props and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0) ||
+                            (props and BluetoothGattCharacteristic.PROPERTY_INDICATE != 0)) {
+
+                            gatt.setCharacteristicNotification(char, true)
+
+                            val descriptor = char.getDescriptor(CCCD_DESCRIPTOR_UUID)
+                            if (descriptor != null) {
+                                descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                                gatt.writeDescriptor(descriptor)
+                                Log.d(TAG, "Descriptor CCCD (0x2902) activado para ${char.uuid}")
+                            }
+                        }
+                    }
                 }
             } else {
                 Log.e(TAG, "Fallo al descubrir servicios GATT ($status)")
-                _estadoConexion.value = EstadoConexionBle.Error("Conectado pero falló la lectura de servicios ($status)")
+                _estadoConexion.value = EstadoConexionBle.Error("Conectado pero falló lectura de servicios ($status)")
             }
         }
 
         override fun onCharacteristicChanged(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?) {
-            if (characteristic?.uuid == VITAL_SIGNS_CHAR_UUID) {
-                val data = characteristic.value?.toString(Charsets.UTF_8) ?: return
-                val bpm = data.replace("BPM:", "").trim().toIntOrNull()
-                if (bpm != null) {
-                    _pulsoActual.value = bpm
-                    Log.d(TAG, "BPM recibido por BLE: $bpm")
-                }
+            val bytes = characteristic?.value ?: return
+            val payloadText = bytes.toString(Charsets.UTF_8).trim()
+            Log.d(TAG, "Datos BLE recibidos desde ${characteristic.uuid}: $payloadText")
+
+            procesarPayloadBle(bytes, payloadText)
+        }
+
+        override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                val bytes = characteristic?.value ?: return
+                val payloadText = bytes.toString(Charsets.UTF_8).trim()
+                procesarPayloadBle(bytes, payloadText)
             }
         }
+    }
+
+    private fun procesarPayloadBle(bytes: ByteArray, textPayload: String) {
+        var bpmEncontrado: Int? = null
+        var batEncontrado: Int? = null
+        var alerta: String? = null
+
+        // 1. Intentar parsear como JSON
+        try {
+            if (textPayload.startsWith("{") && textPayload.endsWith("}")) {
+                val json = JSONObject(textPayload)
+                if (json.has("bpm")) bpmEncontrado = json.getInt("bpm")
+                if (json.has("pulse")) bpmEncontrado = json.getInt("pulse")
+                if (json.has("bateria")) batEncontrado = json.getInt("bateria")
+                if (json.has("battery")) batEncontrado = json.getInt("battery")
+                if (json.has("alerta")) alerta = json.getString("alerta")
+            }
+        } catch (_: Exception) {}
+
+        // 2. Parsear como cadenas tipo "BPM:78", "BAT:90", "FALL_ALERT"
+        if (bpmEncontrado == null && textPayload.contains("BPM", ignoreCase = true)) {
+            bpmEncontrado = textPayload.replace("BPM:", "").replace("BPM", "").trim().toIntOrNull()
+        }
+        if (bpmEncontrado == null && textPayload.toIntOrNull() != null) {
+            bpmEncontrado = textPayload.toInt()
+        }
+
+        // Standard Bluetooth SIG Heart Rate measurement format (Flags byte + UInt8 / UInt16)
+        if (bpmEncontrado == null && bytes.size >= 2) {
+            val flags = bytes[0].toInt()
+            val is16Bit = (flags and 0x01) != 0
+            bpmEncontrado = if (is16Bit && bytes.size >= 3) {
+                (bytes[1].toInt() and 0xFF) or ((bytes[2].toInt() and 0xFF) shl 8)
+            } else {
+                bytes[1].toInt() and 0xFF
+            }
+            if (bpmEncontrado <= 0 || bpmEncontrado > 250) bpmEncontrado = null
+        }
+
+        if (textPayload.contains("CAIDA", ignoreCase = true) || textPayload.contains("FALL", ignoreCase = true)) {
+            alerta = "⚠️ ¡Caída Detectada!"
+        } else if (textPayload.contains("SOS", ignoreCase = true) || textPayload.contains("EMERGENCIA", ignoreCase = true)) {
+            alerta = "🚨 ¡Alerta de Emergencia SOS!"
+        }
+
+        if (bpmEncontrado != null) {
+            _pulsoActual.value = bpmEncontrado
+        }
+
+        val actual = _telemetria.value
+        _telemetria.value = actual.copy(
+            pulsoBpm = bpmEncontrado ?: actual.pulsoBpm,
+            bateriaPorcentaje = batEncontrado ?: actual.bateriaPorcentaje,
+            alertaActiva = alerta ?: actual.alertaActiva,
+            ultimoMensaje = textPayload.ifBlank { "Datos recibidos (${bytes.size} bytes)" },
+            timestampMs = System.currentTimeMillis()
+        )
     }
 }

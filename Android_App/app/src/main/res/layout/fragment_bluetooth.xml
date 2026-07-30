@@ -1,118 +1,312 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F7FA"
-    android:orientation="vertical"
-    android:padding="20dp">
+    android:fillViewport="true">
 
-    <!-- Header -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp">
+        android:orientation="vertical"
+        android:padding="20dp">
 
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Atrás"
-            android:src="@drawable/ic_chevron_left"
-            app:tint="#263238" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Conexión Bluetooth BLE"
-            android:textColor="#263238"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
-
-    <!-- Bluetooth Status Card -->
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="3dp"
-        app:strokeWidth="0dp"
-        android:layout_marginBottom="20dp">
-
-        <LinearLayout
+        <!-- Header -->
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:layout_marginBottom="20dp">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Atrás"
+                android:src="@drawable/ic_chevron_left"
+                app:tint="#263238" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Conexión Bluetooth BLE"
+                android:textColor="#263238"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!-- Bluetooth Status Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp"
+            app:strokeWidth="0dp"
+            android:layout_marginBottom="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="8dp">
+                android:orientation="vertical"
+                android:padding="20dp">
 
-                <ImageView
-                    android:id="@+id/ivStatusDot"
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:src="@drawable/bg_status_dot_active"
-                    android:layout_marginEnd="10dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <ImageView
+                        android:id="@+id/ivStatusDot"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/bg_status_dot_active"
+                        android:layout_marginEnd="10dp" />
+
+                    <TextView
+                        android:id="@+id/tvStatusTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Estado: Desconectado"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#263238" />
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/tvStatusTitle"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvStatusDetail"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Estado: Desconectado"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="#263238" />
+                    android:text="Presiona 'Buscar Pulsera' para iniciar el escaneo Bluetooth de la SafeBand."
+                    android:textSize="13sp"
+                    android:textColor="#78909C"
+                    android:layout_marginBottom="16dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnScanBle"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="🔍 Buscar Pulsera SafeBand"
+                    android:textAllCaps="false"
+                    android:textSize="15sp"
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="#00BFA5"
+                    android:textColor="#FFFFFF" />
+
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- LIVE TELEMETRY & CONTROL PANEL (Visible when Connected) -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <LinearLayout
+            android:id="@+id/panelConnected"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginBottom="20dp">
 
             <TextView
-                android:id="@+id/tvStatusDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TELEMETRÍA EN TIEMPO REAL"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:textColor="#78909C"
+                android:layout_marginBottom="10dp" />
+
+            <!-- Heart Rate BPM Display Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Presiona 'Buscar Pulsera' para iniciar el escaneo Bluetooth de la SafeBand."
-                android:textSize="13sp"
-                android:textColor="#78909C"
-                android:layout_marginBottom="16dp" />
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#00BFA5"
+                android:layout_marginBottom="14dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnScanBle"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="❤️ Pulso Cardíaco Actual"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#00BFA5"
+                        android:layout_marginBottom="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tvLiveBpm"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="75"
+                            android:textSize="48sp"
+                            android:textStyle="bold"
+                            android:textColor="#263238" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" BPM"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="#00BFA5"
+                            android:layout_marginStart="6dp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvLastMessage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Recibiendo paquetes de datos..."
+                        android:textSize="12sp"
+                        android:textColor="#78909C"
+                        android:layout_marginTop="6dp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Send Wi-Fi Config over BLE -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="🔍 Buscar Pulsera SafeBand"
-                android:textAllCaps="false"
-                android:textSize="15sp"
-                app:cornerRadius="12dp"
-                app:backgroundTint="#00BFA5"
-                android:textColor="#FFFFFF" />
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E0E0E0"
+                android:layout_marginBottom="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📶 Configurar Wi-Fi por Bluetooth BLE"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="#263238"
+                        android:layout_marginBottom="10dp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Nombre de Red Wi-Fi (SSID)"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        app:boxCornerRadiusTopStart="10dp"
+                        app:boxCornerRadiusTopEnd="10dp"
+                        app:boxCornerRadiusBottomStart="10dp"
+                        app:boxCornerRadiusBottomEnd="10dp"
+                        android:layout_marginBottom="8dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etBleWifiSsid"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Contraseña Wi-Fi"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        app:boxCornerRadiusTopStart="10dp"
+                        app:boxCornerRadiusTopEnd="10dp"
+                        app:boxCornerRadiusBottomStart="10dp"
+                        app:boxCornerRadiusBottomEnd="10dp"
+                        app:passwordToggleEnabled="true"
+                        android:layout_marginBottom="12dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etBleWifiPass"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPassword" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSendBleWifi"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:text="Enviar Wi-Fi a Pulsera por BLE"
+                        android:textAllCaps="false"
+                        android:textSize="13sp"
+                        app:cornerRadius="10dp"
+                        app:backgroundTint="#00BFA5"
+                        android:textColor="#FFFFFF" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Send Test Commands -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTestBuzzer"
+                    android:layout_width="0dp"
+                    android:layout_height="42dp"
+                    android:layout_weight="1"
+                    android:text="🔊 Alarma / Buzzer"
+                    android:textAllCaps="false"
+                    android:textSize="12sp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    app:strokeColor="#FF9800"
+                    android:textColor="#FF9800"
+                    app:cornerRadius="10dp"
+                    android:layout_marginEnd="6dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTestPing"
+                    android:layout_width="0dp"
+                    android:layout_height="42dp"
+                    android:layout_weight="1"
+                    android:text="📡 Ping Estado"
+                    android:textAllCaps="false"
+                    android:textSize="12sp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    app:strokeColor="#00BFA5"
+                    android:textColor="#00BFA5"
+                    app:cornerRadius="10dp"
+                    android:layout_marginStart="6dp" />
+            </LinearLayout>
 
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
 
-    <!-- Dispositivos Encontrados Header -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="DISPOSITIVOS CERCANOS DETECTADOS"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:letterSpacing="0.08"
-        android:textColor="#78909C"
-        android:layout_marginBottom="12dp" />
+        <!-- Dispositivos Encontrados Header -->
+        <TextView
+            android:id="@+id/tvDevicesHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DISPOSITIVOS CERCANOS DETECTADOS"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:textColor="#78909C"
+            android:layout_marginBottom="12dp" />
 
-    <!-- Container for list of devices -->
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true">
-
+        <!-- Container for list of devices -->
         <LinearLayout
             android:id="@+id/containerDevicesList"
             android:layout_width="match_parent"
@@ -131,6 +325,6 @@
                 android:textColor="#B0BEC5" />
 
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

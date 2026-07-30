@@ -2,12 +2,13 @@ package com.safestep.appband.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.safestep.appband.models.DatosTelemetriaBle
 import com.safestep.appband.models.DispositivoBluetooth
 import com.safestep.appband.repositories.BluetoothRepository
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * ViewModel para la pantalla / fragment de conectividad Bluetooth.
+ * ViewModel para la pantalla / fragment de conectividad Bluetooth y telemetría continua.
  */
 class BluetoothViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -16,8 +17,10 @@ class BluetoothViewModel(application: Application) : AndroidViewModel(applicatio
     val dispositivosEncontrados: StateFlow<List<DispositivoBluetooth>> = bluetoothRepo.dispositivosEncontrados
     val estadoConexion: StateFlow<BluetoothRepository.EstadoConexionBle> = bluetoothRepo.estadoConexion
     val pulsoActual: StateFlow<Int?> = bluetoothRepo.pulsoActual
+    val telemetria: StateFlow<DatosTelemetriaBle> = bluetoothRepo.telemetria
 
     fun isBluetoothEnabled(): Boolean = bluetoothRepo.isBluetoothHabilitado()
+    fun isUbicacionEnabled(): Boolean = bluetoothRepo.isUbicacionHabilitada()
 
     fun iniciarEscaneo() {
         bluetoothRepo.iniciarEscaneoBle()
@@ -33,6 +36,10 @@ class BluetoothViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun desconectar() {
         bluetoothRepo.desconectar()
+    }
+
+    fun enviarComando(comando: String): Boolean {
+        return bluetoothRepo.enviarComando(comando)
     }
 
     fun enviarWifiConfig(ssid: String, pass: String): Boolean {
