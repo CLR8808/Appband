@@ -16,7 +16,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="16dp">
 
             <ImageButton
                 android:id="@+id/btnBack"
@@ -37,6 +37,53 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
         </RelativeLayout>
+
+        <!-- Simulation / Demo Switch Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#7C4DFF"
+            app:cardBackgroundColor="#F3E5F5"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🧪 Modo Simulación / Demo"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="#6A1B9A" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Simula la pulsera ESP32 para probar telemetría, pulso y comandos sin hardware."
+                        android:textSize="11sp"
+                        android:textColor="#8E24AA" />
+                </LinearLayout>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchSimulacion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Bluetooth Status Card -->
         <com.google.android.material.card.MaterialCardView

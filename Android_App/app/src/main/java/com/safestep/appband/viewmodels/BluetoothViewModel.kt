@@ -18,9 +18,14 @@ class BluetoothViewModel(application: Application) : AndroidViewModel(applicatio
     val estadoConexion: StateFlow<BluetoothRepository.EstadoConexionBle> = bluetoothRepo.estadoConexion
     val pulsoActual: StateFlow<Int?> = bluetoothRepo.pulsoActual
     val telemetria: StateFlow<DatosTelemetriaBle> = bluetoothRepo.telemetria
+    val modoSimulacion: StateFlow<Boolean> = bluetoothRepo.modoSimulacion
 
     fun isBluetoothEnabled(): Boolean = bluetoothRepo.isBluetoothHabilitado()
     fun isUbicacionEnabled(): Boolean = bluetoothRepo.isUbicacionHabilitada()
+
+    fun setModoSimulacion(activado: Boolean) {
+        bluetoothRepo.setModoSimulacion(activado)
+    }
 
     fun iniciarEscaneo() {
         bluetoothRepo.iniciarEscaneoBle()

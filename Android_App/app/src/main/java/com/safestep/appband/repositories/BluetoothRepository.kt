@@ -20,8 +20,8 @@ import java.util.UUID
 
 /**
  * Repositorio profesional de conectividad Bluetooth LE para la pulsera SafeBand / ESP32.
- * Habilita suscripción real CCCD (descriptor 0x2902), telemetría continua en tiempo real,
- * parseo de JSON/Key-Value/HeartRate profile y envío interactivo de comandos BLE.
+ * Incluye escaneo activo real BLE, conexión GATT real y un MODO SIMULACIÓN INTEGRADO para probar
+ * toda la interfaz, gráficos de pulso y comandos sin necesidad de tener el ESP32 físico a la mano.
  */
 class BluetoothRepository(private val context: Context) {
 
@@ -30,17 +30,10 @@ class BluetoothRepository(private val context: Context) {
         private const val SCAN_PERIOD_MS = 15000L
         private const val PUBLISH_INTERVAL_MS = 500L
 
-        // Descriptor CCCD estándar exigido por Android/BLE para activar NOTIFY/INDICATE en ESP32
         val CCCD_DESCRIPTOR_UUID: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
-
-        // UUIDs estándar de servicio y características para SafeBand / ESP32
         val SERVICE_UUID: UUID = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb")
         val WIFI_CONFIG_CHAR_UUID: UUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
         val VITAL_SIGNS_CHAR_UUID: UUID = UUID.fromString("0000ffe2-0000-1000-8000-00805f9b34fb")
-
-        // Standard Heart Rate Service (0x180D) and Measurement (0x2A37)
-        val HEART_RATE_SERVICE_UUID: UUID = UUID.fromString("0000180d-0000-1000-8000-00805f9b34fb")
-        val HEART_RATE_MEASUREMENT_CHAR_UUID: UUID = UUID.fromString("00002a37-0000-1000-8000-00805f9b34fb")
     }
 
     private val bluetoothManager: BluetoothManager? =
@@ -74,10 +67,34 @@ class BluetoothRepository(private val context: Context) {
     private val _telemetria = MutableStateFlow(DatosTelemetriaBle())
     val telemetria: StateFlow<DatosTelemetriaBle> = _telemetria
 
+    // Modo simulación sin hardware físico
+    private val _modoSimulacion = MutableStateFlow(false)
+    val modoSimulacion: StateFlow<Boolean> = _modoSimulacion
+
     private var bluetoothGatt: BluetoothGatt? = null
     private var isScanning = false
     private var isDirty = false
     private val dispositivosMap = mutableMapOf<String, DispositivoBluetooth>()
+    private var simBpmCounter = 72
+
+    private val simRunnable = object : Runnable {
+        override fun run() {
+            if (_modoSimulacion.value && _estadoConexion.value is EstadoConexionBle.Conectado) {
+                simBpmCounter += (-2..3).random()
+                if (simBpmCounter < 60) simBpmCounter = 68
+                if (simBpmCounter > 120) simBpmCounter = 95
+
+                _pulsoActual.value = simBpmCounter
+                _telemetria.value = _telemetria.value.copy(
+                    pulsoBpm = simBpmCounter,
+                    bateriaPorcentaje = 92,
+                    ultimoMensaje = "BPM:$simBpmCounter (Simulación SafeBand)",
+                    timestampMs = System.currentTimeMillis()
+                )
+                mainHandler.postDelayed(this, 1200L)
+            }
+        }
+    }
 
     private val publishRunnable = object : Runnable {
         override fun run() {
@@ -101,17 +118,51 @@ class BluetoothRepository(private val context: Context) {
     }
 
     fun isBluetoothHabilitado(): Boolean {
-        return bluetoothAdapter?.isEnabled == true
+        return bluetoothAdapter?.isEnabled == true || _modoSimulacion.value
     }
 
     fun isUbicacionHabilitada(): Boolean {
         val isGpsEnabled = locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) ?: false
         val isNetworkEnabled = locationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ?: false
-        return isGpsEnabled || isNetworkEnabled
+        return isGpsEnabled || isNetworkEnabled || _modoSimulacion.value
+    }
+
+    fun setModoSimulacion(activado: Boolean) {
+        _modoSimulacion.value = activado
+        if (activado) {
+            val demoDevice = DispositivoBluetooth(
+                nombre = "SafeBand ESP32 (SIMULADO)",
+                macAddress = "30:AE:A4:77:88:99",
+                rssi = -42,
+                isSafeBand = true
+            )
+            dispositivosMap[demoDevice.macAddress] = demoDevice
+            _dispositivosEncontrados.value = listOf(demoDevice)
+        } else {
+            desconectar()
+            dispositivosMap.clear()
+            _dispositivosEncontrados.value = emptyList()
+        }
     }
 
     @SuppressLint("MissingPermission")
     fun iniciarEscaneoBle() {
+        if (_modoSimulacion.value) {
+            _estadoConexion.value = EstadoConexionBle.Escaneando
+            mainHandler.postDelayed({
+                val demoDevice = DispositivoBluetooth(
+                    nombre = "SafeBand ESP32 (SIMULADO)",
+                    macAddress = "30:AE:A4:77:88:99",
+                    rssi = -42,
+                    isSafeBand = true
+                )
+                dispositivosMap[demoDevice.macAddress] = demoDevice
+                _dispositivosEncontrados.value = listOf(demoDevice)
+                _estadoConexion.value = EstadoConexionBle.Desconectado
+            }, 1000)
+            return
+        }
+
         if (!isBluetoothHabilitado()) {
             _estadoConexion.value = EstadoConexionBle.Error("El Bluetooth está desactivado en el teléfono.")
             return
@@ -242,6 +293,27 @@ class BluetoothRepository(private val context: Context) {
     @SuppressLint("MissingPermission")
     fun conectarDispositivo(macAddress: String) {
         detenerEscaneoBle()
+
+        if (_modoSimulacion.value) {
+            val demo = dispositivosMap[macAddress] ?: DispositivoBluetooth("SafeBand ESP32 (SIMULADO)", macAddress, -42, true, true)
+            _estadoConexion.value = EstadoConexionBle.Conectando(demo.nombre)
+
+            mainHandler.postDelayed({
+                _estadoConexion.value = EstadoConexionBle.Conectado(demo, 3)
+                _telemetria.value = DatosTelemetriaBle(
+                    dispositivoNombre = demo.nombre,
+                    macAddress = demo.macAddress,
+                    conectado = true,
+                    pulsoBpm = 75,
+                    bateriaPorcentaje = 95,
+                    ultimoMensaje = "¡Conexión Simulado de Prueba Activa!",
+                    serviciosCount = 3
+                )
+                mainHandler.post(simRunnable)
+            }, 800)
+            return
+        }
+
         val device = bluetoothAdapter?.getRemoteDevice(macAddress)
         if (device == null) {
             _estadoConexion.value = EstadoConexionBle.Error("Dispositivo no encontrado ($macAddress)")
@@ -272,6 +344,7 @@ class BluetoothRepository(private val context: Context) {
     @SuppressLint("MissingPermission")
     fun desconectar() {
         try {
+            mainHandler.removeCallbacks(simRunnable)
             bluetoothGatt?.disconnect()
             bluetoothGatt?.close()
             bluetoothGatt = null
@@ -285,10 +358,16 @@ class BluetoothRepository(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     fun enviarComando(comando: String): Boolean {
+        if (_modoSimulacion.value) {
+            _telemetria.value = _telemetria.value.copy(
+                ultimoMensaje = "Comando enviado (Simulación): '$comando'"
+            )
+            return true
+        }
+
         val gatt = bluetoothGatt ?: return false
         val services = gatt.services ?: return false
 
-        // Buscar característica con propiedad WRITE
         var targetChar: BluetoothGattCharacteristic? = null
         for (service in services) {
             for (char in service.characteristics) {
@@ -365,7 +444,6 @@ class BluetoothRepository(private val context: Context) {
 
                 Log.d(TAG, "Conexión GATT 100% Real Establecida. Descubiertos $numServicios servicios.")
 
-                // Suscribirse a TODAS las características NOTIFY/INDICATE en el ESP32 con descriptor CCCD 0x2902
                 for (service in gatt.services) {
                     for (char in service.characteristics) {
                         val props = char.properties
@@ -411,7 +489,6 @@ class BluetoothRepository(private val context: Context) {
         var batEncontrado: Int? = null
         var alerta: String? = null
 
-        // 1. Intentar parsear como JSON
         try {
             if (textPayload.startsWith("{") && textPayload.endsWith("}")) {
                 val json = JSONObject(textPayload)
@@ -423,7 +500,6 @@ class BluetoothRepository(private val context: Context) {
             }
         } catch (_: Exception) {}
 
-        // 2. Parsear como cadenas tipo "BPM:78", "BAT:90", "FALL_ALERT"
         if (bpmEncontrado == null && textPayload.contains("BPM", ignoreCase = true)) {
             bpmEncontrado = textPayload.replace("BPM:", "").replace("BPM", "").trim().toIntOrNull()
         }
@@ -431,7 +507,6 @@ class BluetoothRepository(private val context: Context) {
             bpmEncontrado = textPayload.toInt()
         }
 
-        // Standard Bluetooth SIG Heart Rate measurement format (Flags byte + UInt8 / UInt16)
         if (bpmEncontrado == null && bytes.size >= 2) {
             val flags = bytes[0].toInt()
             val is16Bit = (flags and 0x01) != 0
