@@ -18,7 +18,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@android:drawable/ic_menu_my_calendar"
-            android:tint="#7C4DFF"
+            android:tint="#00796B"
             android:layout_marginEnd="8dp" />
         <TextView
             android:layout_width="wrap_content"
@@ -26,7 +26,7 @@
             android:text="Tutor / Familiar Responsable"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#263238" />
+            android:textColor="#11181C" />
     </LinearLayout>
 
     <TextView
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:text="Datos del familiar o tutor principal"
         android:textSize="13sp"
-        android:textColor="#78909C"
+        android:textColor="#64748B"
         android:layout_marginBottom="20dp" />
 
     <!-- Nombre Completo -->
@@ -43,6 +43,9 @@
         android:layout_height="wrap_content"
         android:hint="Nombre Completo *"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundColor="#FFFFFF"
+        app:boxStrokeColor="#CBD5E1"
+        app:hintTextColor="#64748B"
         app:boxCornerRadiusTopStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
@@ -53,6 +56,7 @@
             android:id="@+id/etTutorNombre"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#11181C"
             android:inputType="textPersonName" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -62,6 +66,9 @@
         android:layout_height="wrap_content"
         android:hint="Parentesco *"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        app:boxBackgroundColor="#FFFFFF"
+        app:boxStrokeColor="#CBD5E1"
+        app:hintTextColor="#64748B"
         app:boxCornerRadiusTopStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
@@ -71,6 +78,7 @@
             android:id="@+id/actvParentesco"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#11181C"
             android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -80,6 +88,9 @@
         android:layout_height="wrap_content"
         android:hint="Teléfono Principal *"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundColor="#FFFFFF"
+        app:boxStrokeColor="#CBD5E1"
+        app:hintTextColor="#64748B"
         app:boxCornerRadiusTopStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
@@ -90,6 +101,7 @@
             android:id="@+id/etTutorTelefono"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#11181C"
             android:inputType="phone" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -99,6 +111,9 @@
         android:layout_height="wrap_content"
         android:hint="Teléfono Alternativo (opcional)"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundColor="#FFFFFF"
+        app:boxStrokeColor="#CBD5E1"
+        app:hintTextColor="#64748B"
         app:boxCornerRadiusTopStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
@@ -109,6 +124,7 @@
             android:id="@+id/etTutorTelefonoAlt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#11181C"
             android:inputType="phone" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -118,6 +134,9 @@
         android:layout_height="wrap_content"
         android:hint="Correo Electrónico *"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundColor="#FFFFFF"
+        app:boxStrokeColor="#CBD5E1"
+        app:hintTextColor="#64748B"
         app:boxCornerRadiusTopStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
@@ -128,6 +147,7 @@
             android:id="@+id/etTutorCorreo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#11181C"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -146,7 +166,7 @@
             android:layout_weight="1"
             android:text="¿Recibir notificaciones por SMS?"
             android:textSize="14sp"
-            android:textColor="#263238" />
+            android:textColor="#11181C" />
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchNotifSMS"
             android:layout_width="wrap_content"
@@ -169,7 +189,7 @@
             android:layout_weight="1"
             android:text="¿Recibir notificaciones por correo?"
             android:textSize="14sp"
-            android:textColor="#263238" />
+            android:textColor="#11181C" />
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchNotifCorreo"
             android:layout_width="wrap_content"
@@ -183,6 +203,9 @@
         android:layout_height="wrap_content"
         android:hint="Dirección (para emergencias) *"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundColor="#FFFFFF"
+        app:boxStrokeColor="#CBD5E1"
+        app:hintTextColor="#64748B"
         app:boxCornerRadiusTopStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
@@ -193,6 +216,7 @@
             android:id="@+id/etTutorDireccion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#11181C"
             android:inputType="textPostalAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 

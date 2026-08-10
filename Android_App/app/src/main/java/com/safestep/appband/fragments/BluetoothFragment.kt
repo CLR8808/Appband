@@ -41,9 +41,6 @@ class BluetoothFragment : Fragment() {
     // Live Telemetry & Control Panel Views
     private lateinit var panelConnected: View
     private lateinit var btnSaveAndContinue: MaterialButton
-    private lateinit var tvTemperature: TextView
-    private lateinit var tvHumidity: TextView
-    private lateinit var tvLastMessage: TextView
     private lateinit var etBleWifiSsid: TextInputEditText
     private lateinit var etBleWifiPass: TextInputEditText
     private lateinit var btnSendBleWifi: MaterialButton
@@ -95,9 +92,6 @@ class BluetoothFragment : Fragment() {
         // Panel de Telemetría
         panelConnected = view.findViewById(R.id.panelConnected)
         btnSaveAndContinue = view.findViewById(R.id.btnSaveAndContinue)
-        tvTemperature = view.findViewById(R.id.tvTemperature)
-        tvHumidity = view.findViewById(R.id.tvHumidity)
-        tvLastMessage = view.findViewById(R.id.tvLastMessage)
         etBleWifiSsid = view.findViewById(R.id.etBleWifiSsid)
         etBleWifiPass = view.findViewById(R.id.etBleWifiPass)
         btnSendBleWifi = view.findViewById(R.id.btnSendBleWifi)
@@ -231,16 +225,6 @@ class BluetoothFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.dispositivosEncontrados.collectLatest { devices ->
                 renderDevicesList(devices)
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.telemetria.collectLatest { telem ->
-                if (telem.conectado) {
-                    tvTemperature.text = telem.temperatura?.toString() ?: "--"
-                    tvHumidity.text = telem.humedad?.toString() ?: "--"
-                    tvLastMessage.text = telem.ultimoMensaje
-                }
             }
         }
     }

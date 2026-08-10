@@ -42,6 +42,15 @@ class NombreFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        binding.etDeviceName.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val length = s?.length ?: 0
+                binding.tvCharCounter.text = "$length/20"
+            }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
+
         binding.btnSave.setOnClickListener {
             val nombre = binding.etDeviceName.text.toString()
             viewModel.guardarDispositivo(nombre)

@@ -5,41 +5,53 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardBackgroundColor="@color/card_add_bg"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="#FFFFFF"
     app:cardCornerRadius="16dp"
-    app:cardElevation="2dp">
+    app:cardElevation="1dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/ivWatch"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
+        <!-- Watch Icon Box -->
+        <FrameLayout
+            android:id="@+id/iconContainer"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="14dp"
-            android:contentDescription="Reloj"
-            android:scaleType="fitCenter"
-            android:src="@drawable/reloj" />
+            android:background="@drawable/bg_circle_icon">
 
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:contentDescription="Reloj"
+                android:src="@drawable/reloj"
+                app:tint="#00796B" />
+        </FrameLayout>
+
+        <!-- Center Column -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/ivWatch"
+            android:layout_toEndOf="@id/iconContainer"
+            android:layout_toStartOf="@id/ivChevron"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvDeviceName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/text_primary"
-                android:textSize="18sp"
+                android:textColor="#11181C"
+                android:textSize="15sp"
                 android:textStyle="bold"
-                tools:text="SafeBand_V1" />
+                tools:text="SafeBand de Mamá" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -48,29 +60,36 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <View
-                    android:layout_width="8dp"
-                    android:layout_height="8dp"
-                    android:layout_marginEnd="6dp"
-                    android:background="@drawable/bg_status_dot_active" />
+                <!-- Status Icon & Text -->
+                <ImageView
+                    android:id="@+id/ivStatusIcon"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_marginEnd="4dp"
+                    android:src="@drawable/ic_checkmark_circle"
+                    app:tint="#10B981" />
 
                 <TextView
+                    android:id="@+id/tvStatusMessage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Activa"
-                    android:textColor="@color/text_muted"
-                    android:textSize="14sp" />
+                    android:textColor="#10B981"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    tools:text="Todo está tranquilo" />
             </LinearLayout>
         </LinearLayout>
 
+        <!-- Chevron Arrow Right -->
         <ImageView
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:id="@+id/ivChevron"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:contentDescription="Chevron"
             android:src="@drawable/ic_chevron_right"
-            app:tint="@color/text_primary" />
+            app:tint="#94A3B8" />
 
     </RelativeLayout>
 

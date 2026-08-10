@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_main"
+    android:background="#F7FAFA"
     android:fillViewport="true">
 
     <LinearLayout
@@ -12,66 +12,101 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingStart="24dp"
-        android:paddingTop="30dp"
+        android:paddingTop="36dp"
         android:paddingEnd="24dp"
-        android:paddingBottom="120dp">
+        android:paddingBottom="100dp">
 
-        <!-- Title -->
+        <!-- Top Header Bar -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="Logo"
+                android:src="@drawable/logo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="SafeStep"
+                android:textColor="#00796B"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btnHelp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Ayuda"
+                android:src="@drawable/ic_help_circle"
+                app:tint="#00796B" />
+        </RelativeLayout>
+
+        <!-- User Greeting Section -->
         <TextView
+            android:id="@+id/tvGreeting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="Hola"
+            android:textColor="#11181C"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvStatusMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="28dp"
-            android:text="@string/dispositivos"
-            android:textColor="#1E1E1E"
-            android:textSize="32sp"
-            android:textStyle="bold" />
+            android:lineSpacingExtra="2dp"
+            android:text="Tus SafeBands están conectadas y\nmonitoreando."
+            android:textColor="#64748B"
+            android:textSize="14sp" />
 
-        <!-- Agregar Dispositivo Card -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardAddDevice"
+        <!-- Section Title Bar ("Mis SafeBands" + "+ Agregar") -->
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:cardBackgroundColor="@color/card_add_bg"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp">
+            android:layout_marginBottom="14dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="16dp">
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="Mis SafeBands"
+                android:textColor="#11181C"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-                <FrameLayout
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginEnd="18dp"
-                    android:background="@drawable/bg_primary_button">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cardAddDevice"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="+ Agregar"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                app:backgroundTint="#00796B"
+                app:cornerRadius="21dp"
+                app:elevation="4dp" />
+        </RelativeLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="+"
-                        android:textColor="@color/white"
-                        android:textSize="26sp"
-                        android:textStyle="bold" />
-                </FrameLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/agregar_dispositivo"
-                    android:textColor="#333333"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Empty State Container -->
+        <!-- Empty State Container (Visible when no bands are registered) -->
         <LinearLayout
             android:id="@+id/containerEmptyState"
             android:layout_width="match_parent"
@@ -83,9 +118,9 @@
             tools:visibility="visible">
 
             <ImageView
-                android:layout_width="260dp"
-                android:layout_height="260dp"
-                android:layout_marginBottom="25dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginBottom="20dp"
                 android:contentDescription="Safeband"
                 android:scaleType="fitCenter"
                 android:src="@drawable/safeband" />
@@ -94,36 +129,41 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
-                android:text="@string/no_hay_dispositivos"
-                android:textColor="#333333"
-                android:textSize="18sp"
+                android:text="No tienes SafeBands registradas aún"
+                android:textColor="#11181C"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/agrega_tu_safeband"
-                android:textColor="@color/primary_teal"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:layout_marginBottom="16dp"
+                android:text="Toca el botón para vincular una pulsera"
+                android:textColor="#64748B"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEmptyStateAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="+ Agregar SafeBand"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:paddingStart="28dp"
+                android:paddingEnd="28dp"
+                app:backgroundTint="#00796B"
+                app:cornerRadius="25dp"
+                app:elevation="6dp" />
         </LinearLayout>
 
-        <!-- List Section Container -->
+        <!-- List Section Container (Visible when bands exist) -->
         <LinearLayout
             android:id="@+id/containerListSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="12dp"
-                android:text="@string/mis_dispositivos"
-                android:textColor="#777777"
-                android:textSize="20sp"
-                android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvDispositivos"

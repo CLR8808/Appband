@@ -18,7 +18,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@android:drawable/ic_menu_myplaces"
-            android:tint="#00BFA5"
+            android:tint="#00796B"
             android:layout_marginEnd="8dp" />
         <TextView
             android:layout_width="wrap_content"
@@ -26,7 +26,7 @@
             android:text="Datos del Paciente"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#263238" />
+            android:textColor="#11181C" />
     </LinearLayout>
 
     <TextView
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:text="Información básica del paciente"
         android:textSize="13sp"
-        android:textColor="#78909C"
+        android:textColor="#64748B"
         android:layout_marginBottom="20dp" />
 
     <!-- Photo Picker -->
@@ -59,7 +59,7 @@
             android:layout_height="36dp"
             android:layout_gravity="center"
             android:src="@android:drawable/ic_menu_camera"
-            android:tint="#BDBDBD" />
+            android:tint="#94A3B8" />
     </FrameLayout>
 
     <!-- Nombre Completo -->
@@ -68,6 +68,9 @@
         android:layout_height="wrap_content"
         android:hint="Nombre Completo *"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundColor="#FFFFFF"
+        app:boxStrokeColor="#CBD5E1"
+        app:hintTextColor="#64748B"
         app:boxCornerRadiusTopStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
@@ -78,6 +81,7 @@
             android:id="@+id/etNombreCompleto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#11181C"
             android:inputType="textPersonName" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -87,6 +91,9 @@
         android:layout_height="wrap_content"
         android:hint="Fecha de Nacimiento *"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundColor="#FFFFFF"
+        app:boxStrokeColor="#CBD5E1"
+        app:hintTextColor="#64748B"
         app:boxCornerRadiusTopStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
@@ -100,7 +107,7 @@
             android:inputType="none"
             android:focusable="false"
             android:clickable="true"
-            android:hint="dd/mm/aaaa" />
+            android:textColor="#11181C" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Género (Dropdown) -->
@@ -109,6 +116,9 @@
         android:layout_height="wrap_content"
         android:hint="Género *"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        app:boxBackgroundColor="#FFFFFF"
+        app:boxStrokeColor="#CBD5E1"
+        app:hintTextColor="#64748B"
         app:boxCornerRadiusTopStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
@@ -118,6 +128,7 @@
             android:id="@+id/actvGenero"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#11181C"
             android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -134,6 +145,9 @@
             android:layout_weight="1"
             android:hint="Peso (kg) *"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxBackgroundColor="#FFFFFF"
+            app:boxStrokeColor="#CBD5E1"
+            app:hintTextColor="#64748B"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
@@ -143,6 +157,7 @@
                 android:id="@+id/etPeso"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#11181C"
                 android:inputType="numberDecimal" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -152,6 +167,9 @@
             android:layout_weight="1"
             android:hint="Altura (cm) *"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxBackgroundColor="#FFFFFF"
+            app:boxStrokeColor="#CBD5E1"
+            app:hintTextColor="#64748B"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
@@ -161,6 +179,7 @@
                 android:id="@+id/etAltura"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#11181C"
                 android:inputType="numberDecimal" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -172,6 +191,9 @@
         android:layout_height="wrap_content"
         android:hint="Tipo de Sangre *"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        app:boxBackgroundColor="#FFFFFF"
+        app:boxStrokeColor="#CBD5E1"
+        app:hintTextColor="#64748B"
         app:boxCornerRadiusTopStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
@@ -181,6 +203,7 @@
             android:id="@+id/actvTipoSangre"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#11181C"
             android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -190,6 +213,9 @@
         android:layout_height="wrap_content"
         android:hint="Dirección *"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundColor="#FFFFFF"
+        app:boxStrokeColor="#CBD5E1"
+        app:hintTextColor="#64748B"
         app:boxCornerRadiusTopStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
@@ -200,6 +226,7 @@
             android:id="@+id/etDireccion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#11181C"
             android:inputType="textPostalAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -209,6 +236,9 @@
         android:layout_height="wrap_content"
         android:hint="Teléfono de Contacto *"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundColor="#FFFFFF"
+        app:boxStrokeColor="#CBD5E1"
+        app:hintTextColor="#64748B"
         app:boxCornerRadiusTopStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
@@ -219,6 +249,7 @@
             android:id="@+id/etTelefono"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#11181C"
             android:inputType="phone" />
     </com.google.android.material.textfield.TextInputLayout>
 

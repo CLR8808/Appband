@@ -49,7 +49,7 @@ class PasswordFragment : Fragment() {
 
         binding.btnConnect.setOnClickListener {
             val pass = binding.etPassword.text.toString()
-            viewModel.conectarWifi(pass)
+            viewModel.conectarWifi(args.ssid, pass)
         }
 
         observarEstado()

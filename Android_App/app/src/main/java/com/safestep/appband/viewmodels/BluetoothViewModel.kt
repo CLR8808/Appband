@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
- * ViewModel para conectividad Bluetooth Clásico, telemetría continua y persistencia local del dispositivo.
+ * ViewModel para conectividad BLE GATT con Nordic UART Service, telemetría y persistencia local.
  */
 class BluetoothViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -51,7 +51,7 @@ class BluetoothViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun guardarDispositivoConectado(nombre: String, macAddress: String, onGuardado: () -> Unit = {}) {
         viewModelScope.launch {
-            storageRepo.agregarDispositivoCompleto(nombre, macAddress, "Classic")
+            storageRepo.agregarDispositivoCompleto(nombre, macAddress, "BLE")
             onGuardado()
         }
     }
@@ -61,6 +61,12 @@ class BluetoothViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun enviarWifiConfig(ssid: String, pass: String): Boolean {
-        return bluetoothRepo.enviarComando("WIFI:$ssid:$pass\n")
+        // Enviar exactamente el mismo JSON que funciona en nRF Connect
+        val jsonPayload = org.json.JSONObject().apply {
+            put("ssid", ssid)
+            put("password", pass)
+        }.toString()
+
+        return bluetoothRepo.enviarComando(jsonPayload)
     }
 }

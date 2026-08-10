@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.safestep.appband.R
 import com.safestep.appband.adapters.DispositivosAdapter
 import com.safestep.appband.databinding.FragmentInicioBinding
@@ -41,9 +42,25 @@ class InicioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupGreeting()
         configurarRecyclerView()
         configurarListeners()
         observarEstado()
+    }
+
+    private fun setupGreeting() {
+        val user = FirebaseAuth.getInstance().currentUser
+        val nombreUsuario = when {
+            !user?.displayName.isNullOrBlank() -> user?.displayName
+            !user?.email.isNullOrBlank() -> user?.email?.substringBefore("@")
+            else -> null
+        }
+
+        binding.tvGreeting.text = if (nombreUsuario != null) {
+            "Hola, $nombreUsuario"
+        } else {
+            "Hola"
+        }
     }
 
     private fun configurarRecyclerView() {
@@ -56,6 +73,9 @@ class InicioFragment : Fragment() {
 
     private fun configurarListeners() {
         binding.cardAddDevice.setOnClickListener {
+            findNavController().navigate(R.id.action_inicio_to_prepararDispositivo)
+        }
+        binding.btnEmptyStateAdd.setOnClickListener {
             findNavController().navigate(R.id.action_inicio_to_prepararDispositivo)
         }
     }

@@ -59,14 +59,21 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun obtenerMensajeError(error: Throwable): String {
+        android.util.Log.e("LoginVM", "Error login: ${error.javaClass.simpleName} - ${error.message}")
         return if (error is FirebaseAuthException) {
+            android.util.Log.e("LoginVM", "Firebase error code: ${error.errorCode}")
             when (error.errorCode) {
                 "ERROR_INVALID_EMAIL", "auth/invalid-email" -> "Ingresa un correo válido."
-                "ERROR_WRONG_PASSWORD", "ERROR_USER_NOT_FOUND", "auth/invalid-credential" -> "Correo o contraseña incorrectos."
+                "ERROR_WRONG_PASSWORD", "ERROR_USER_NOT_FOUND",
+                "ERROR_INVALID_CREDENTIAL", "auth/invalid-credential" -> "Correo o contraseña incorrectos."
+                "ERROR_USER_DISABLED" -> "Esta cuenta ha sido deshabilitada."
+                "ERROR_TOO_MANY_REQUESTS" -> "Demasiados intentos. Espera un momento."
                 "ERROR_OPERATION_NOT_ALLOWED" -> "Activa el inicio de sesión con correo y contraseña en Firebase Authentication."
-                else -> "No se pudo conectar con Firebase. Revisa tu conexión a internet."
+                "ERROR_NETWORK_REQUEST_FAILED" -> "Error de red. Revisa tu conexión a internet."
+                else -> "Error de autenticación (${error.errorCode}). Intenta de nuevo."
             }
         } else {
+            android.util.Log.e("LoginVM", "Non-Firebase error: ${error.javaClass.name}")
             error.message ?: "No se pudo iniciar sesión. Intenta de nuevo."
         }
     }

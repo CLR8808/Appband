@@ -18,5 +18,8 @@ data class Dispositivo(
     val ip: String = "",
     val tipoConexion: String = "BLE",
     val fechaAgregado: String = "",
-    val estado: String = "Conectado"
+    val estado: String = "Conectado",
+    val bateria: Int = 85,
+    val incidenteDetectado: Boolean = false,
+    val mensajeEstado: String = "Todo está tranquilo"
 )

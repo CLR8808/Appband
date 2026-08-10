@@ -79,10 +79,64 @@ class StorageRepository(private val context: Context) {
         agregarDispositivoCompleto(nombre)
     }
 
+    suspend fun actualizarNombreDispositivoActivo(nuevoNombre: String) {
+        if (nuevoNombre.isBlank()) return
+        context.dataStoreDispositivos.edit { prefs ->
+            val jsonActivo = prefs[KEY_DISPOSITIVO_ACTIVO]
+            if (jsonActivo != null) {
+                val devActual = gson.fromJson(jsonActivo, Dispositivo::class.java)
+                val devActualizado = devActual.copy(nombre = nuevoNombre.trim())
+                prefs[KEY_DISPOSITIVO_ACTIVO] = gson.toJson(devActualizado)
+
+                val jsonLista = prefs[KEY_DISPOSITIVOS]
+                if (jsonLista != null) {
+                    val type = object : TypeToken<List<Dispositivo>>() {}.type
+                    val lista: MutableList<Dispositivo> = gson.fromJson(jsonLista, type) ?: mutableListOf()
+                    val idx = lista.indexOfFirst { it.macAddress == devActual.macAddress || it.nombre == devActual.nombre }
+                    if (idx != -1) {
+                        lista[idx] = devActualizado
+                    } else if (lista.isNotEmpty()) {
+                        lista[0] = devActualizado
+                    }
+                    prefs[KEY_DISPOSITIVOS] = gson.toJson(lista)
+                }
+            } else {
+                val nuevoDev = Dispositivo(nombre = nuevoNombre.trim(), estado = "Conectado")
+                prefs[KEY_DISPOSITIVO_ACTIVO] = gson.toJson(nuevoDev)
+            }
+        }
+    }
+
     suspend fun eliminarDispositivos() {
         context.dataStoreDispositivos.edit { prefs ->
             prefs.remove(KEY_DISPOSITIVOS)
             prefs.remove(KEY_DISPOSITIVO_ACTIVO)
+        }
+    }
+
+    suspend fun desvincularDispositivo(nombre: String = "") {
+        context.dataStoreDispositivos.edit { prefs ->
+            val jsonActual = prefs[KEY_DISPOSITIVOS]
+            val type = object : TypeToken<List<Dispositivo>>() {}.type
+            val listaActual: MutableList<Dispositivo> = if (jsonActual != null) {
+                gson.fromJson(jsonActual, type) ?: mutableListOf()
+            } else {
+                mutableListOf()
+            }
+
+            if (nombre.isNotBlank()) {
+                listaActual.removeAll { it.nombre.equals(nombre, ignoreCase = true) }
+            } else {
+                listaActual.clear()
+            }
+
+            if (listaActual.isEmpty()) {
+                prefs.remove(KEY_DISPOSITIVOS)
+                prefs.remove(KEY_DISPOSITIVO_ACTIVO)
+            } else {
+                prefs[KEY_DISPOSITIVOS] = gson.toJson(listaActual)
+                prefs[KEY_DISPOSITIVO_ACTIVO] = gson.toJson(listaActual.first())
+            }
         }
     }
 

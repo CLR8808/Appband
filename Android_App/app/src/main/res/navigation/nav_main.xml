@@ -32,7 +32,11 @@
         android:id="@+id/eventosFragment"
         android:name="com.safestep.appband.fragments.EventosFragment"
         android:label="Eventos"
-        tools:layout="@layout/fragment_eventos" />
+        tools:layout="@layout/fragment_eventos">
+        <action
+            android:id="@+id/action_eventos_to_detalleIncidente"
+            app:destination="@id/detalleIncidenteFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/perfilFragment"
@@ -127,6 +131,9 @@
         <action
             android:id="@+id/action_dispositivo_to_bluetooth"
             app:destination="@id/bluetoothFragment" />
+        <action
+            android:id="@+id/action_dispositivo_to_mapa"
+            app:destination="@id/mapaFragment" />
     </fragment>
 
     <fragment
@@ -158,6 +165,16 @@
         android:name="com.safestep.appband.fragments.BluetoothFragment"
         android:label="Conexión Bluetooth BLE"
         tools:layout="@layout/fragment_bluetooth" />
+
+    <fragment
+        android:id="@+id/detalleIncidenteFragment"
+        android:name="com.safestep.appband.fragments.DetalleIncidenteFragment"
+        android:label="Detalle del Incidente"
+        tools:layout="@layout/fragment_detalle_incidente">
+        <action
+            android:id="@+id/action_detalleIncidente_to_mapa"
+            app:destination="@id/mapaFragment" />
+    </fragment>
 
 </navigation>
 

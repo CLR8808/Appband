@@ -3,7 +3,8 @@
     <!-- Brand Primary Colors (Gradient #0FB8C7 -> #0A7F8A -> #085E66 / #0E9AA7) -->
     <color name="primary_cyan">#0FB8C7</color>
     <color name="primary_cyan_dark">#0A7F8A</color>
-    <color name="primary_teal">#0E9AA7</color>
+    <color name="primary_teal">#00796B</color>
+    <color name="brand_teal">#00796B</color>
     <color name="primary_teal_dark">#085E66</color>
     <color name="primary_cyan_light">#36C9DB</color>
     <color name="primary_bg_cyan_light">#E8F7F8</color>

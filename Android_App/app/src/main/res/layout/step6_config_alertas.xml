@@ -18,7 +18,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@android:drawable/ic_menu_manage"
-            android:tint="#2196F3"
+            android:tint="#00796B"
             android:layout_marginEnd="8dp" />
         <TextView
             android:layout_width="wrap_content"
@@ -26,7 +26,7 @@
             android:text="Configuración de Alertas"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#263238" />
+            android:textColor="#11181C" />
     </LinearLayout>
 
     <TextView
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:text="Personaliza cómo y cuándo recibir alertas"
         android:textSize="13sp"
-        android:textColor="#78909C"
+        android:textColor="#64748B"
         android:layout_marginBottom="20dp" />
 
     <!-- Modo de alerta -->
@@ -44,7 +44,7 @@
         android:text="Modo de Alerta"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:textColor="#263238"
+        android:textColor="#11181C"
         android:layout_marginBottom="10dp" />
 
     <RadioGroup
@@ -60,11 +60,11 @@
             android:layout_height="wrap_content"
             android:text="  Sonido y Vibración"
             android:textSize="15sp"
-            android:textColor="#263238"
+            android:textColor="#11181C"
             android:padding="12dp"
             android:background="@drawable/bg_contact_card"
             android:layout_marginBottom="6dp"
-            android:buttonTint="#00BFA5"
+            android:buttonTint="#00796B"
             android:checked="true" />
 
         <RadioButton
@@ -73,11 +73,11 @@
             android:layout_height="wrap_content"
             android:text="  Solo Vibración"
             android:textSize="15sp"
-            android:textColor="#263238"
+            android:textColor="#11181C"
             android:padding="12dp"
             android:background="@drawable/bg_contact_card"
             android:layout_marginBottom="6dp"
-            android:buttonTint="#00BFA5" />
+            android:buttonTint="#00796B" />
 
         <RadioButton
             android:id="@+id/radioSilencioso"
@@ -85,17 +85,17 @@
             android:layout_height="wrap_content"
             android:text="  Silencioso (solo visual)"
             android:textSize="15sp"
-            android:textColor="#263238"
+            android:textColor="#11181C"
             android:padding="12dp"
             android:background="@drawable/bg_contact_card"
             android:layout_marginBottom="6dp"
-            android:buttonTint="#00BFA5" />
+            android:buttonTint="#00796B" />
     </RadioGroup>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#F0F0F0"
+        android:background="#E2E8F0"
         android:layout_marginBottom="16dp" />
 
     <!-- Notificaciones toggle switches -->
@@ -105,7 +105,7 @@
         android:text="Tipos de Notificación"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:textColor="#263238"
+        android:textColor="#11181C"
         android:layout_marginBottom="10dp" />
 
     <LinearLayout
@@ -126,13 +126,13 @@
                 android:layout_height="wrap_content"
                 android:text="Alerta por Pulso Anormal"
                 android:textSize="14sp"
-                android:textColor="#263238" />
+                android:textColor="#11181C" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Notificar cuando el pulso salga de rango"
                 android:textSize="11sp"
-                android:textColor="#90A4AE" />
+                android:textColor="#64748B" />
         </LinearLayout>
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchAlertaPulso"
@@ -159,13 +159,13 @@
                 android:layout_height="wrap_content"
                 android:text="Alerta por Caída Detectada"
                 android:textSize="14sp"
-                android:textColor="#263238" />
+                android:textColor="#11181C" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Notificar cuando se detecte una caída"
                 android:textSize="11sp"
-                android:textColor="#90A4AE" />
+                android:textColor="#64748B" />
         </LinearLayout>
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchAlertaCaida"
@@ -192,13 +192,13 @@
                 android:layout_height="wrap_content"
                 android:text="Alerta por Inactividad"
                 android:textSize="14sp"
-                android:textColor="#263238" />
+                android:textColor="#11181C" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Notificar si no hay movimiento prolongado"
                 android:textSize="11sp"
-                android:textColor="#90A4AE" />
+                android:textColor="#64748B" />
         </LinearLayout>
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchAlertaInactividad"
@@ -225,13 +225,13 @@
                 android:layout_height="wrap_content"
                 android:text="Enviar Ubicación GPS"
                 android:textSize="14sp"
-                android:textColor="#263238" />
+                android:textColor="#11181C" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Incluir ubicación en alertas de emergencia"
                 android:textSize="11sp"
-                android:textColor="#90A4AE" />
+                android:textColor="#64748B" />
         </LinearLayout>
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchEnviarGPS"
@@ -243,7 +243,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#F0F0F0"
+        android:background="#E2E8F0"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp" />
 
@@ -254,7 +254,7 @@
         android:text="Intervalo de Monitoreo (segundos)"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:textColor="#263238"
+        android:textColor="#11181C"
         android:layout_marginBottom="8dp" />
 
     <LinearLayout
@@ -262,7 +262,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:background="@drawable/bg_bpm_display"
+        android:background="@drawable/bg_contact_card"
         android:padding="12dp"
         android:layout_marginBottom="8dp">
         <TextView
@@ -272,13 +272,13 @@
             android:text="30"
             android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="#2E7D32" />
+            android:textColor="#00796B" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=" seg"
             android:textSize="16sp"
-            android:textColor="#4CAF50" />
+            android:textColor="#00796B" />
     </LinearLayout>
 
     <com.google.android.material.slider.Slider
@@ -289,10 +289,10 @@
         android:valueTo="120"
         android:value="30"
         android:stepSize="5"
-        app:thumbColor="#00BFA5"
-        app:trackColorActive="#00BFA5"
-        app:trackColorInactive="#E0E0E0"
-        app:haloColor="#8000BFA5" />
+        app:thumbColor="#00796B"
+        app:trackColorActive="#00796B"
+        app:trackColorInactive="#E2E8F0"
+        app:haloColor="#8000796B" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -305,14 +305,14 @@
             android:layout_weight="1"
             android:text="5 seg"
             android:textSize="12sp"
-            android:textColor="#90A4AE" />
+            android:textColor="#64748B" />
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="120 seg"
             android:textSize="12sp"
-            android:textColor="#90A4AE"
+            android:textColor="#64748B"
             android:gravity="end" />
     </LinearLayout>
 
