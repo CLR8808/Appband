@@ -144,61 +144,41 @@ class DispositivoFragment : Fragment() {
                     binding.tvLastUpdateTime.text = "Sensor activo ($horaMostrar)"
                     binding.tvLastSync.text = "En línea ($horaMostrar)"
 
-                    // Marcar estado como sincronizado por Wi-Fi / Firestore
-                    binding.tvConnectionStatus.text = "Sincronizada (Wi-Fi)"
-                    binding.tvConnectionStatus.setTextColor(resources.getColor(R.color.success_green, null))
-                    binding.tvConnectionType.text = "Sincronizada"
-                    binding.tvConnectionType.setTextColor(resources.getColor(R.color.text_primary, null))
+                    // Evaluar si la pulsera sigue activa o han pasado más de 2 minutos sin un registro nuevo
+                    val tiempoTranscurrido = System.currentTimeMillis() - sensor.ultimaActualizacion
+                    val estaActiva = tiempoTranscurrido < 120_000 // 2 minutos
+
+                    if (estaActiva) {
+                        binding.tvConnectionStatus.text = "Sincronizada (Wi-Fi)"
+                        binding.tvConnectionStatus.setTextColor(resources.getColor(R.color.success_green, null))
+                        binding.tvConnectionType.text = "Sincronizada"
+                        binding.tvConnectionType.setTextColor(resources.getColor(R.color.text_primary, null))
+                    } else {
+                        binding.tvConnectionStatus.text = "Desconectada"
+                        binding.tvConnectionStatus.setTextColor(resources.getColor(R.color.danger_red, null))
+                        binding.tvConnectionType.text = "Desconectada"
+                        binding.tvConnectionType.setTextColor(resources.getColor(R.color.text_secondary, null))
+                    }
                 } else {
                     binding.tvHeartRate.text = "-- BPM"
                     binding.tvOxygen.text = "-- %"
                     binding.tvBatteryLevel.text = "-- %"
                     binding.tvLastUpdateTime.text = "Esperando registros..."
                     binding.tvLastSync.text = "--"
+                    binding.tvConnectionStatus.text = "Desconectada"
+                    binding.tvConnectionStatus.setTextColor(resources.getColor(R.color.text_secondary, null))
                 }
             }
         }
 
-        // Observar Promedios Diarios desde Base de Datos
+        // Observar Promedios Diarios calculados en tiempo real desde Firestore
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.promedioPulso.collectLatest { avg ->
-                binding.tvHeartRateAverage.text = avg
-            }
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.promedioOxigenacion.collectLatest { avg ->
-                binding.tvOxygenAverage.text = avg
-            }
-        }
-
-        // Observar Estado de Conexión
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.estadoConexion.collectLatest { estado ->
-                when (estado) {
-                    is BluetoothRepository.EstadoConexion.Conectado -> {
-                        binding.tvConnectionStatus.text = "Conectada"
-                        binding.tvConnectionStatus.setTextColor(resources.getColor(R.color.success_green, null))
-                        binding.tvConnectionType.text = "Conectada"
-                        binding.tvConnectionType.setTextColor(resources.getColor(R.color.text_primary, null))
-                    }
-                    is BluetoothRepository.EstadoConexion.Conectando -> {
-                        binding.tvConnectionStatus.text = "Conectando..."
-                        binding.tvConnectionStatus.setTextColor(resources.getColor(R.color.primary_cyan, null))
-                        binding.tvConnectionType.text = "Conectando"
-                        binding.tvConnectionType.setTextColor(resources.getColor(R.color.primary_cyan, null))
-                    }
-                    is BluetoothRepository.EstadoConexion.Error -> {
-                        binding.tvConnectionStatus.text = "Desconectada"
-                        binding.tvConnectionStatus.setTextColor(resources.getColor(R.color.danger_red, null))
-                        binding.tvConnectionType.text = "Desconectada"
-                        binding.tvConnectionType.setTextColor(resources.getColor(R.color.text_secondary, null))
-                    }
-                    else -> {
-                        binding.tvConnectionStatus.text = "Desconectada"
-                        binding.tvConnectionStatus.setTextColor(resources.getColor(R.color.text_secondary, null))
-                        binding.tvConnectionType.text = "Desconectada"
-                        binding.tvConnectionType.setTextColor(resources.getColor(R.color.text_secondary, null))
-                    }
+            viewModel.promediosDiarios.collectLatest { promedios ->
+                if (promedios.promedioBpm > 0) {
+                    binding.tvHeartRateAverage.text = "${promedios.promedioBpm} BPM"
+                }
+                if (promedios.promedioSpo2 > 0) {
+                    binding.tvOxygenAverage.text = "${promedios.promedioSpo2} %"
                 }
             }
         }

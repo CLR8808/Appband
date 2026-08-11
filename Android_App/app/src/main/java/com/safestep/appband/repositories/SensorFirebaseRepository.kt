@@ -6,26 +6,16 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlin.math.roundToInt
 
 /**
  * Repositorio que escucha en tiempo real el registro más reciente en la colección "sensor" de Firestore.
  * El ESP32 SafeBand sube periódicamente un nuevo documento (cada 30 segundos) con la telemetría del sensor.
- *
- * Estructura de documentos soportada (plana o anidada):
- *   sensor/registro_<millis>_<hex>
- *     ├── bateria: 54
- *     ├── bpm: 0
- *     ├── spo2: 94
- *     ├── fecha: "2026-08-10"
- *     ├── hora: "21:07:41"
- *     ├── fechaHora: "2026-08-10 21:07:41"
- *     ├── gpsFix: true
- *     ├── latitud: 23.2875
- *     ├── longitud: -106.417094
- *     ├── max30102Conectado: true
- *     └── caida: false
  */
 class SensorFirebaseRepository {
 
@@ -38,8 +28,8 @@ class SensorFirebaseRepository {
 
         fun getInstance(): SensorFirebaseRepository {
             return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: SensorFirebaseRepository().also { 
-                    INSTANCE = it 
+                INSTANCE ?: SensorFirebaseRepository().also {
+                    INSTANCE = it
                     it.iniciarEscucha()
                 }
             }
@@ -80,6 +70,15 @@ class SensorFirebaseRepository {
         val ultimaActualizacion: Long = 0
     )
 
+    /**
+     * Modelo de Promedios Diarios calculados a partir de las lecturas registradas.
+     */
+    data class PromediosDiarios(
+        val promedioBpm: Int = 0,
+        val promedioSpo2: Int = 0,
+        val hayDatos: Boolean = false
+    )
+
     private val _datosSensor = MutableStateFlow(DatosSensor())
     val datosSensor: StateFlow<DatosSensor> = _datosSensor
 
@@ -90,16 +89,15 @@ class SensorFirebaseRepository {
 
     /**
      * Iniciar la escucha en tiempo real del registro más reciente en la colección "sensor".
-     * Cada vez que el ESP32 o la base de datos registra un nuevo documento (cada 30 segundos),
-     * este listener captura el documento superior y actualiza la app al instante.
      */
     fun iniciarEscucha() {
+        if (listenerRegistration != null) {
+            // Listener ya activo y escuchando en tiempo real
+            return
+        }
+
         val firestore = FirebaseFirestore.getInstance()
 
-        // Remover listener anterior si existe
-        listenerRegistration?.remove()
-
-        // Consulta en tiempo real: Ordenar por ID de documento de manera descendente (los más recientes primero) y limitar a 1
         val query = firestore.collection(COLECCION)
             .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
             .limit(1)
@@ -133,6 +131,64 @@ class SensorFirebaseRepository {
         }
 
         Log.i(TAG, "📡 Escuchando registros más recientes en la colección '$COLECCION' de Firestore...")
+    }
+
+    /**
+     * Calcula los promedios diarios de pulso (BPM) y oxigenación (SpO2)
+     * a partir de los registros almacenados en la colección "sensor", filtrando lecturas en cero.
+     */
+    fun calcularPromediosDiarios(): Flow<PromediosDiarios> = callbackFlow {
+        val firestore = FirebaseFirestore.getInstance()
+
+        val query = firestore.collection(COLECCION)
+            .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
+            .limit(100)
+
+        val listener = query.addSnapshotListener { snapshot, error ->
+            if (error != null || snapshot == null || snapshot.isEmpty) {
+                trySend(PromediosDiarios())
+                return@addSnapshotListener
+            }
+
+            val validBpms = mutableListOf<Int>()
+            val validSpo2s = mutableListOf<Int>()
+
+            for (doc in snapshot.documents) {
+                // Parsear BPM
+                val bpmVal = doc.get("bpm")
+                val max30102Map = doc.get("max30102") as? Map<String, Any> ?: emptyMap()
+                val bpm = when (bpmVal) {
+                    is Number -> bpmVal.toInt()
+                    is String -> bpmVal.toIntOrNull() ?: 0
+                    else -> toLong(max30102Map["bpm"]).toInt()
+                }
+                if (bpm >= 35 && bpm <= 220) {
+                    validBpms.add(bpm)
+                }
+
+                // Parsear SpO2
+                val spo2Val = doc.get("spo2")
+                val spo2 = when (spo2Val) {
+                    is Number -> spo2Val.toInt()
+                    is String -> spo2Val.toIntOrNull() ?: 0
+                    else -> toLong(max30102Map["spo2"]).toInt()
+                }
+                if (spo2 >= 70 && spo2 <= 100) {
+                    validSpo2s.add(spo2)
+                }
+            }
+
+            val avgBpm = if (validBpms.isNotEmpty()) validBpms.average().roundToInt() else 0
+            val avgSpo2 = if (validSpo2s.isNotEmpty()) validSpo2s.average().roundToInt() else 0
+
+            trySend(PromediosDiarios(
+                promedioBpm = avgBpm,
+                promedioSpo2 = avgSpo2,
+                hayDatos = avgBpm > 0 || avgSpo2 > 0
+            ))
+        }
+
+        awaitClose { listener.remove() }
     }
 
     /**

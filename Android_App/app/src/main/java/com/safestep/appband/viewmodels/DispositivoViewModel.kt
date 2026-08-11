@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel para DispositivoFragment.
  * Expone datos del sensor desde el último registro de Firestore en tiempo real,
- * el estado de conexión y acciones de desvinculación.
+ * el cálculo de promedios diarios, estado de conexión y acciones de desvinculación.
  */
 class DispositivoViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -37,9 +37,13 @@ class DispositivoViewModel(application: Application) : AndroidViewModel(applicat
     val datosSensor: StateFlow<SensorFirebaseRepository.DatosSensor> = sensorFirebaseRepo.datosSensor
     val conectadoFirebase: StateFlow<Boolean> = sensorFirebaseRepo.conectadoFirebase
 
-    // Promedios diarios
-    val promedioPulso: StateFlow<String> = kotlinx.coroutines.flow.MutableStateFlow("-- BPM")
-    val promedioOxigenacion: StateFlow<String> = kotlinx.coroutines.flow.MutableStateFlow("-- %")
+    // Promedios diarios calculados en tiempo real desde Firestore
+    val promediosDiarios: StateFlow<SensorFirebaseRepository.PromediosDiarios> = sensorFirebaseRepo.calcularPromediosDiarios()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SensorFirebaseRepository.PromediosDiarios()
+        )
 
     init {
         iniciarEscucha()
