@@ -105,6 +105,11 @@ class DispositivoFragment : Fragment() {
             .show()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.recargarDatos()
+    }
+
     private fun observeViewModel() {
         // Observar Dispositivo Activo desde DataStore
         viewLifecycleOwner.lifecycleScope.launch {
@@ -116,32 +121,30 @@ class DispositivoFragment : Fragment() {
             }
         }
 
-        // Observar datos del sensor desde Firestore (Se actualiza continuamente vía Wi-Fi o mantiene el último dato guardado)
+        // Observar datos del sensor desde el último registro en Firestore en tiempo real (se actualiza automáticamente cada 30s)
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.datosSensor.collectLatest { sensor ->
                 if (sensor.hayDatos) {
-                    // BPM: mostrar lectura continua o último valor guardado en Firestore
-                    binding.tvHeartRate.text = if (sensor.bpm > 0) "${sensor.bpm} BPM" else "-- BPM"
+                    // BPM: mostrar lectura exacta del último registro (0 BPM si el sensor marca 0)
+                    binding.tvHeartRate.text = if (sensor.bpm > 0) "${sensor.bpm} BPM" else "0 BPM"
 
-                    // SpO2: mostrar lectura continua o último valor guardado en Firestore
+                    // SpO2: mostrar oxigenación exacta del último registro
                     binding.tvOxygen.text = if (sensor.spo2 > 0) "${sensor.spo2} %" else "-- %"
 
-                    // Batería real leída desde Firestore
-                    binding.tvBatteryLevel.text = if (sensor.bateriaPorcentaje > 0) "${sensor.bateriaPorcentaje} %" else "-- %"
+                    // Batería real leída desde el registro más reciente en Firestore
+                    binding.tvBatteryLevel.text = "${sensor.bateriaPorcentaje} %"
 
-                    // Estado de actualización y tiempo de última sincronización
-                    val timeFormatted = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
-                        .format(java.util.Date(sensor.ultimaActualizacion))
-
-                    if (sensor.dedo) {
-                        binding.tvLastUpdateTime.text = "Sensor activo ($timeFormatted)"
-                        binding.tvLastSync.text = "En línea ($timeFormatted)"
+                    // Hora exacta del registro capturado desde Firestore
+                    val horaMostrar = if (sensor.horaTexto.isNotBlank()) {
+                        sensor.horaTexto
                     } else {
-                        binding.tvLastUpdateTime.text = "Último dato guardado ($timeFormatted)"
-                        binding.tvLastSync.text = "Sin dedo detectado"
+                        java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date(sensor.ultimaActualizacion))
                     }
 
-                    // Marcar como sincronizada por Wi-Fi / Firestore
+                    binding.tvLastUpdateTime.text = "Sensor activo ($horaMostrar)"
+                    binding.tvLastSync.text = "En línea ($horaMostrar)"
+
+                    // Marcar estado como sincronizado por Wi-Fi / Firestore
                     binding.tvConnectionStatus.text = "Sincronizada (Wi-Fi)"
                     binding.tvConnectionStatus.setTextColor(resources.getColor(R.color.success_green, null))
                     binding.tvConnectionType.text = "Sincronizada"
@@ -150,7 +153,7 @@ class DispositivoFragment : Fragment() {
                     binding.tvHeartRate.text = "-- BPM"
                     binding.tvOxygen.text = "-- %"
                     binding.tvBatteryLevel.text = "-- %"
-                    binding.tvLastUpdateTime.text = "Esperando base de datos..."
+                    binding.tvLastUpdateTime.text = "Esperando registros..."
                     binding.tvLastSync.text = "--"
                 }
             }

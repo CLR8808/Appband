@@ -2,43 +2,52 @@ package com.safestep.appband.repositories
 
 import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Repositorio que escucha en tiempo real el documento "sensor/actual" de Firestore.
- * El ESP32 SafeBand envía datos vía Firebase.Firestore.patchDocument() a este documento.
+ * Repositorio que escucha en tiempo real el registro más reciente en la colección "sensor" de Firestore.
+ * El ESP32 SafeBand sube periódicamente un nuevo documento (cada 30 segundos) con la telemetría del sensor.
  *
- * Estructura del documento en Firestore:
- *   sensor/actual
- *     ├── max30102 { bpm, spo2, bpmValido, spo2Valido, dedo, ir, red }
- *     ├── bateria  { voltaje, porcentaje }
- *     ├── gps      { fix, latitud, longitud, altitud, velocidad, satelites }
- *     ├── mpu6500  { acelerometro{x,y,z}, giroscopio{x,y,z}, resultante, g, caida }
- *     ├── alerta   { sos, caida }
- *     └── json     (string del JSON completo)
+ * Estructura de documentos soportada (plana o anidada):
+ *   sensor/registro_<millis>_<hex>
+ *     ├── bateria: 54
+ *     ├── bpm: 0
+ *     ├── spo2: 94
+ *     ├── fecha: "2026-08-10"
+ *     ├── hora: "21:07:41"
+ *     ├── fechaHora: "2026-08-10 21:07:41"
+ *     ├── gpsFix: true
+ *     ├── latitud: 23.2875
+ *     ├── longitud: -106.417094
+ *     ├── max30102Conectado: true
+ *     └── caida: false
  */
 class SensorFirebaseRepository {
 
     companion object {
         private const val TAG = "SensorFirebaseRepo"
         private const val COLECCION = "sensor"
-        private const val DOCUMENTO = "actual"
 
         @Volatile
         private var INSTANCE: SensorFirebaseRepository? = null
 
         fun getInstance(): SensorFirebaseRepository {
             return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: SensorFirebaseRepository().also { INSTANCE = it }
+                INSTANCE ?: SensorFirebaseRepository().also { 
+                    INSTANCE = it 
+                    it.iniciarEscucha()
+                }
             }
         }
     }
 
     /**
-     * Datos completos del sensor leídos desde Firestore.
+     * Datos completos del sensor leídos desde el registro más reciente en Firestore.
      */
     data class DatosSensor(
         // MAX30102
@@ -62,6 +71,10 @@ class SensorFirebaseRepository {
         // Alertas
         val alertaSOS: Boolean = false,
         val alertaCaida: Boolean = false,
+        // Fechas y hora desde el registro
+        val horaTexto: String = "",
+        val fechaTexto: String = "",
+        val documentId: String = "",
         // Estado
         val hayDatos: Boolean = false,
         val ultimaActualizacion: Long = 0
@@ -76,98 +89,117 @@ class SensorFirebaseRepository {
     private var listenerRegistration: ListenerRegistration? = null
 
     /**
-     * Iniciar la escucha en tiempo real del documento "sensor/actual" en Firestore.
-     * Cada vez que el ESP32 actualiza los valores (cada 10 segundos), se reciben aquí.
+     * Iniciar la escucha en tiempo real del registro más reciente en la colección "sensor".
+     * Cada vez que el ESP32 o la base de datos registra un nuevo documento (cada 30 segundos),
+     * este listener captura el documento superior y actualiza la app al instante.
      */
     fun iniciarEscucha() {
         val firestore = FirebaseFirestore.getInstance()
-        val docRef = firestore.collection(COLECCION).document(DOCUMENTO)
 
         // Remover listener anterior si existe
         listenerRegistration?.remove()
 
-        listenerRegistration = docRef.addSnapshotListener { snapshot, error ->
+        // Consulta en tiempo real: Ordenar por ID de documento de manera descendente (los más recientes primero) y limitar a 1
+        val query = firestore.collection(COLECCION)
+            .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
+            .limit(1)
+
+        listenerRegistration = query.addSnapshotListener { snapshot, error ->
             if (error != null) {
-                Log.e(TAG, "❌ Error escuchando Firestore: ${error.message}")
+                Log.e(TAG, "❌ Error escuchando registros de Firestore: ${error.message}")
                 _conectadoFirebase.value = false
                 return@addSnapshotListener
             }
 
-            if (snapshot == null || !snapshot.exists()) {
-                Log.w(TAG, "⚠️ Documento sensor/actual no existe todavía")
+            if (snapshot == null || snapshot.isEmpty) {
+                Log.w(TAG, "⚠️ La colección '$COLECCION' aún no contiene registros")
                 _conectadoFirebase.value = true
                 return@addSnapshotListener
             }
 
-            try {
-                val datos = parsearDatos(snapshot)
-                _datosSensor.value = datos
-                _conectadoFirebase.value = true
+            val docMasReciente = snapshot.documents.firstOrNull()
+            if (docMasReciente != null && docMasReciente.exists()) {
+                try {
+                    val datos = parsearDatos(docMasReciente)
+                    _datosSensor.value = datos
+                    _conectadoFirebase.value = true
 
-                Log.d(TAG, "✅ Datos Firestore: BPM=${datos.bpm} (válido=${datos.bpmValido}), " +
-                        "SpO2=${datos.spo2} (válido=${datos.spo2Valido}), Dedo=${datos.dedo}, " +
-                        "Batería=${datos.bateriaPorcentaje}%, GPS fix=${datos.gpsFix}")
-            } catch (e: Exception) {
-                Log.e(TAG, "Error parseando datos de Firestore: ${e.message}")
+                    Log.d(TAG, "✅ Registro más reciente en vivo (${docMasReciente.id}): Hora=${datos.horaTexto}, " +
+                            "BPM=${datos.bpm}, SpO2=${datos.spo2}, Batería=${datos.bateriaPorcentaje}%")
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error parseando datos de Firestore: ${e.message}")
+                }
             }
         }
 
-        Log.i(TAG, "📡 Escuchando documento $COLECCION/$DOCUMENTO en Firestore...")
+        Log.i(TAG, "📡 Escuchando registros más recientes en la colección '$COLECCION' de Firestore...")
     }
 
     /**
-     * Parsear el snapshot de Firestore a DatosSensor.
-     * Los datos están organizados en maps anidados: max30102, bateria, gps, mpu6500, alerta.
+     * Parsear el snapshot del documento más reciente en Firestore a DatosSensor.
      */
     @Suppress("UNCHECKED_CAST")
     private fun parsearDatos(snapshot: DocumentSnapshot): DatosSensor {
         // MAX30102
-        val max30102 = snapshot.get("max30102") as? Map<String, Any> ?: emptyMap()
-        val bpm = toLong(max30102["bpm"]).toInt()
-        val spo2 = toLong(max30102["spo2"]).toInt()
-        val bpmValido = max30102["bpmValido"] as? Boolean ?: false
-        val spo2Valido = max30102["spo2Valido"] as? Boolean ?: false
-        val dedo = max30102["dedo"] as? Boolean ?: false
-        val ir = toLong(max30102["ir"])
-        val red = toLong(max30102["red"])
+        val max30102Map = snapshot.get("max30102") as? Map<String, Any> ?: emptyMap()
+        val bpmVal = snapshot.get("bpm")
+        val bpm = when (bpmVal) {
+            is Number -> bpmVal.toInt()
+            is String -> bpmVal.toIntOrNull() ?: 0
+            else -> toLong(max30102Map["bpm"]).toInt()
+        }
+
+        val spo2Val = snapshot.get("spo2")
+        val spo2 = when (spo2Val) {
+            is Number -> spo2Val.toInt()
+            is String -> spo2Val.toIntOrNull() ?: 0
+            else -> toLong(max30102Map["spo2"]).toInt()
+        }
 
         // Batería
-        val bateria = snapshot.get("bateria") as? Map<String, Any> ?: emptyMap()
-        val bateriaPorcentaje = toLong(bateria["porcentaje"]).toInt()
-        val bateriaVoltaje = toDouble(bateria["voltaje"])
+        val bateriaVal = snapshot.get("bateria")
+        val bateriaMap = snapshot.get("bateria") as? Map<String, Any> ?: emptyMap()
+        val bateriaPorcentaje = when (bateriaVal) {
+            is Number -> bateriaVal.toInt()
+            is String -> bateriaVal.toIntOrNull() ?: 0
+            else -> toLong(bateriaMap["porcentaje"]).toInt()
+        }
+
+        val bateriaVoltaje = if (snapshot.contains("voltajeBateria")) toDouble(snapshot.get("voltajeBateria")) else toDouble(bateriaMap["voltaje"])
+
+        // Hora y Fecha
+        val horaTexto = snapshot.getString("hora") ?: snapshot.getString("fechaHora") ?: ""
+        val fechaTexto = snapshot.getString("fecha") ?: ""
 
         // GPS
-        val gps = snapshot.get("gps") as? Map<String, Any> ?: emptyMap()
-        val gpsFix = gps["fix"] as? Boolean ?: false
-        val gpsLatitud = toDouble(gps["latitud"])
-        val gpsLongitud = toDouble(gps["longitud"])
-        val gpsAltitud = toDouble(gps["altitud"])
-        val gpsVelocidad = toDouble(gps["velocidad"])
-        val gpsSatelites = toLong(gps["satelites"]).toInt()
+        val gpsMap = snapshot.get("gps") as? Map<String, Any> ?: emptyMap()
+        val gpsFix = snapshot.getBoolean("gpsFix") ?: (gpsMap["fix"] as? Boolean ?: false)
+        val gpsLatitud = if (snapshot.contains("latitud")) toDouble(snapshot.get("latitud")) else toDouble(gpsMap["latitud"])
+        val gpsLongitud = if (snapshot.contains("longitud")) toDouble(snapshot.get("longitud")) else toDouble(gpsMap["longitud"])
 
         // Alertas
-        val alerta = snapshot.get("alerta") as? Map<String, Any> ?: emptyMap()
-        val alertaSOS = alerta["sos"] as? Boolean ?: false
-        val alertaCaida = alerta["caida"] as? Boolean ?: false
+        val alertaMap = snapshot.get("alerta") as? Map<String, Any> ?: emptyMap()
+        val alertaSOS = snapshot.getBoolean("sos") ?: (alertaMap["sos"] as? Boolean ?: false)
+        val alertaCaida = snapshot.getBoolean("caida") ?: (alertaMap["caida"] as? Boolean ?: false)
+
+        val max30102Conectado = snapshot.getBoolean("max30102Conectado") ?: true
 
         return DatosSensor(
             bpm = bpm,
-            bpmValido = bpmValido,
+            bpmValido = bpm > 0,
             spo2 = spo2,
-            spo2Valido = spo2Valido,
-            dedo = dedo,
-            ir = ir,
-            red = red,
+            spo2Valido = spo2 > 0,
+            dedo = max30102Conectado,
             bateriaPorcentaje = bateriaPorcentaje,
             bateriaVoltaje = bateriaVoltaje,
             gpsFix = gpsFix,
             gpsLatitud = gpsLatitud,
             gpsLongitud = gpsLongitud,
-            gpsAltitud = gpsAltitud,
-            gpsVelocidad = gpsVelocidad,
-            gpsSatelites = gpsSatelites,
             alertaSOS = alertaSOS,
             alertaCaida = alertaCaida,
+            horaTexto = horaTexto,
+            fechaTexto = fechaTexto,
+            documentId = snapshot.id,
             hayDatos = true,
             ultimaActualizacion = System.currentTimeMillis()
         )

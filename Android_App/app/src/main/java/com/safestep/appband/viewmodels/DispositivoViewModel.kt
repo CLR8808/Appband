@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 
 /**
  * ViewModel para DispositivoFragment.
- * Expone datos del sensor MAX30102 desde Firebase Realtime Database en tiempo real,
- * el estado de conexión BLE y acciones de desvinculación.
+ * Expone datos del sensor desde el último registro de Firestore en tiempo real,
+ * el estado de conexión y acciones de desvinculación.
  */
 class DispositivoViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -33,16 +33,23 @@ class DispositivoViewModel(application: Application) : AndroidViewModel(applicat
             initialValue = null
         )
 
-    // Datos del sensor MAX30102 desde Firebase Realtime Database
+    // Datos del sensor desde el último registro en Firestore
     val datosSensor: StateFlow<SensorFirebaseRepository.DatosSensor> = sensorFirebaseRepo.datosSensor
     val conectadoFirebase: StateFlow<Boolean> = sensorFirebaseRepo.conectadoFirebase
 
-    // Promedios diarios (se actualizarán cuando haya suficientes datos en la BD)
+    // Promedios diarios
     val promedioPulso: StateFlow<String> = kotlinx.coroutines.flow.MutableStateFlow("-- BPM")
     val promedioOxigenacion: StateFlow<String> = kotlinx.coroutines.flow.MutableStateFlow("-- %")
 
     init {
-        // Iniciar la escucha de Firebase Realtime Database automáticamente
+        iniciarEscucha()
+    }
+
+    fun iniciarEscucha() {
+        sensorFirebaseRepo.iniciarEscucha()
+    }
+
+    fun recargarDatos() {
         sensorFirebaseRepo.iniciarEscucha()
     }
 
@@ -66,6 +73,5 @@ class DispositivoViewModel(application: Application) : AndroidViewModel(applicat
 
     override fun onCleared() {
         super.onCleared()
-        sensorFirebaseRepo.detenerEscucha()
     }
 }
