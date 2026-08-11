@@ -88,8 +88,48 @@ class DetalleIncidenteFragment : Fragment() {
             "Se ha registrado una anomalía en los patrones de movimiento de la SafeBand."
         }
 
-        // Ubicación
-        binding.tvLocationName.text = evento.ubicacionTexto.ifEmpty { "Mazatlán, Sinaloa" }
+        // Validar coordenadas de la alerta
+        val rawLat = evento.latitud
+        val rawLng = evento.longitud
+        val tieneGpsValido = esCoordenadaValida(rawLat, rawLng)
+
+        val latFinal = if (tieneGpsValido) rawLat else 23.264864
+        val lngFinal = if (tieneGpsValido) rawLng else -106.430832
+
+        // Ubicación en texto
+        binding.tvLocationName.text = if (evento.ubicacionTexto.isNotBlank() && !evento.ubicacionTexto.contains("Guang Xi", ignoreCase = true)) {
+            evento.ubicacionTexto
+        } else {
+            "Mazatlán, Sinaloa"
+        }
+
+        if (tieneGpsValido) {
+            viewLifecycleOwner.lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                try {
+                    val geocoder = android.location.Geocoder(requireContext(), java.util.Locale.getDefault())
+                    @Suppress("DEPRECATION")
+                    val addresses = geocoder.getFromLocation(latFinal, lngFinal, 1)
+                    if (!addresses.isNullOrEmpty()) {
+                        val address = addresses[0]
+                        val country = address.countryName ?: ""
+                        // Evitar nombres incoherentes si el sensor envió datos no calibrados
+                        if (!country.contains("China", ignoreCase = true)) {
+                            val street = address.thoroughfare ?: address.subLocality ?: ""
+                            val locality = address.locality ?: address.subAdminArea ?: "Mazatlán"
+                            val adminArea = address.adminArea ?: "Sinaloa"
+                            val fullText = listOf(street, locality, adminArea).filter { it.isNotBlank() }.joinToString(", ")
+                            if (fullText.isNotBlank()) {
+                                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                                    _binding?.tvLocationName?.text = fullText
+                                }
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("DetalleIncidente", "Error en Geocoder: ${e.message}")
+                }
+            }
+        }
 
         // Hora y Fecha
         binding.tvHora.text = evento.horaTexto.ifEmpty { evento.tiempoTexto.ifEmpty { "--:--" } }
@@ -103,23 +143,36 @@ class DetalleIncidenteFragment : Fragment() {
         if (evento.revisado) {
             binding.btnMarcarRevisado.text = "Incidente revisado ✓"
             binding.btnMarcarRevisado.isEnabled = false
-            binding.btnMarcarRevisado.alpha = 0.6f
+            binding.btnMarcarRevisado.alpha = 0.7f
+        } else {
+            binding.btnMarcarRevisado.text = "Marcar como revisado"
+            binding.btnMarcarRevisado.isEnabled = true
+            binding.btnMarcarRevisado.alpha = 1.0f
         }
+    }
+
+    private fun esCoordenadaValida(lat: Double, lng: Double): Boolean {
+        if (lat == 0.0 && lng == 0.0) return false
+        if (lat < -90.0 || lat > 90.0 || lng < -180.0 || lng > 180.0) return false
+        if (kotlin.math.abs(lat) < 0.1 && kotlin.math.abs(lng) < 0.1) return false
+        return true
     }
 
     private fun setupMiniMap() {
         val evento = selectedEvento
-        val lat = evento?.latitud ?: 23.264864
-        val lng = evento?.longitud ?: -106.430832
+        val rawLat = evento?.latitud ?: 0.0
+        val rawLng = evento?.longitud ?: 0.0
+
+        val tieneGpsValido = esCoordenadaValida(rawLat, rawLng)
+        val lat = if (tieneGpsValido) rawLat else 23.264864
+        val lng = if (tieneGpsValido) rawLng else -106.430832
 
         binding.miniMapView.setTileSource(TileSourceFactory.MAPNIK)
-        binding.miniMapView.setMultiTouchControls(false)
+        binding.miniMapView.setMultiTouchControls(true)
         binding.miniMapView.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-        binding.miniMapView.isClickable = false
-        binding.miniMapView.isFocusable = false
 
         val controller = binding.miniMapView.controller
-        controller.setZoom(17.0)
+        controller.setZoom(16.5)
 
         val point = GeoPoint(lat, lng)
         controller.setCenter(point)
@@ -127,7 +180,13 @@ class DetalleIncidenteFragment : Fragment() {
         val marker = Marker(binding.miniMapView)
         marker.position = point
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-        marker.title = "📍 Ubicación del incidente"
+        marker.title = evento?.titulo?.ifEmpty { "Ubicación del incidente" } ?: "Ubicación del incidente"
+
+        val pinDrawable = androidx.core.content.ContextCompat.getDrawable(requireContext(), R.drawable.ic_location_pin)
+        if (pinDrawable != null) {
+            marker.icon = pinDrawable
+        }
+
         binding.miniMapView.overlays.clear()
         binding.miniMapView.overlays.add(marker)
         binding.miniMapView.invalidate()
@@ -136,10 +195,6 @@ class DetalleIncidenteFragment : Fragment() {
     private fun setupListeners() {
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
-        }
-
-        binding.miniMapContainer.setOnClickListener {
-            findNavController().navigate(R.id.action_detalleIncidente_to_mapa)
         }
 
         binding.btnMarcarRevisado.setOnClickListener {

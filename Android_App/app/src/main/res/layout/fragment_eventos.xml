@@ -81,6 +81,46 @@
                 android:textColor="#64748B"
                 android:textSize="13sp" />
 
+            <!-- Filter Segment Control (Nuevos vs Revisados) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_segment_inactive"
+                android:orientation="horizontal"
+                android:padding="4dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnFiltroNuevos"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Nuevos"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="#00796B"
+                    app:cornerRadius="20dp"
+                    app:elevation="0dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnFiltroRevisados"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Revisados"
+                    android:textAllCaps="false"
+                    android:textColor="#64748B"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@android:color/transparent"
+                    app:cornerRadius="20dp"
+                    app:elevation="0dp" />
+            </LinearLayout>
+
             <!-- Divider -->
             <View
                 android:layout_width="match_parent"

@@ -54,7 +54,6 @@ class PerfilFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         configurarOptionCards()
-        configurarTabLayout()
         observarEstado()
     }
 
@@ -195,29 +194,6 @@ class PerfilFragment : Fragment() {
             startActivity(intent)
             requireActivity().finish()
         }
-    }
-
-    private fun configurarTabLayout() {
-        binding.tabLayoutPerfil.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                if (tab?.position == 0) {
-                    binding.containerPerfilTab.visibility = View.VISIBLE
-                    binding.containerPacienteTab.visibility = View.GONE
-                } else {
-                    binding.containerPerfilTab.visibility = View.GONE
-                    binding.containerPacienteTab.visibility = View.VISIBLE
-
-                    if (childFragmentManager.findFragmentById(R.id.containerPacienteTab) == null) {
-                        childFragmentManager.beginTransaction()
-                            .replace(R.id.containerPacienteTab, RegistroPacienteFragment())
-                            .commit()
-                    }
-                }
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
     }
 
     private fun observarEstado() {

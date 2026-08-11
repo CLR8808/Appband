@@ -8,14 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.safestep.appband.R
 import com.safestep.appband.databinding.ActivitySplashBinding
 import com.safestep.appband.viewmodels.SplashViewModel
 import kotlinx.coroutines.launch
 
 /**
  * Pantalla de Splash Inicial (Logo animado en gradiente cian).
- * Migrado desde components/index/index.component.ts
+ * Redirige a MainActivity si la sesión está activa o a AuthActivity si se cerró sesión.
  */
 class SplashActivity : AppCompatActivity() {
 
@@ -31,12 +30,12 @@ class SplashActivity : AppCompatActivity() {
         val animFadeIn = AnimationUtils.loadAnimation(this, android.R.anim.fade_in)
         binding.ivLogo.startAnimation(animFadeIn)
 
-        // Observar evento de navegación a Login tras 3 segundos
+        // Observar destino de navegación
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.navigateToLoginEvent.collect { ready ->
-                    if (ready) {
-                        val intent = Intent(this@SplashActivity, AuthActivity::class.java)
+                viewModel.navigationTarget.collect { targetClass ->
+                    if (targetClass != null) {
+                        val intent = Intent(this@SplashActivity, targetClass)
                         startActivity(intent)
                         finish()
                     }
